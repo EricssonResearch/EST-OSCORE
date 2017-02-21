@@ -96,7 +96,7 @@ document are to be interpreted as described in {{RFC2119}}. These
 words may also appear in this document in lowercase, absent their
 normative meanings.
 
-Terminology taken from [ ]
+Terminology taken from \[ \]
 
 Pledge:
 :  the prospective device, which has the identity provided to
