@@ -115,6 +115,42 @@ Join Registrar/Coordinator (JRC):
 :  a central entity responsible for authentication and authorization of joining
    nodes.
 
+# Architectural Overview # {#architecture}
+
+When a pledge first joins a constrained network, it typically does not have IPv6 connectivity to reach the Join Registrar/Coordinator.
+For that reason, pledge communicates with the Join Proxy, a one hop neighbor of the pledge.
+Join Proxy statelessly relays the exchanges between the pledge and the Join Registrar/Coordinator.
+
+As in the model of {{I-D.ietf-6tisch-minimal-security}}, the Join Proxy plays the role of a CoAP proxy.
+Default CoAP proxy, however, keeps state information in order to relay the response back to the originating client, in this case the pledge. 
+To mitigate Denial of Service attacks at the Join Proxy, {{I-D.ietf-6tisch-minimal-security}} mandates the use of a new CoAP option, Stateless-Proxy option, that allows the Join Proxy to operate statelessly.
+The proxy adds en-route the state information necessary for its operation as the value of the Stateless-Proxy option.
+The value of the Stateless-Proxy option is opaque to the JRC/CoAP server. 
+The option is echoed back by the JRC/CoAP server, and consumed by the proxy.
+{{arch-overview}} illustrates the operation of the Join Proxy.
+
+~~~~~~~~~~~
++--------+     +-------+       +--------+
+| pledge |     |  JP   |       |  JRC   |
+|        |     |       |       |        |
++--------+     +-------+       +--------+
+    |              |                |
+    +------------->|                |       
+    |   Request    |                |
+    |              |                |
+    |              +--------------->|
+    |              |     Request    |       Stateless-Proxy: opaque value
+    |              |                |
+    |              |<---------------+
+    |              |    Response    |       Stateless-Proxy: opaque value
+    |              |                |
+    <--------------+                |    
+    |   Response   |                |
+    |              |                |
+~~~~~~~~~~~
+{: #arch-overview title="Overview of the bootstrapping architecture."}
+{: artwork-align="center"}
+
 # Enrollment Protocols # {#protocols}
 
 ## Overview ##
