@@ -55,6 +55,7 @@ normative:
 
 informative:
 
+  RFC5272:
   RFC7228:
   RFC7030:
   I-D.richardson-6tisch-dtsecurity-secure-join:
@@ -63,29 +64,27 @@ informative:
   I-D.hartke-core-e2e-security-reqs:
   I-D.ietf-core-coap-tcp-tls:
   I-D.bormann-6lo-coap-802-15-ie:
+  I-D.ietf-ace-oauth-authz:
 
   
 
 --- abstract
 
 
-This document specifies public key certificate enrollment procedures authenticated with application layer security protocols suitable for Internet of Things deployments. The protocols leverage existing standards including Constrained Appliction Protocol (CoAP), Consise Binary Object Representation (CBOR) and the CBOR Object Signing and Encryption (COSE) format.
+This document specifies public key certificate enrollment procedures authenticated with application layer security protocols suitable for Internet of Things deployments. The protocols leverage existing IoT standards including Constrained Appliction Protocol (CoAP), Consise Binary Object Representation (CBOR) and the CBOR Object Signing and Encryption (COSE) format.
 
 --- middle
 
 # Introduction #       {#intro}
 
 
-Security at the application layer provides an attractive option for protecting Internet of Things (IoT) deployments, in particular in constrained environments {{RFC7228}} or when using CoAP {{RFC7252}}; for example where transport layer security is not sufficient {{I-D.hartke-core-e2e-security-reqs}}, or where it is beneficial that the security protocol is independent of lower layers, such as when securing CoAP over mixed transport protocols.
+Security at the application layer provides an attractive option for protecting Internet of Things (IoT) deployments, in particular in constrained environments {{RFC7228}} and when using CoAP {{RFC7252}}; for example where transport layer security is not sufficient {{I-D.hartke-core-e2e-security-reqs}}, or where it is beneficial that the security protocol is independent of lower layers, such as when securing CoAP over mixed transport protocols.
 
-Application layer security protocols suitable for constrained devices are in development, including the secure communication protocol OSCOAP {{I-D.ietf-core-object-security}}, and the key exchange protocol EDHOC {{I-D.selander-ace-cose-ecdhe}}. OSCOAP defines an extension to the Constrained Application Protocol (CoAP) providing encryption, integrity and replay protection end-to-end between CoAP client and server based on a shared secret. EDHOC is a key establishment protocol providing mutual authentication of client and server based on pre-shared keys, raw public keys or public key certificates, and establishes a shared secret with forward secrecy which may be used with OSCOAP. OSCOAP and EDHOC are built upon other constrained device primitives developed in the IETF: CoAP, CBOR {{RFC7049}} and COSE {{I-D.ietf-cose-msg}}, and makes only a small additional implementation footprint.
+Application layer security protocols suitable for constrained devices are in development, including the secure communication protocol OSCOAP {{I-D.ietf-core-object-security}}. OSCOAP defines an extension to the Constrained Application Protocol (CoAP) providing encryption, integrity and replay protection end-to-end between CoAP client and server based on a shared secret. The shared secret can be established in different ways e.g. using a trusted third party such as in ACE {{I-D.ietf-ace-oauth-authz}}, or using a key exchange protocol such as EDHOC {{I-D.selander-ace-cose-ecdhe}}. OSCOAP and EDHOC are built upon other constrained device primitives developed in the IETF: CoAP, CBOR {{RFC7049}} and COSE {{I-D.ietf-cose-msg}}, and makes only a small additional implementation footprint.
 
-Lately there has been a discussion in several IETF working groups about certificate enrollment protocols suitable for IoT devices, to enable zero-touch joining of a device in a network domain.  BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}} specifies an automated bootstrapping of a remote secure key infrastructure (BRSKI) using vendor installed X.509 certificate, in combination with a vendor authorized service on the Internet. BRSKI is referencing Enrolment over Secure Transport (EST) {{RFC7030}}. 
+Lately, there has been a discussion in several IETF working groups about certificate enrollment protocols suitable for IoT devices, to support the use case of an IoT device joining a new network domain and establishing credentials valid in this domain. This document describes Enrollment with Application Layer Security (EALS), a certificate enrollment procedure based on the Simple PKI Requests and Responses of CMC {{RFC5272}}. EALS uses OSCOAP as a channel for the enrollment protocol, and describes how ACE and EDHOC can be used for establishing an authenticated and authorized channel.
 
-This document describes an efficient join/certificate enrollment procedure called Enrollment with Application Layer Security (EALS), using the aforementioned application layer security protocols. For devices already implementing OSCOAP or EDHOC, the enrollment protocols re-use much of the code base and is only a minor addition.
-
-The problem statement from BRSKI is imported into this document. The limitations of applicability to energy constrained devices due to credential size applies also to this document, and further work is needed to specify certificate formats relevant to constrained devices. Having said that, one rationale for this document is a more optimized message exchange, which is favorable in low-power deployments. Related work include {{I-D.richardson-6tisch-dtsecurity-secure-join}} which addresses the low-power problem statement, and {{I-D.ietf-6tisch-minimal-security}} which describes a one-touch procedure using OSCOAP and EDHOC.
-
+This work is inspired by the Enrollment over Secure Transport (EST) protocol {{RFC7030}}, which also is based on CMC, but EALS is secured on application layer instead of on transport layer.
 
 
 ## Terminology ##  {#terminology}
@@ -96,7 +95,209 @@ document are to be interpreted as described in {{RFC2119}}. These
 words may also appear in this document in lowercase, absent their
 normative meanings.
 
-Terminology taken from \[ \]
+
+# Simple Enrollment # {#simple-enroll}
+
+This section describes the simple enrollment protocol which is an embedding of the Simple PKI Request/Response protocol of CMC {{RFC5272}} in Object Secure CoAP (OSCOAP) {{I-D.ietf-core-object-security}}. 
+
+The simple enrollment protocol is a 2-pass protocol between EALS client and EALS server, see {{fig-simple-enroll}}. The protocol assumes that both EALS client and EALS server implement CoAP, and the Object-Security option of CoAP (OSCOAP). 
+
+
+~~~~~~~~~~~
+
+ EALS                                                   EALS 
+client                                                 server
+
+  |                                                       | 
+  | POST /eals      (Object-Security; Payload: PKCS #10)  |  
+  +------------------------------------------------------>|
+  |                                                       |          
+  |  2.04 Changed   (Object-Security; Payload: PKCS #7)   |
+  |<------------------------------------------------------+
+  |                                                       |       
+
+~~~~~~~~~~~
+{: #fig-simple-enroll title="The Simple Enrollment Protocol."}
+{: artwork-align="center"}
+
+
+The simple enrollment protocol consists of a CoAP message exchange. 
+
+The EALS client sends a CoAP request:
+
+ * Method if POST
+ * Uri-Path is "eals"
+ * Object-Security option is present
+ * Payload is the CMC Simple PKI Request {{RFC5272}} (i.e. a PKCS #10 certification request).
+
+ 
+If successful, the EALS server sends a CoAP response: 
+
+ * Code is 2.04 (Changed)
+ * Content-Format is "application/pkcs7-mime" (TBD)
+ * Object-Security option is present
+ * Payload is a certs-only CMC Simple PKI Response {{RFC5272}} (i.e the issued certificate)
+
+
+OSCOAP protects the CoAP message exchange between the endpoints over any transport and via intermediary nodes. The OSCOAP protection requires that a security context is shared between client and server, and the security context can be derived from a set of Input Parameters (Section 3.3 of {{I-D.ietf-core-object-security}}):
+
+* Master Secret
+* Sender ID
+* Recipient ID
+
+The server MUST verify that the Master Secret is associated to the Distinguished Name for which the client is requesting a certificate. Examples of how these input parameters are established in client and server are described in {{establish-master-secret}}.
+
+Note 1: The encodings and formats used in CMC may later be updated with other equivalents more adapted to constrained environments.
+
+Note 2: OSCOAP protects the CoAP message exchange independent of underlying protocol e.g. UDP, TCP {{I-D.ietf-core-coap-tcp-tls}}, or 802.15.4 IE {{I-D.bormann-6lo-coap-802-15-ie}}.
+
+TBD: Further details
+
+
+# Establishment of Master Secret # {#establish-master-secret}
+
+
+In order to deploy OSCOAP between EALS client and EALS server, the OSCOAP input parameters needs to established (Section 3.3 of {{I-D.ietf-core-object-security}}), in particular a master secret. In this section we present two application layer protocols for establishing the input parameters: the authorization protocol ACE and the key exchange protocol EDHOC.
+
+## ACE  ##
+
+The ACE protocol framework {{I-D.ietf-ace-oauth-authz}} is an adaptation of OAuth 2.0 to IoT environments. ACE describes different message flows for a Client to get authorized access to a Resource Server (RS) by leveraging an Authorization Server (AS). 
+
+The Token Introspection flow (Section 7 of {{I-D.ietf-ace-oauth-authz}}) allows an RS to access authorization information relating to a client provided access token. If the access token is valid, the RS obtains information about the access rights and key of the client, and also a client token containing the same shared key protected for the legitimate client (Section 7.4 of {{I-D.ietf-ace-oauth-authz}}, {{ACE-introspect}}).
+
+By mapping the EALS client and server to the ACE client and resource server, respectively, this application of ACE enables the authorization of EALS client and establishment of a shared  The access token is in this case not bound to a particular resource server and could be provisioned to the client during manufacture. key, which can be used as master secret with OSCOAP in the simple enrollment protocol in {{simple-enroll}}. The access rights include the right to get enrolled in this key infrastructure.
+
+
+~~~~~~~~~~~
+                     Resource       Authorization
+    Client            Server           Server
+       |                |                |
+       |                |                |
+       +--------------->|                |
+       |  POST          |                |
+       |  Access Token  |                |
+       |                +--------------->|
+       |                | Introspection  |
+       |                |    Request     |
+       |                |                |
+       |                +<---------------+
+       |                | Introspection  |
+       |                |   Response     |
+       |                | + Client Token |
+       |<---------------+                |
+       |  2.01 Created  |                |
+       | + Client Token |
+
+
+~~~~~~~~~~~
+{: #ACE-introspect title="ACE Token Introspection with Client Token."}
+{: artwork-align="center"}
+
+
+TBD: Specify how to carry OSCOAP input parameters in the client token
+
+TBD: Optionally include authorization information about the server in the client token, for the benefit of the client authorizing the enrollment, e.g. voucher relating to ownership of client. 
+
+
+## EDHOC ##
+
+EDHOC {{I-D.selander-ace-cose-ecdhe}} is a key establishment protocol encoded with CBOR and using COSE that may be transported with e.g. CoAP.
+
+EDHOC provides mutual authentication of client and server based on pre-shared keys, raw public keys or public key certificates. EDHOC establishes a shared secret with forward secrecy which may be used by different applications, such as by OSCOAP in the simple enrollment protocol, {{simple-enroll}}.
+
+EDHOC also negotiates the algorithm the application will use with the master secret, and allows application specific extentions and key derivation.
+
+
+
+~~~~~~~~~~~
+
+Party U                                             Party V
+   |                   E_U, EXT_1                     |
+   +------------------------------------------------->|
+   |                                                  |
+   |      E_V, AEAD(EXT_2, ID_V, Sig(V; E_U, E_V))    |
+   |<-------------------------------------------------+
+   |                                                  |
+   |         AEAD(EXT_3, ID_U, Sig(U; E_V, E_U))      |
+   +------------------------------------------------->|
+   |                                                  |
+
+
+~~~~~~~~~~~
+{: #fig-EDHOC title="The EDHOC protocol (simplification)."}
+{: artwork-align="center"}
+
+
+
+
+To address the authorization aspects the EDHOC protocol is exended with an optional audit/ownership voucher {{I-D.ietf-anima-bootstrapping-keyinfra}}. The voucher is retrieved by the EALS server using mechanism out of scope for this document.  The voucher is transported by leveraging the extensions mechanism built-in into EDHOC. The extension in EDHOC message_3 is encrypted by the EDHOC protocol.
+
+
+~~~~~~~~~~~
+ EALS                                     EALS 
+client                                   server
+
+  |                                        |                       
+  |                                        |                       
+  +--------------------------------------->|                       
+  |                                        |                       
+  |             EDHOC message_1            |                       
+  |<---------------------------------------+                       
+  |                                        |                       
+  |    EDHOC message_2   (EXT_2 = Nonce)   |                       
+  +--------------------------------------->|    Third party           
+  |                                        | <----------------->            
+  |    EDHOC message_3  (EXT_3 = Voucher)  |    authorization
+  |<---------------------------------------+                       
+  |                                        |                        
+
+~~~~~~~~~~~
+{: #fig-2 title="EDHOC in EALS."}
+{: artwork-align="center"}
+
+
+The enrollment procedure described here is assuming that the EALS server/Join Registrar/Coordinator is EDHOC client, see figure {{fig-2}}. This setting has the properties that the 
+
+1. The EALS server initiates the protocol
+2. The EALS client is authenticed first (EDHOC message_2)
+
+Item 1. allows the EALS server to orchestrate many concurrent enrollments. Item 2. allows the the EALS server to authenticate and authorize the EALS client before completing the protocol.
+
+For certain deployment settings the reverse roles may be favorable, and it is straightforward to embed the enrolment protocol in EDHOC with interchanged roles. The details are FFS.
+
+
+TBD Detail the protocol
+
+TBD CoAP binding. Same as in EDHOC?
+
+TBD name of resource? POST /edhoc?
+
+TBD CoAP Response codes to communicate success or failure of the EALS function?
+
+
+
+
+# Application to 6tisch #
+
+
+Terminology
+
+The Pledge is EALS client and the Join Registrar/Coordinator is EALS server.
+
+
+One candidate embedding of EALS into a bootstrapping architecture is as described in {{I-D.ietf-6tisch-minimal-security}}  where the Plegde is EALS/CoAP client, the Join Registrar/Coordinator is EALS/CoAP server and Join Proxy is a CoAP proxy.
+
+
+Stateless proxy, recap and reference minimal security draft
+
+
+ BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}} specifies an automated bootstrapping of a remote secure key infrastructure (BRSKI) using vendor installed X.509 certificate, in combination with a vendor authorized service on the Internet. BRSKI is referencing Enrolment over Secure Transport (EST) {{RFC7030}}. 
+ 
+ 
+, to enable zero-touch joining of a device in a network domain
+
+
+One application of EALS is to the BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}} problem statement. BRSKI deals with automated bootstrapping of new devices using vendor installed X.509 certificate, in combination with a vendor authorized service on the Internet. The following terminology is used
 
 Pledge:
 :  the prospective device, which has the identity provided to
@@ -114,6 +315,20 @@ Join Proxy (JP):
 Join Registrar/Coordinator (JRC):
 :  a central entity responsible for authentication and authorization of joining
    nodes.
+
+   Bootstrapping a new device can occur using a routable address and a
+   cloud service, or using only link-local connectivity, or on limited/
+   disconnected networks.  Support for lower security models, including
+   devices with minimal identity, is described for legacy reasons but
+   not encouraged.  Bootstrapping is complete when the cryptographic
+   identity of the new key infrastructure is successfully deployed to
+   the device but the established secure connection can be used to
+   deploy a locally issued certificate to the device as well.
+
+
+The problem statement from BRSKI is imported into this document. The limitations of applicability to energy constrained devices due to credential size applies also to this document, and further work is needed to specify certificate formats relevant to constrained devices. Having said that, one rationale for this document is a more optimized message exchange, which is favorable in low-power deployments. Related work include {{I-D.richardson-6tisch-dtsecurity-secure-join}} which addresses the low-power problem statement, and {{I-D.ietf-6tisch-minimal-security}} which describes a one-touch procedure using OSCOAP and EDHOC.
+
+
 
 # Architectural Overview # {#architecture}
 
@@ -139,10 +354,10 @@ The option is echoed back by the JRC/CoAP server, and consumed by the proxy.
     |   Request    |                |
     |              |                |
     |              +--------------->|
-    |              |     Request    |       Stateless-Proxy: opaque value
+    |              |     Request    |  Stateless-Proxy: opaque value
     |              |                |
     |              |<---------------+
-    |              |    Response    |       Stateless-Proxy: opaque value
+    |              |    Response    |  Stateless-Proxy: opaque value
     |              |                |
     <--------------+                |    
     |   Response   |                |
@@ -150,107 +365,6 @@ The option is echoed back by the JRC/CoAP server, and consumed by the proxy.
 ~~~~~~~~~~~
 {: #arch-overview title="Overview of the bootstrapping architecture."}
 {: artwork-align="center"}
-
-# Enrollment Protocols # {#protocols}
-
-## Overview ##
-
-Two different certificate enrollment protocols are described in this document; the simple (EALS) enrollment protocol and the full (EALS) enrollment protocol. The Pledge is EALS client and the Join Registrar/Coordinator is EALS server.
-
-The simple enrollment protocol is a two-pass protocol: the EALS client sends a certificate enrollment request and, if granted, the EALS server responds with a certificate. The protocol is protected with OSCOAP and assumes that both EALS client and EALS server implement CoAP. (The CoAP messages may, however, be carried using various transport protocols e.g. UDP, TCP {{I-D.ietf-core-coap-tcp-tls}}, 802.15.4 IE {{I-D.bormann-6lo-coap-802-15-ie}}).
-
-The full enrollment protocol is preceding the simple enrolment protocol with a mutual authentication, authorization and key establishment procedure embedded in the 3-pass EDHOC protocol. The full enrollment protocol can be transported over any channel, and the binding to CoAP is described in this document.
-
-
-
-## Simple Enrollment ## {#simple}
-
-The simple enrollment is a 2-pass protocol between EALS client and EALS server. Simple enrollment assumes that client and server has pre-established a shared master secret associated to the identity which the EALS client requesting to enroll. 
-
-The simple enrollment protocol may be used for re-enrollment e.g. if a previous full enrollment procedure has been sucessfully performed.
-
-~~~~~~~~~~~
-
- EALS                                                   EALS 
-client                                                 server
-
-  |                                                       | 
-  | POST /eals        (ObjectSecurity; Payload: PKCS#10)  |  
-  +------------------------------------------------------>|
-  |                                                       |          
-  |  2.04 Changed   (ObjectSecurity; Payload: PKCS#7)     |
-  |<------------------------------------------------------+
-  |                                                       |       
-
-~~~~~~~~~~~
-{: #simple-enroll title="The Simple EALS Protocol."}
-{: artwork-align="center"}
-
-
-The protocol consists of an OSCOAP exchange using the security context derived from the shared master secret. The EALS client sends an OSCOAP POST to /simpleeals, request payload is the certificate signing request (PKCS#10). The EALS server MUST verify that the DN in PKCS#10 corresponds to the security context with which the received OSCOAP request was protected. Since OSCOAP has sequence number-based replay protection, the EALS server rejects old requests. 
-
-If the request is successful, the EALS server responds with 2.04 Changed and returns a public key certificate (PKCS#7) matching the requested PKCS#10 to the EALS client.
-
-The protocol is entirely embedded in CoAP and is protected end-to-end when sent over any transport and via intermediary nodes. One candidate embedding of EALS into a bootstrapping architecture is as described in {{I-D.ietf-6tisch-minimal-security}}  where the Plegde is EALS/CoAP client, the Join Registrar/Coordinator is EALS/CoAP server and Join Proxy is a CoAP proxy.
-
-TBD Details
-
-TBD Stateless proxy, recap and reference minimal security draft
-
-
-## Full Enrollment ##
-
-
-The full enrollment procedure consists of a mutual authentication and authorization step, using EDHOC with an enrollment extension defined in this section, followed by the simple enrollment protocol ({{simple}}). The EDHOC protocol {{I-D.selander-ace-cose-ecdhe}} establishes the master secret used with the simple enrollment protocol for first enrollment or subsequent re-enrollments.
-
-EDHOC is a 3-pass client-server key exchange protocol providing mutual authentication between client and server, allowing application specific extensions. The parties may authenticate using pre-established keys, raw public keys or public key certificates. The focus here is on the last option, where the pre-established certificates are by issued the manufacturer, as described in BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}}.
-
-The EDHOC protocol is exended with an optional audit/ownership voucher {{I-D.ietf-anima-bootstrapping-keyinfra}}. The voucher is retrieved by the EALS server using mechanism out of scope for this document.  server {{I-D.ietf-anima-bootstrapping-keyinfra}}. The voucher is transported by leveraging the extensions mechanism built-in into EDHOC. The extension in EDHOC message_3 is encrypted by the EDHOC protocol.
-
-
-
-~~~~~~~~~~~
-
- EALS                                                   EALS 
-client                                                 server
-
-  |                                                       |
-  |                                                       |
-  +------------------------------------------------------>|
-  |                                                       |
-  |                    EDHOC message_1                    |
-  |<------------------------------------------------------+
-  |                                                       |
-  |                    EDHOC message_2                    |
-  +------------------------------------------------------>|
-  |                                                       |
-  |             EDHOC message_3  (EXT_3 = Voucher)        |
-  |<------------------------------------------------------+
-  |                                                       |    
-
-~~~~~~~~~~~
-{: #full-enroll title="Mutual authentication and authorization."}
-{: artwork-align="center"}
-
-
-The enrollment procedure described here is assuming that the EALS server/Join Registrar/Coordinator is EDHOC client, see figure {{full-enroll}}. This setting has the properties that the 
-
-1. The EALS server initiates the protocol
-2. The EALS client is authenticed first (EDHOC message_2)
-
-Item 1. allows the EALS server to orchestrate many concurrent enrollments. Item 2. allows the the EALS server to authenticate and authorize the EALS client before completing the protocol.
-
-For certain deployment settings the reverse roles may be favorable, and it is straightforward to embed the enrolment protocol in EDHOC with interchanged roles. The details are FFS.
-
-
-
-TBD Detail the protocol
-
-TBD CoAP binding. Same as in EDHOC?
-
-TBD name of resource? POST /fulleals?
-
-TBD CoAP Response codes to communicate success or failure of the EALS function?
 
 
 
