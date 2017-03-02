@@ -65,7 +65,7 @@ informative:
   I-D.ietf-core-coap-tcp-tls:
   I-D.bormann-6lo-coap-802-15-ie:
   I-D.ietf-ace-oauth-authz:
-
+  I-D.seitz-ace-oscoap-profile:
   
 
 --- abstract
@@ -165,7 +165,7 @@ The ACE protocol framework {{I-D.ietf-ace-oauth-authz}} is an adaptation of OAut
 
 The Token Introspection flow (Section 7 of {{I-D.ietf-ace-oauth-authz}}) allows an RS to access authorization information relating to a client provided access token. If the access token is valid, the RS obtains information about the access rights and key of the client, and also a client token containing the same shared key protected for the legitimate client (Section 7.4 of {{I-D.ietf-ace-oauth-authz}}, {{ACE-introspect}}).
 
-By mapping the EALS client and server to the ACE client and resource server, respectively, this application of ACE enables the authorization of EALS client and establishment of a shared  The access token is in this case not bound to a particular resource server and could be provisioned to the client during manufacture. key, which can be used as master secret with OSCOAP in the simple enrollment protocol in {{simple-enroll}}. The access rights include the right to get enrolled in this key infrastructure.
+By mapping the EALS client and server to the ACE client and resource server, respectively, this application of ACE enables the authorization of EALS client and establishment of a shared key. The access token is in this case not bound to a particular resource server and could be provisioned to the client during manufacture. Key can be used as master secret with OSCOAP in the simple enrollment protocol in {{simple-enroll}}. The access rights include the right to get enrolled in this key infrastructure.
 
 
 ~~~~~~~~~~~
@@ -194,9 +194,29 @@ By mapping the EALS client and server to the ACE client and resource server, res
 {: artwork-align="center"}
 
 
-TBD: Specify how to carry OSCOAP input parameters in the client token
+Section 2 of {{I-D.seitz-ace-oscoap-profile}} defines additional common header parameters for COSE_Key structure that are used to carry OSCOAP input parameters Sender and Recipient ID.
+OSCOAP master secret is transported as part of the symmetric COSE_Key object. 
+This document uses the same construct.
+COSE_Key object with OSCOAP input parameters present is transported as part of the introspection response and the client token. 
 
-TBD: Optionally include authorization information about the server in the client token, for the benefit of the client authorizing the enrollment, e.g. voucher relating to ownership of client. 
+For the benefit of the client authorizing the enrollment, this document defines an additional common parameter for the client token called voucher, extending the definition in Section 7.4 of {{I-D.ietf-ace-oauth-authz}}:
+
+~~~~~~~~~~~
+voucher
+    OPTIONAL. Contains authorization information about the server, 
+    e.g. ownership voucher. The encoding is TBD. 
+~~~~~~~~~~~
+
+~~~~~~~~~~~
+/-------------------+----------+-----------------\
+| Parameter name    | CBOR Key | Major Type      |
+|-------------------+----------+-----------------|
+| voucher           | 32       | 2 (byte string) |
+\-------------------+----------+-----------------/
+~~~~~~~~~~~
+{: #ACE-cbor-mapping-voucher title="CBOR mapping of parameters extending the client token."}
+{: artwork-align="center"}
+
 
 
 ## EDHOC ##
