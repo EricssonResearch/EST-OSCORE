@@ -219,7 +219,7 @@ voucher
 
 
 
-## EDHOC ##
+## EDHOC ## {#sec-edhoc}
 
 EDHOC {{I-D.selander-ace-cose-ecdhe}} is a key establishment protocol encoded with CBOR and using COSE that may be transported with e.g. CoAP.
 
@@ -296,42 +296,23 @@ TBD CoAP Response codes to communicate success or failure of the EALS function?
 
 # Application to 6tisch #
 
+One candidate embedding of EALS into a bootstrapping architecture is as described in {{I-D.ietf-6tisch-minimal-security}}.
+The new device, or pledge in 6TiSCH terminology, requests to be admitted into the network managed by the Join Registrar/Coordinator.
+The Pledge maps to an EALS/CoAP client, and the Join Registrar/Coordinator maps to an EALS/CoAP server.
 
-Terminology
+When a pledge first joins a constrained network, it typically does not have IPv6 connectivity to reach the Join Registrar/Coordinator.
+For that reason, pledge communicates with the Join Proxy, a one hop neighbor of the pledge.
+Join Proxy statelessly relays the exchanges between the pledge and the Join Registrar/Coordinator.
 
-The Pledge is EALS client and the Join Registrar/Coordinator is EALS server.
+As in the model of {{I-D.ietf-6tisch-minimal-security}}, the Join Proxy plays the role of a CoAP proxy.
+Default CoAP proxy, however, keeps state information in order to relay the response back to the originating client, in this case the pledge. 
+To mitigate Denial of Service attacks at the Join Proxy, {{I-D.ietf-6tisch-minimal-security}} mandates the use of a new CoAP option, Stateless-Proxy option, that allows the Join Proxy to operate statelessly.
+This document also mandates the use of the Stateless-Proxy option. 
 
+# Application to Anima #
 
-One candidate embedding of EALS into a bootstrapping architecture is as described in {{I-D.ietf-6tisch-minimal-security}}  where the Plegde is EALS/CoAP client, the Join Registrar/Coordinator is EALS/CoAP server and Join Proxy is a CoAP proxy.
-
-
-Stateless proxy, recap and reference minimal security draft
-
-
- BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}} specifies an automated bootstrapping of a remote secure key infrastructure (BRSKI) using vendor installed X.509 certificate, in combination with a vendor authorized service on the Internet. BRSKI is referencing Enrolment over Secure Transport (EST) {{RFC7030}}. 
- 
- 
-, to enable zero-touch joining of a device in a network domain
-
-
-One application of EALS is to the BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}} problem statement. BRSKI deals with automated bootstrapping of new devices using vendor installed X.509 certificate, in combination with a vendor authorized service on the Internet. The following terminology is used
-
-Pledge:
-:  the prospective device, which has the identity provided to
-   at the factory.  Neither the device nor the network knows if the
-   device yet knows if this device belongs with this network.
-
-Joined Node:
-: the prospective device, after having completing the join process, often
-  just called a Node.
-
-Join Proxy (JP):
-:  a stateless relay that provides connectivity between the pledge
-   and the join registrar/coordinator.
-
-Join Registrar/Coordinator (JRC):
-:  a central entity responsible for authentication and authorization of joining
-   nodes.
+Another application of EALS is to the BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}} problem statement. BRSKI specifies an automated bootstrapping of a remote secure key infrastructure (BRSKI) using vendor installed X.509 certificate, in combination with a vendor authorized service on the Internet. BRSKI is referencing Enrolment over Secure Transport (EST) {{RFC7030}} to enable zero-touch joining of a device in a network domain.
+The problem statement from BRSKI is imported into this document:
 
    Bootstrapping a new device can occur using a routable address and a
    cloud service, or using only link-local connectivity, or on limited/
@@ -343,47 +324,10 @@ Join Registrar/Coordinator (JRC):
    deploy a locally issued certificate to the device as well.
 
 
-The problem statement from BRSKI is imported into this document. The limitations of applicability to energy constrained devices due to credential size applies also to this document, and further work is needed to specify certificate formats relevant to constrained devices. Having said that, one rationale for this document is a more optimized message exchange, which is favorable in low-power deployments. Related work include {{I-D.richardson-6tisch-dtsecurity-secure-join}} which addresses the low-power problem statement, and {{I-D.ietf-6tisch-minimal-security}} which describes a one-touch procedure using OSCOAP and EDHOC.
+The audit/ownership vouchers specified in {{I-D.ietf-anima-bootstrapping-keyinfra}} are carried as part of EDHOC application-defined extensions, as described in {{sec-edhoc}}.
 
-
-
-# Architectural Overview # {#architecture}
-
-When a pledge first joins a constrained network, it typically does not have IPv6 connectivity to reach the Join Registrar/Coordinator.
-For that reason, pledge communicates with the Join Proxy, a one hop neighbor of the pledge.
-Join Proxy statelessly relays the exchanges between the pledge and the Join Registrar/Coordinator.
-
-As in the model of {{I-D.ietf-6tisch-minimal-security}}, the Join Proxy plays the role of a CoAP proxy.
-Default CoAP proxy, however, keeps state information in order to relay the response back to the originating client, in this case the pledge. 
-To mitigate Denial of Service attacks at the Join Proxy, {{I-D.ietf-6tisch-minimal-security}} mandates the use of a new CoAP option, Stateless-Proxy option, that allows the Join Proxy to operate statelessly.
-The proxy adds en-route the state information necessary for its operation as the value of the Stateless-Proxy option.
-The value of the Stateless-Proxy option is opaque to the JRC/CoAP server. 
-The option is echoed back by the JRC/CoAP server, and consumed by the proxy.
-{{arch-overview}} illustrates the operation of the Join Proxy.
-
-~~~~~~~~~~~
-+--------+     +-------+       +--------+
-| pledge |     |  JP   |       |  JRC   |
-|        |     |       |       |        |
-+--------+     +-------+       +--------+
-    |              |                |
-    +------------->|                |       
-    |   Request    |                |
-    |              |                |
-    |              +--------------->|
-    |              |     Request    |  Stateless-Proxy: opaque value
-    |              |                |
-    |              |<---------------+
-    |              |    Response    |  Stateless-Proxy: opaque value
-    |              |                |
-    <--------------+                |    
-    |   Response   |                |
-    |              |                |
-~~~~~~~~~~~
-{: #arch-overview title="Overview of the bootstrapping architecture."}
-{: artwork-align="center"}
-
-
+The limitations of applicability to energy-constrained devices due to credential size applies also to this document, and further work is needed to specify certificate formats relevant to constrained devices.
+Having said that, one rationale for this document is a more optimized message exchange, which is favorable in low-power deployments. 
 
 # Security Considerations # {#sec-cons}
 
