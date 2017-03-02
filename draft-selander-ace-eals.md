@@ -42,6 +42,15 @@ author:
         code: SE-16440 Stockholm
         country: Sweden
         email: shahid@sics.se
+      -
+        ins: M. Vucinic
+        name: Malisa Vucinic
+        org: Inria
+        email: malisa.vucinic@inria.fr
+        street: 2 Rue Simone Iff
+        city: Paris
+        code: 75012
+        country: France
 
 
 normative:
