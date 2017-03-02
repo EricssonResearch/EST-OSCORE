@@ -125,7 +125,7 @@ The simple enrollment protocol consists of a CoAP message exchange.
 
 The EALS client sends a CoAP request:
 
- * Method if POST
+ * Method is POST
  * Uri-Path is "eals"
  * Object-Security option is present
  * Payload is the CMC Simple PKI Request {{RFC5272}} (i.e. a PKCS #10 certification request).
@@ -211,7 +211,7 @@ voucher
 /-------------------+----------+-----------------\
 | Parameter name    | CBOR Key | Major Type      |
 |-------------------+----------+-----------------|
-| voucher           | 32       | 2 (byte string) |
+| voucher           | TBD      | 2 (byte string) |
 \-------------------+----------+-----------------/
 ~~~~~~~~~~~
 {: #ACE-cbor-mapping-voucher title="CBOR mapping of parameters extending the client token."}
@@ -225,7 +225,7 @@ EDHOC {{I-D.selander-ace-cose-ecdhe}} is a key establishment protocol encoded wi
 
 EDHOC provides mutual authentication of client and server based on pre-shared keys, raw public keys or public key certificates. EDHOC establishes a shared secret with forward secrecy which may be used by different applications, such as by OSCOAP in the simple enrollment protocol, {{simple-enroll}}.
 
-EDHOC also negotiates the algorithm the application will use with the master secret, and allows application specific extentions and key derivation.
+EDHOC also negotiates the algorithm the application will use with the master secret, and allows application specific extensions and key derivation.
 
 
 
@@ -250,7 +250,7 @@ Party U                                             Party V
 
 
 
-To address the authorization aspects the EDHOC protocol is exended with an optional audit/ownership voucher {{I-D.ietf-anima-bootstrapping-keyinfra}}. The voucher is retrieved by the EALS server using mechanism out of scope for this document.  The voucher is transported by leveraging the extensions mechanism built-in into EDHOC. The extension in EDHOC message_3 is encrypted by the EDHOC protocol.
+To address the authorization aspects the EDHOC protocol is extended with an optional audit/ownership voucher {{I-D.ietf-anima-bootstrapping-keyinfra}}. The voucher is retrieved by the EALS server using mechanism out of scope for this document.  The voucher is transported by leveraging the extensions mechanism built-in into EDHOC. The extension in EDHOC message_3 is encrypted by the EDHOC protocol.
 
 
 ~~~~~~~~~~~
@@ -276,12 +276,12 @@ client                                   server
 {: artwork-align="center"}
 
 
-The enrollment procedure described here is assuming that the EALS server/Join Registrar/Coordinator is EDHOC client, see figure {{fig-2}}. This setting has the properties that the 
+The enrollment procedure described here is assuming that the EALS server is EDHOC client, see {{fig-2}}. This setting has the properties that the 
 
 1. The EALS server initiates the protocol
-2. The EALS client is authenticed first (EDHOC message_2)
+2. The EALS client is authenticated first (EDHOC message_2)
 
-Item 1. allows the EALS server to orchestrate many concurrent enrollments. Item 2. allows the the EALS server to authenticate and authorize the EALS client before completing the protocol.
+Item 1. allows the EALS server to orchestrate many concurrent enrollments. Item 2. allows the EALS server to authenticate and authorize the EALS client before completing the protocol.
 
 For certain deployment settings the reverse roles may be favorable, and it is straightforward to embed the enrolment protocol in EDHOC with interchanged roles. The details are FFS.
 
@@ -293,9 +293,6 @@ TBD CoAP binding. Same as in EDHOC?
 TBD name of resource? POST /edhoc?
 
 TBD CoAP Response codes to communicate success or failure of the EALS function?
-
-
-
 
 # Application to 6tisch #
 
