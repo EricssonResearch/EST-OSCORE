@@ -67,13 +67,10 @@ informative:
   RFC5272:
   RFC7228:
   RFC7030:
-  I-D.richardson-6tisch-dtsecurity-secure-join:
+  I-D.ietf-ace-oauth-authz:
   I-D.ietf-anima-bootstrapping-keyinfra:
   I-D.ietf-6tisch-minimal-security:
   I-D.hartke-core-e2e-security-reqs:
-  I-D.ietf-core-coap-tcp-tls:
-  I-D.bormann-6lo-coap-802-15-ie:
-  I-D.ietf-ace-oauth-authz:
   I-D.seitz-ace-oscoap-profile:
   
 
@@ -153,7 +150,7 @@ OSCOAP protects the CoAP message exchange between the endpoints over any transpo
 * Sender ID
 * Recipient ID
 
-where the master secret is a uniformly random byte string, and the sender ID of the client is the recipient ID of the server and v.v. In {{establish-input-parameters}} we give examples of how to the OSCOAP input parameters can be established.
+where the Master Secret is a uniformly random byte string, and the Sender ID and Recipient ID are byte strings identifying the endpoints. In {{establish-input-parameters}} we give examples of how to the OSCOAP input parameters can be established.
 
 The server MUST verify that the Master Secret is associated to the Distinguished Name for which the client is requesting a certificate. 
 
@@ -172,9 +169,7 @@ In this section we present two application layer protocols for establishing OSCO
 
 The ACE protocol framework {{I-D.ietf-ace-oauth-authz}} is an adaptation of OAuth 2.0 to IoT deployments. ACE describes different message flows for a Client to get authorized access to a Resource Server (RS) by leveraging an Authorization Server (AS). 
 
-The Token Introspection flow (Section 7 of {{I-D.ietf-ace-oauth-authz}}) allows an RS to access authorization information relating to a client provided access token. If the access token is valid, the RS obtains information about the access rights and a symmetric key used by the client, and also a client token containing the same shared key protected for the legitimate client (Section 7.4 of {{I-D.ietf-ace-oauth-authz}}, {{ACE-introspect}}).
-
-By mapping the EALS client and server to the ACE client and resource server, respectively, this application of ACE enables the authorization of EALS client and establishment of a shared key, which can be used as master secret with OSCOAP in the simple enrollment protocol ({{simple-enroll}}). In this case, the access token is not bound to a particular resource server and could be pre-provisioned to the client, e.g. during manufacture. The access rights include the right to get enrolled in this key infrastructure.
+The Token Introspection flow (Section 7 of {{I-D.ietf-ace-oauth-authz}}) allows an RS to access authorization information relating to a client provided Access Token. If the access token is valid, the RS obtains information about the access rights and a symmetric key used by the client, and also a Client Token containing the same shared key protected for the legitimate client (Section 7.4 of {{I-D.ietf-ace-oauth-authz}}, {{ACE-introspect}}).
 
 
 ~~~~~~~~~~~
@@ -202,11 +197,9 @@ By mapping the EALS client and server to the ACE client and resource server, res
 {: #ACE-introspect title="ACE Token Introspection with Client Token."}
 {: artwork-align="center"}
 
+By mapping the EALS client and server to the ACE client and resource server, respectively, this application of ACE enables the authorization of EALS client and establishment of a shared key, which can be used as master secret with OSCOAP in the simple enrollment protocol ({{simple-enroll}}). In this case, the access token contains access rights to /eals, but is not bound to a particular resource server. The access token could be pre-provisioned to the client, e.g. during manufacture. Information about binding to resource server comes with the introspection response.
 
-Section 2 of {{I-D.seitz-ace-oscoap-profile}} defines additional common header parameters for COSE_Key structure that are used to carry OSCOAP input parameters Sender and Recipient ID.
-OSCOAP master secret is transported as part of the symmetric COSE_Key object. 
-This document uses the same construct.
-COSE_Key object with OSCOAP input parameters present is transported as part of the introspection response and the client token. 
+Section 2 of {{I-D.seitz-ace-oscoap-profile}} defines additional common header parameters for COSE_Key structure that are used to carry OSCOAP input parameters Sender and Recipient ID. OSCOAP master secret is transported as part of the symmetric COSE_Key object. This document uses the same construct. COSE_Key object with OSCOAP input parameters present is transported as part of the introspection response and the client token. 
 
 For the benefit of the client authorizing the enrollment, this document defines an additional common parameter for the client token called voucher, extending the definition in Section 7.4 of {{I-D.ietf-ace-oauth-authz}}:
 
@@ -226,14 +219,14 @@ voucher
 {: #ACE-cbor-mapping-voucher title="CBOR mapping of parameters extending the client token."}
 {: artwork-align="center"}
 
-
+TBD Include Sender/Recipient ID in COSE_Key object (Client Token) as well as (v.v.) in Introspection Response
 
 ## EDHOC ## {#sec-edhoc}
 
 EDHOC {{I-D.selander-ace-cose-ecdhe}} is a key establishment protocol encoded with CBOR and using COSE that may be transported with e.g. CoAP. EDHOC provides mutual authentication of client and server and establishes a shared secret with forward secrecy which may be used as OSCOAP master secret in the simple enrollment protocol ({{simple-enroll}}). 
 
-A simplified version of the EDHOC protocol is shown in {{fig-EDHOC}}. The session identifiers S_U and S_V may be chosen by U and V to work as OSCOAP parameters Sender ID and Recipient ID. The extension parameters EXT_1, EXT_2 and EXT_3 allows for application specific extensions.
-
+The asymmetric keys authenticated version of EDHOC is described in section 4 of {{I-D.selander-ace-cose-ecdhe}},
+a simplified version of the protocol is shown in {{fig-EDHOC}}. 
 
 
 ~~~~~~~~~~~
@@ -251,14 +244,16 @@ Party U                                                    Party V
 
 
 ~~~~~~~~~~~
-{: #fig-EDHOC title="EDHOC with asymmetric key authentication (simplified)."}
+{: #fig-EDHOC title="EDHOC with asymmetric key authentication (simplified). S = session identifer, N = nonce, E = ephemeral public key, ID = identifier, and EXT = application defined extension."}
 {: artwork-align="center"}
 
+The session identifiers S_U and S_V may be used as OSCOAP input parameters Sender ID and Recipient ID of party U, and v.v. as described in Appendix B2 of {{I-D.selander-ace-cose-ecdhe}}. 
 
-TBD specify extension containing authorization information, such as ownership voucher
+{{fig-EDHOC-EALS}} shows an example of using the EDHOC protocol to establish a mutually authenticated and authorized channel for the simple enrolment protocol. In this case the EALS server is EDHOC client (the mapping with interchanged roles is straightforward and left FFS). This setting has the following properties:
 
+1. The EALS server initiates the EDHOC protocol. This allows the EALS server (Registration Authority of a PKI) to orchestrate many concurrent enrollments, and control of the associated network load.
 
-{{fig-EDHOC-EALS}} describes one example of mapping the EDHOC protocol to establishing a mutually authenticated and authorized channel for the simple enrolment protocol.
+2. The EALS client is authenticated first (EDHOC message_2). This allows the EALS server to authenticate the EALS client, and with this information to authorize the EALS client before completing the EDHOC protocol. The EALS server may in this case also relay authorizaton information about the EALS client, such as an ownership voucher, to the client in EDHOC extension EXT_3.
 
 
 ~~~~~~~~~~~
@@ -274,8 +269,8 @@ client                                   server
   |                                        |                       
   |            EDHOC message_2             |                       
   +--------------------------------------->|    Third party           
-  |                                        | <----------------->            
-  |    EDHOC message_3  (EXT_3 = Voucher)  |    authorization
+  |                                        | < - - - - - - - - >            
+  |  EDHOC message_3 (EXT_3 = Authz info)  |    authorization
   |<---------------------------------------+                       
   |                                        |                        
 
@@ -283,59 +278,36 @@ client                                   server
 {: #fig-EDHOC-EALS title="EALS extension of EDHOC."}
 {: artwork-align="center"}
 
-
-The enrollment procedure described here is assuming that the EALS server/Join Registrar/Coordinator is EDHOC client. This setting has the properties that the 
-
-1. The EALS server initiates the protocol
-2. The EALS client is authenticated first (EDHOC message_2)
-
-Item 1. allows the EALS server to orchestrate many concurrent enrollments. Item 2. allows the EALS server to authenticate and authorize the EALS client before completing the protocol.
-
-For certain deployment settings the reverse roles may be favorable, and it is straightforward to embed the enrolment protocol in EDHOC with interchanged roles. The details are FFS.
+Appendix B1 of {{I-D.selander-ace-cose-ecdhe}} shows how to embed EDHOC in a CoAP message exchange, a similar embedding can be applied here.
 
 
 TBD Detail the protocol
-
-TBD CoAP binding. Same as in EDHOC?
 
 TBD name of resource? POST /edhoc?
 
 TBD CoAP Response codes to communicate success or failure of the EALS function?
 
-# Application to 6tisch #
 
-One candidate embedding of EALS into a bootstrapping architecture is as described in {{I-D.ietf-6tisch-minimal-security}}.
-The new device, or pledge in 6TiSCH terminology, requests to be admitted into the network managed by the Join Registrar/Coordinator.
-The Pledge maps to an EALS/CoAP client, and the Join Registrar/Coordinator maps to an EALS/CoAP server.
+# Application to 6TiSCH #
 
-When a pledge first joins a constrained network, it typically does not have IPv6 connectivity to reach the Join Registrar/Coordinator.
-For that reason, pledge communicates with the Join Proxy, a one hop neighbor of the pledge.
-Join Proxy statelessly relays the exchanges between the pledge and the Join Registrar/Coordinator.
+One candidate embedding of EALS into a bootstrapping architecture is as described in {{I-D.ietf-6tisch-minimal-security}}. The new device (a.k.a. Pledge) requests to be admitted into the network managed by the Join Registrar/Coordinator. The Pledge maps to an EALS/CoAP client, and the Join Registrar/Coordinator maps to an EALS/CoAP server.
+
+When a pledge first joins a constrained network, it typically does not have IPv6 connectivity to reach the Join Registrar/Coordinator. For that reason, pledge communicates with the Join Proxy, a one hop neighbor of the pledge.  Join Proxy statelessly relays the exchanges between the pledge and the Join Registrar/Coordinator.
 
 As in the model of {{I-D.ietf-6tisch-minimal-security}}, the Join Proxy plays the role of a CoAP proxy.
-Default CoAP proxy, however, keeps state information in order to relay the response back to the originating client, in this case the pledge. 
-To mitigate Denial of Service attacks at the Join Proxy, {{I-D.ietf-6tisch-minimal-security}} mandates the use of a new CoAP option, Stateless-Proxy option, that allows the Join Proxy to operate statelessly.
-This document also mandates the use of the Stateless-Proxy option. 
+Default CoAP proxy, however, keeps state information in order to relay the response back to the originating client, in this case the pledge. To mitigate Denial of Service attacks at the Join Proxy, {{I-D.ietf-6tisch-minimal-security}} mandates the use of a new CoAP option, Stateless-Proxy option, that allows the Join Proxy to operate statelessly. 
 
-# Application to Anima #
+The use of EDHOC as described in {{sec-edhoc}} enables mutual authentication and authorization of Pledge and Join Registrar/Coordinator, and supports the use of the Stateless-Proxy option in order to provide the CoAP Proxy functionality described in this section.
 
-Another application of EALS is to the BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}} problem statement. BRSKI specifies an automated bootstrapping of a remote secure key infrastructure (BRSKI) using vendor installed X.509 certificate, in combination with a vendor authorized service on the Internet. BRSKI is referencing Enrolment over Secure Transport (EST) {{RFC7030}} to enable zero-touch joining of a device in a network domain.
-The problem statement from BRSKI is imported into this document:
+# Application to ANIMA #
 
-   Bootstrapping a new device can occur using a routable address and a
-   cloud service, or using only link-local connectivity, or on limited/
-   disconnected networks.  Support for lower security models, including
-   devices with minimal identity, is described for legacy reasons but
-   not encouraged.  Bootstrapping is complete when the cryptographic
-   identity of the new key infrastructure is successfully deployed to
-   the device but the established secure connection can be used to
-   deploy a locally issued certificate to the device as well.
+Another application of EALS is to the BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}} problem statement. BRSKI specifies an automated bootstrapping of a remote secure key infrastructure (BRSKI) using vendor installed X.509 certificate, in combination with a vendor authorized service on the Internet. BRSKI is referencing Enrolment over Secure Transport (EST) {{RFC7030}} to enable zero-touch joining of a device in a network domain. The same approach can be applied using EDHOC instead of EST, as is outlined in this document.
 
-
-The audit/ownership vouchers specified in {{I-D.ietf-anima-bootstrapping-keyinfra}} are carried as part of EDHOC application-defined extensions, as described in {{sec-edhoc}}.
+The audit/ownership vouchers specified in {{I-D.ietf-anima-bootstrapping-keyinfra}} are carried as part of EDHOC application-defined extensions, as described in {{sec-edhoc}}. Nonces of the EDHOC protocol can be used for freshness also of the authorization step.
 
 The limitations of applicability to energy-constrained devices due to credential size applies also to this document, and further work is needed to specify certificate formats relevant to constrained devices.
-Having said that, one rationale for this document is a more optimized message exchange, which is favorable in low-power deployments. 
+Having said that, one rationale for this document is a more optimized message exchange, and potentially also code footprint, which is favorable in low-power deployments. 
+
 
 # Security Considerations # {#sec-cons}
 
