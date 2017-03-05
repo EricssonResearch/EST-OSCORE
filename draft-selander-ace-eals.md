@@ -108,6 +108,7 @@ This section describes the simple enrollment protocol, which is an embedding of 
 
 The simple enrollment protocol is a 2-pass protocol between EALS client and EALS server, see {{fig-simple-enroll}}. The protocol assumes that both EALS client and EALS server implement CoAP and the Object-Security option of CoAP (OSCOAP). 
 
+TBD. Add paragraph stating that authentication and authorization of EALS client and server is implicit to the shared key protecting the /eals resource. 
 
 ~~~~~~~~~~~
 
@@ -156,7 +157,13 @@ The server MUST verify that the Master Secret is associated to the Distinguished
 
 Note 1: The encodings and formats used by CMC may later be updated with other equivalents more adapted to constrained environments.
 
-TBD: Further details
+TBD. Requirements on parsing PKCS messages and X.509 certificates
+
+TBD. Error handling with CoAP error codes
+
+TBD. Re-enrollment protocol
+
+TBD. Server-side key generation
 
 
 # Establishment of OSCOAP Input Parameters # {#establish-input-parameters}
@@ -171,6 +178,7 @@ The ACE protocol framework {{I-D.ietf-ace-oauth-authz}} is an adaptation of OAut
 
 The Token Introspection flow (Section 7 of {{I-D.ietf-ace-oauth-authz}}) allows an RS to access authorization information relating to a client provided Access Token. If the access token is valid, the RS obtains information about the access rights and a symmetric key used by the client, and also a Client Token containing the same shared key protected for the legitimate client (Section 7.4 of {{I-D.ietf-ace-oauth-authz}}, {{ACE-introspect}}).
 
+TBD. Describe how authentication between Client and Resource Server is performed. Same for RS<->AS flow. 
 
 ~~~~~~~~~~~
                      Resource       Authorization
