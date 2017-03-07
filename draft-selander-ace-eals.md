@@ -83,6 +83,7 @@ This document specifies public key certificate enrollment procedures authenticat
 
 # Introduction #       {#intro}
 
+Asymmetric cryptography with Public Key Infrastructure (PKI) is a de-facto key exchange and mutual authentication solution in the Internet. Though solutions based on PSK are still state-of-the-art in sensor networks they are not scalable to Internet-connected billions of things. Therefore, most IoT security standards support asymmetric cryptographic protocols. The greatest challenge with asymmetric cryptography and PKI is enrollment, the process of certifying keys. Enrollment is even more challenging in the IoT as things are resource-constrained and traditional enrollment techniques are not compatible with recent IoT security protocols. Without secure enrollment, PKI will not be trustworthy and in turn the cybersecurity of the entire system will be at stake even though the underlying cryptographic cipher suites are most secure.
 
 Security at the application layer provides an attractive option for protecting Internet of Things (IoT) deployments, in particular in constrained environments {{RFC7228}} and when using CoAP {{RFC7252}}; for example where transport layer security is not sufficient {{I-D.hartke-core-e2e-security-reqs}}, or where it is beneficial that the security protocol is independent of lower layers, such as when securing CoAP over mixed transport protocols.
 
@@ -106,14 +107,14 @@ normative meanings.
 
 This section describes the simple enrollment protocol, which is an embedding of the Simple PKI Request/Response protocol of CMC {{RFC5272}} in Object Secure CoAP (OSCOAP) {{I-D.ietf-core-object-security}}. 
 
-The simple enrollment protocol is a 2-pass protocol between EALS client and EALS server, see {{fig-simple-enroll}}. The protocol assumes that both EALS client and EALS server implement CoAP and the Object-Security option of CoAP (OSCOAP). 
+The simple enrollment protocol is a 2-pass protocol between EALS client ( an IoT devices) and EALS server (a CA- Certification Authority), see {{fig-simple-enroll}}. The protocol assumes that both EALS client and EALS server implement CoAP and the Object-Security option of CoAP (OSCOAP). 
 
 TBD. Add paragraph stating that authentication and authorization of EALS client and server is implicit to the shared key protecting the /eals resource. 
 
 ~~~~~~~~~~~
 
- EALS                                                   EALS 
-client                                                 server
+EALS client                                          EALS server 
+(IoT device)                                             (CA)        
 
   |                                                       | 
   | POST /eals      (Object-Security; Payload: PKCS #10)  |  
