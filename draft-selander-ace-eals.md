@@ -165,11 +165,17 @@ The server MUST verify that the Master Secret is associated to the Distinguished
 
 Note 1: The encodings and formats used by CMC may later be updated with other equivalents more adapted to constrained environments.
 
+## Re-enrollment
+
+Re-enrollment and re-keying of clients occurs using the same exchange as during 
+the simple enrollment protocol. Re-enrollment request follows the same format 
+as during the simple enrollment. In case of success, re-enrollment response 
+contains certs-only CMC Simple PKI Response, as in the case of simple enrollment
+with content-format set to "application/pkcs7-mime".
+
 TBD. Requirements on parsing PKCS messages and X.509 certificates
 
 TBD. Error handling with CoAP error codes
-
-TBD. Re-enrollment protocol
 
 TBD. Server-side key generation
 
