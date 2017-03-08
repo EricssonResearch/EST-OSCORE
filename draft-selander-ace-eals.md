@@ -109,7 +109,14 @@ This section describes the simple enrollment protocol, which is an embedding of 
 
 The simple enrollment protocol is a 2-pass protocol between EALS client ( an IoT devices) and EALS server (a CA- Certification Authority), see {{fig-simple-enroll}}. The protocol assumes that both EALS client and EALS server implement CoAP and the Object-Security option of CoAP (OSCOAP). 
 
-TBD. Add paragraph stating that authentication and authorization of EALS client and server is implicit to the shared key protecting the /eals resource. 
+
+OSCOAP assumes the existence of a shared secret between an EALS client and server.
+The shared secret may be obtained by running a key agreement algorithm or
+by an aid of a trusted third party.
+Mutual authentication and authorization occurs during this key agreement stage.
+The simple enrollment protocol may also be run directly with a pre-shared key. 
+In that case, authentication and authorization of EALS client and server is implicit to the shared key
+protecting the /eals resource. 
 
 ~~~~~~~~~~~
 
