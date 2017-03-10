@@ -51,6 +51,15 @@ author:
         city: Paris
         code: 75012
         country: France
+      -
+        ins: M. Furuhed
+        name: Martin Furuhed
+        org: Nexus
+        email: martin.furuhed@nexusgroup.com
+        street: Telefonv. 26
+        city: Stockholm
+        code: SE-12626
+        country: Sweden
 
 
 normative:
@@ -61,13 +70,13 @@ normative:
   I-D.ietf-cose-msg:
   I-D.ietf-core-object-security:
   I-D.selander-ace-cose-ecdhe:
+  I-D.ietf-ace-oauth-authz:
 
 informative:
 
   RFC5272:
   RFC7228:
   RFC7030:
-  I-D.ietf-ace-oauth-authz:
   I-D.ietf-anima-bootstrapping-keyinfra:
   I-D.ietf-6tisch-minimal-security:
   I-D.hartke-core-e2e-security-reqs:
@@ -89,7 +98,7 @@ Security at the application layer provides an attractive option for protecting I
 
 Application layer security protocols suitable for constrained devices are in development, including the secure communication protocol OSCOAP {{I-D.ietf-core-object-security}}. OSCOAP defines an extension to the Constrained Application Protocol (CoAP) providing encryption, integrity and replay protection end-to-end between CoAP client and server based on a shared secret. The shared secret can be established in different ways e.g. using a trusted third party such as in ACE {{I-D.ietf-ace-oauth-authz}}, or using a key exchange protocol such as EDHOC {{I-D.selander-ace-cose-ecdhe}}. OSCOAP and EDHOC can leverage other constrained device primitives developed in the IETF: CoAP, CBOR {{RFC7049}} and COSE {{I-D.ietf-cose-msg}}, and makes only a small additional implementation footprint.
 
-Lately, there has been a discussion in several IETF working groups about certificate enrollment protocols suitable for IoT devices, to support the use case of an IoT device joining a new network domain and establishing credentials valid in this domain. This document describes Enrollment with Application Layer Security (EALS), a certificate enrollment protocol based on the Simple PKI Requests and Responses of CMC {{RFC5272}} and using OSCOAP as a secure channel. This document also describes how ACE and EDHOC can be used for establishing an authenticated and authorized channel.
+Lately, there has been a discussion in several IETF working groups about certificate enrollment protocols suitable for IoT devices, to support the use case of an IoT device joining a new network domain and establishing credentials valid in this domain. This document describes Enrollment with Application Layer Security (EALS), a certificate enrollment protocol based on CMC {{RFC5272}} and using OSCOAP as a secure channel. This document also describes how ACE and EDHOC can be used for establishing an authenticated and authorized channel.
 
 This work is inspired by the Enrollment over Secure Transport (EST) protocol {{RFC7030}}, which also is based on CMC, but EALS is secured on application layer instead of on transport layer.
 
@@ -103,12 +112,13 @@ words may also appear in this document in lowercase, absent their
 normative meanings.
 
 
-# Simple Enrollment # {#simple-enroll}
+# CMC protocol #
 
-This section describes the simple enrollment protocol, which is an embedding of the Simple PKI Request/Response protocol of CMC {{RFC5272}} in Object Secure CoAP (OSCOAP) {{I-D.ietf-core-object-security}}. 
+## Simple Enrollment ## {#simple-enroll}
 
-The simple enrollment protocol is a 2-pass protocol between EALS client ( an IoT devices) and EALS server (a CA- Certification Authority), see {{fig-simple-enroll}}. The protocol assumes that both EALS client and EALS server implement CoAP and the Object-Security option of CoAP (OSCOAP). 
+This section describes the simple enrollment protocol, which is an embedding of the Simple PKI Request/Response protocol of CMC {{RFC5272}} in Object Secure CoAP (OSCOAP) {{I-D.ietf-core-object-security}}.
 
+The simple enrollment protocol is a 2-pass protocol between an EALS client (e.g. an IoT device) and an EALS server (a Certification Authority (CA)), see {{fig-simple-enroll}}. The protocol assumes that both EALS client and EALS server implement CoAP and the Object-Security option of CoAP (OSCOAP). 
 
 OSCOAP assumes the existence of a shared secret between an EALS client and server.
 The shared secret may be obtained by running a key agreement algorithm or
@@ -121,7 +131,6 @@ protecting the /eals resource.
 ~~~~~~~~~~~
 
 EALS client                                          EALS server 
-(IoT device)                                             (CA)        
 
   |                                                       | 
   | POST /eals      (Object-Security; Payload: PKCS #10)  |  
@@ -179,6 +188,27 @@ TBD. Error handling with CoAP error codes
 
 TBD. Server-side key generation
 
+
+## Full Enrollment ## {#full-enroll}
+
+It is straightforward to extend the simple enrollment to the CMC Full PKI Request/Response protocol.
+
+In this case, to authorize the PKCS#10 request to the CA, it is enveloped in a CMC message and signed with a pre-installed device private key and certificate by the device itself. 
+
+The public key in the device certificate acts as a unique identifier of the device. By trusting the CA issuing the pre-installed certificate, the enrolment CA can acknowledge the signed request. The trusted factory CA will also ensure the origin of the device.
+
+An alternative to authorize the PKCS#10 request to the CA, is to use a security gateway that can envelope the request in a CMC message using a certificate trusted by the CA.
+
+The details are FFS.
+
+## Establishing Certificate Content ## {#establish-content}
+ 
+A CA have several means of compiling certificate content during issuance. The subject Distinguished Name (DN) information for the certificate may be based on the content of the request alone. 
+
+Alternatively, complementary data can be added to the request by the CA from an external source trusted by the CA, or taken from records of pre-registered information on end-entities that is stored in the CA system and which can be uniquely matched to the data in the request. Due to the constrained device capabilities the amount of subject DN data in a request may be very limited. The method of adding complementary data for the certificate can be a choice of the CA, assuming the source of complementary data can be provided in a trustworthy way.
+
+With the option to add complementary data to a certificate request, the end-entity provided data can be minimized by submitting only the public key in the PKCS#10 content. The public key can be used to match the device to pre-registered data or for retrieval of subject data from other sources.
+ 
 
 # Establishment of OSCOAP Input Parameters # {#establish-input-parameters}
 
