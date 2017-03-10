@@ -112,7 +112,7 @@ words may also appear in this document in lowercase, absent their
 normative meanings.
 
 
-# CMC protocol #
+# CMC protocol # {#CMC}
 
 ## Simple Enrollment ## {#simple-enroll}
 
@@ -201,13 +201,13 @@ An alternative to authorize the PKCS#10 request to the CA, is to use a security 
 
 The details are FFS.
 
-## Establishing Certificate Content ## {#establish-content}
+## Compiling Certificate Content ## {#establish-content}
  
 A CA have several means of compiling certificate content during issuance. The subject Distinguished Name (DN) information for the certificate may be based on the content of the request alone. 
 
 Alternatively, complementary data can be added to the request by the CA from an external source trusted by the CA, or taken from records of pre-registered information on end-entities that is stored in the CA system and which can be uniquely matched to the data in the request. Due to the constrained device capabilities the amount of subject DN data in a request may be very limited. The method of adding complementary data for the certificate can be a choice of the CA, assuming the source of complementary data can be provided in a trustworthy way.
 
-With the option to add complementary data to a certificate request, the end-entity provided data can be minimized by submitting only the public key in the PKCS#10 content. The public key can be used to match the device to pre-registered data or for retrieval of subject data from other sources.
+With the option to add complementary data to a certificate request, the end-entity provided data can be diminished by e.g. submitting only the public key in the PKCS#10 content. The public key can be used to match the device to pre-registered data or for retrieval of subject data from other sources.
  
 
 # Establishment of OSCOAP Input Parameters # {#establish-input-parameters}
@@ -215,67 +215,9 @@ With the option to add complementary data to a certificate request, the end-enti
  
 In this section we present two application layer protocols for establishing OSCOAP input parameters (Section 3.3 of {{I-D.ietf-core-object-security}}), in particular the OSCOAP master secret.
 
-
-## ACE  ##
-
-The ACE protocol framework {{I-D.ietf-ace-oauth-authz}} is an adaptation of OAuth 2.0 to IoT deployments. ACE describes different message flows for a Client to get authorized access to a Resource Server (RS) by leveraging an Authorization Server (AS). 
-
-The Token Introspection flow (Section 7 of {{I-D.ietf-ace-oauth-authz}}) allows an RS to access authorization information relating to a client provided Access Token. If the access token is valid, the RS obtains information about the access rights and a symmetric key used by the client, and also a Client Token containing the same shared key protected for the legitimate client (Section 7.4 of {{I-D.ietf-ace-oauth-authz}}, {{ACE-introspect}}).
-
-TBD. Describe how authentication between Client and Resource Server is performed. Same for RS<->AS flow. 
-
-~~~~~~~~~~~
-                     Resource       Authorization
-    Client            Server           Server
-       |                |                |
-       |                |                |
-       +--------------->|                |
-       |  POST          |                |
-       |  Access Token  |                |
-       |                +--------------->|
-       |                | Introspection  |
-       |                |    Request     |
-       |                |                |
-       |                +<---------------+
-       |                | Introspection  |
-       |                |   Response     |
-       |                | + Client Token |
-       |<---------------+                |
-       |  2.01 Created  |                |
-       | + Client Token |
-
-
-~~~~~~~~~~~
-{: #ACE-introspect title="ACE Token Introspection with Client Token."}
-{: artwork-align="center"}
-
-By mapping the EALS client and server to the ACE client and resource server, respectively, this application of ACE enables the authorization of EALS client and establishment of a shared key, which can be used as master secret with OSCOAP in the simple enrollment protocol ({{simple-enroll}}). In this case, the access token contains access rights to /eals, but is not bound to a particular resource server. The access token could be pre-provisioned to the client, e.g. during manufacture. Information about binding to resource server comes with the introspection response.
-
-Section 2 of {{I-D.seitz-ace-oscoap-profile}} defines additional common header parameters for COSE_Key structure that are used to carry OSCOAP input parameters Sender and Recipient ID. OSCOAP master secret is transported as part of the symmetric COSE_Key object. This document uses the same construct. COSE_Key object with OSCOAP input parameters present is transported as part of the introspection response and the client token. 
-
-For the benefit of the client authorizing the enrollment, this document defines an additional common parameter for the client token called voucher, extending the definition in Section 7.4 of {{I-D.ietf-ace-oauth-authz}}:
-
-~~~~~~~~~~~
-voucher
-    OPTIONAL. Contains authorization information about the server, 
-    e.g. ownership voucher. The encoding is TBD. 
-~~~~~~~~~~~
-
-~~~~~~~~~~~
-/-------------------+----------+-----------------\
-| Parameter name    | CBOR Key | Major Type      |
-|-------------------+----------+-----------------|
-| voucher           | TBD      | 2 (byte string) |
-\-------------------+----------+-----------------/
-~~~~~~~~~~~
-{: #ACE-cbor-mapping-voucher title="CBOR mapping of parameters extending the client token."}
-{: artwork-align="center"}
-
-TBD Include Sender/Recipient ID in COSE_Key object (Client Token) as well as (v.v.) in Introspection Response
-
 ## EDHOC ## {#sec-edhoc}
 
-EDHOC {{I-D.selander-ace-cose-ecdhe}} is a key establishment protocol encoded with CBOR and using COSE that may be transported with e.g. CoAP. EDHOC provides mutual authentication of client and server and establishes a shared secret with forward secrecy which may be used as OSCOAP master secret in the simple enrollment protocol ({{simple-enroll}}). 
+EDHOC {{I-D.selander-ace-cose-ecdhe}} is a key establishment protocol, corresponding to the handshake protocol of TLS, encoded with CBOR and using COSE that may be transported with e.g. CoAP. EDHOC provides mutual authentication of client and server and establishes a shared secret with forward secrecy which may be used as OSCOAP master secret in the CMC protocol ({{CMC}}). 
 
 The asymmetric keys authenticated version of EDHOC is described in section 4 of {{I-D.selander-ace-cose-ecdhe}},
 a simplified version of the protocol is shown in {{fig-EDHOC}}. 
@@ -303,7 +245,7 @@ The session identifiers S_U and S_V may be used as OSCOAP input parameters Sende
 
 {{fig-EDHOC-EALS}} shows an example of using the EDHOC protocol to establish a mutually authenticated and authorized channel for the simple enrolment protocol. In this case the EALS server is EDHOC client (the mapping with interchanged roles is straightforward and left FFS). This setting has the following properties:
 
-1. The EALS server initiates the EDHOC protocol. This allows the EALS server (Registration Authority of a PKI) to orchestrate many concurrent enrollments, and control of the associated network load.
+1. The EALS server initiates the EDHOC protocol. This allows the EALS server to orchestrate many concurrent enrollments, and control the associated network load.
 
 2. The EALS client is authenticated first (EDHOC message_2). This allows the EALS server to authenticate the EALS client, and with this information to authorize the EALS client before completing the EDHOC protocol. The EALS server may in this case also relay authorizaton information about the EALS client, such as an ownership voucher, to the client in EDHOC extension EXT_3.
 
@@ -335,9 +277,70 @@ Appendix B1 of {{I-D.selander-ace-cose-ecdhe}} shows how to embed EDHOC in a CoA
 
 TBD Detail the protocol
 
-TBD name of resource? POST /edhoc?
 
-TBD CoAP Response codes to communicate success or failure of the EALS function?
+
+## ACE  ##
+
+The ACE protocol framework {{I-D.ietf-ace-oauth-authz}} is an adaptation of OAuth 2.0 to IoT deployments. ACE describes different message flows for a Client to get authorized access to a Resource Server (RS) by leveraging an Authorization Server (AS). 
+
+The Token Introspection flow (Section 7 of {{I-D.ietf-ace-oauth-authz}}) allows an RS to access authorization information relating to a client provided Access Token. If the access token is valid, the RS obtains information about the access rights and a symmetric key used by the client, and also a Client Token containing the same shared key protected for the legitimate client (Section 7.4 of {{I-D.ietf-ace-oauth-authz}}, {{ACE-introspect}}).
+
+This message flow assumes that the Client and AS, as well as the RS and AS, has or can establish a mutually authenticted secure channel such that:
+
+*  the AS can encrypt the symmetric key for the Client, and the Client can verify the Client Token is issued by the AS.
+* The RS and AS exchange encrypted, integrity and replay protected introspection messages. In this case, the establishment of the secure channel can take place immediately before introspection, triggered by the RS receiveing the Access Token.
+
+
+
+~~~~~~~~~~~
+                     Resource       Authorization
+    Client            Server           Server
+       |                |                |
+       |                |                |
+       +--------------->|                |
+       |  POST          |                |
+       |  Access Token  |                |
+       |                +--------------->|
+       |                | Introspection  |
+       |                |    Request     |
+       |                |                |
+       |                +<---------------+
+       |                | Introspection  |
+       |                |   Response     |
+       |                | + Client Token |
+       |<---------------+                |
+       |  2.01 Created  |                |
+       | + Client Token |
+
+
+~~~~~~~~~~~
+{: #ACE-introspect title="ACE Token Introspection with Client Token."}
+{: artwork-align="center"}
+
+By mapping the EALS client and server to the ACE client and resource server, respectively, this application of ACE enables the authorization of EALS client and establishment of a shared key, which can be used as master secret with OSCOAP in the CMC protocol ({{CMC}}). In this case, the access token contains access rights to /eals, but is not bound to a particular resource server. The access token could be pre-provisioned to the client, e.g. during manufacture, and the AS would in this case represent the device manufacturer. Information about binding to resource server comes with the introspection response.
+
+Section 2 of {{I-D.seitz-ace-oscoap-profile}} defines additional common header parameters for COSE_Key structure that are used to carry OSCOAP input parameters Sender and Recipient ID. The OSCOAP master secret is transported as part of the symmetric COSE_Key object. This document uses the same construct: COSE_Key object with OSCOAP input parameters present is transported as part of the introspection response and in the client token. 
+
+For the benefit of the client authorizing the enrollment, this document defines an additional common parameter for the client token called voucher, extending the definition in Section 7.4 of {{I-D.ietf-ace-oauth-authz}}:
+
+~~~~~~~~~~~
+voucher
+    OPTIONAL. Contains authorization information about the server, 
+    e.g. ownership voucher. The encoding is TBD. 
+~~~~~~~~~~~
+
+~~~~~~~~~~~
+.-------------------+----------+-----------------.
+| Parameter name    | CBOR Key | Major Type      |
+|-------------------+----------+-----------------|
+| voucher           | TBD      | 2 (byte string) |
+'-------------------+----------+-----------------'
+~~~~~~~~~~~
+{: #ACE-cbor-mapping-voucher title="CBOR mapping of parameters extending the client token."}
+{: artwork-align="center"}
+
+TBD Include Sender/Recipient ID in COSE_Key object (Client Token) as well as (v.v.) in Introspection Response
+
 
 
 # Application to 6TiSCH #
@@ -367,7 +370,6 @@ Having said that, one rationale for this document is a more optimized message ex
 
 # Privacy Considerations #
 
-TODO
 
 
 # IANA Considerations # {#iana}
@@ -376,7 +378,8 @@ TODO
 
 # Acknowledgments #
 
-The authors wants to thank  
+The authors wants to thank Michael Richardson and the 6tisch security design team for discussions and input contributing to this document.
+
 
 --- back
 
