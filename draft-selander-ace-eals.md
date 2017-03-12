@@ -60,6 +60,15 @@ author:
         city: Stockholm
         code: SE-12626
         country: Sweden
+      -
+        ins: M. Richardson
+        name: Michael Richardson
+        org: Sandelman Software Works
+        email: mcr+ietf@sandelman.ca
+        street: 470 Dawson Avenue
+        city: Ottawa, ON
+        code: K1Z5V7
+        country: Canada
 
 
 normative:
@@ -81,7 +90,7 @@ informative:
   I-D.ietf-6tisch-minimal-security:
   I-D.hartke-core-e2e-security-reqs:
   I-D.seitz-ace-oscoap-profile:
-  
+
 
 --- abstract
 
