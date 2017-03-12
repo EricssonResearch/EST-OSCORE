@@ -294,10 +294,10 @@ The ACE protocol framework {{I-D.ietf-ace-oauth-authz}} is an adaptation of OAut
 
 The Token Introspection flow (Section 7 of {{I-D.ietf-ace-oauth-authz}}) allows an RS to access authorization information relating to a client provided Access Token. If the access token is valid, the RS obtains information about the access rights and a symmetric key used by the client, and also a Client Token containing the same shared key protected for the legitimate client (Section 7.4 of {{I-D.ietf-ace-oauth-authz}}, {{ACE-introspect}}).
 
-This message flow assumes that the Client and AS, as well as the RS and AS, has or can establish a mutually authenticted secure channel such that:
+This message flow assumes that the Client and AS, as well as the RS and AS, has or can establish a mutually authenticated secure channel such that:
 
-*  the AS can encrypt the symmetric key for the Client, and the Client can verify the Client Token is issued by the AS.
-* The RS and AS exchange encrypted, integrity and replay protected introspection messages. In this case, the establishment of the secure channel can take place immediately before introspection, triggered by the RS receiveing the Access Token.
+*  The AS can encrypt the symmetric key for the Client in the Client Token, and the Client can verify the Client Token is issued by the AS;
+* The RS and AS can exchange encrypted, integrity and replay protected introspection messages. In this case, the establishment of the secure channel can take place immediately before introspection, triggered by the RS receiveing the Access Token.
 
 
 
@@ -309,6 +309,9 @@ This message flow assumes that the Client and AS, as well as the RS and AS, has 
        +--------------->|                |
        |  POST          |                |
        |  Access Token  |                |
+       |                |<- - - - - - - >|
+       |                |(Authentication)|
+       |                |                |
        |                +--------------->|
        |                | Introspection  |
        |                |    Request     |
@@ -326,11 +329,11 @@ This message flow assumes that the Client and AS, as well as the RS and AS, has 
 {: #ACE-introspect title="ACE Token Introspection with Client Token."}
 {: artwork-align="center"}
 
-By mapping the EALS client and server to the ACE client and resource server, respectively, this application of ACE enables the authorization of EALS client and establishment of a shared key, which can be used as master secret with OSCOAP in the CMC protocol ({{CMC}}). In this case, the access token contains access rights to /eals, but is not bound to a particular resource server. The access token could be pre-provisioned to the client, e.g. during manufacture, and the AS would in this case represent the device manufacturer. Information about binding to resource server comes with the introspection response.
+By mapping the EALS client and server to the ACE client and resource server, respectively, this application of ACE enables the authorization of EALS client and establishment of a shared key, which can be used as master secret with OSCOAP in the CMC protocol ({{CMC}}). In this case, the access token contains access rights to /eals, but is not (yet) bound to a particular resource server. The access token could be pre-provisioned to the client, e.g. during manufacture. Information about binding to resource server comes with the introspection response.
 
-Section 2 of {{I-D.seitz-ace-oscoap-profile}} defines additional common header parameters for COSE_Key structure that are used to carry OSCOAP input parameters Sender and Recipient ID. The OSCOAP master secret is transported as part of the symmetric COSE_Key object. This document uses the same construct: COSE_Key object with OSCOAP input parameters present is transported as part of the introspection response and in the client token. 
+Section 2 of {{I-D.seitz-ace-oscoap-profile}} defines additional common header parameters for COSE_Key structure that are used to carry OSCOAP input parameters Sender and Recipient ID. The OSCOAP master secret is transported as part of the symmetric COSE_Key object. This document uses the same construct: COSE_Key object with OSCOAP input parameters present is transported as part of the Introspection Response and in the Client Token. 
 
-For the benefit of the client authorizing the enrollment, this document defines an additional common parameter for the client token called voucher, extending the definition in Section 7.4 of {{I-D.ietf-ace-oauth-authz}}:
+For the benefit of the client authorizing the enrollment, this document defines an additional common parameter for the Client Token called Voucher, extending the definition in Section 7.4 of {{I-D.ietf-ace-oauth-authz}}:
 
 ~~~~~~~~~~~
 voucher
@@ -348,8 +351,7 @@ voucher
 {: #ACE-cbor-mapping-voucher title="CBOR mapping of parameters extending the client token."}
 {: artwork-align="center"}
 
-TBD Include Sender/Recipient ID in COSE_Key object (Client Token) as well as (v.v.) in Introspection Response
-
+Additionally, the certificate attributes presented by the Client in the enrolment request ({{CMC}}) may be carried in the Client Token. The encoding is TBD.
 
 
 # Application to 6TiSCH #
@@ -363,7 +365,7 @@ Default CoAP proxy, however, keeps state information in order to relay the respo
 
 The use of EDHOC as described in {{sec-edhoc}} enables mutual authentication and authorization of Pledge and Join Registrar/Coordinator, and supports the use of the Stateless-Proxy option in order to provide the CoAP Proxy functionality described in this section.
 
-# Application to ANIMA #
+# Application to BRSKI #
 
 Another application of EALS is to the BRSKI {{I-D.ietf-anima-bootstrapping-keyinfra}} problem statement. BRSKI specifies an automated bootstrapping of a remote secure key infrastructure (BRSKI) using vendor installed X.509 certificate, in combination with a vendor authorized service on the Internet. BRSKI is referencing Enrolment over Secure Transport (EST) {{RFC7030}} to enable zero-touch joining of a device in a network domain. The same approach can be applied using EDHOC instead of EST, as is outlined in this document.
 
@@ -387,7 +389,7 @@ Having said that, one rationale for this document is a more optimized message ex
 
 # Acknowledgments #
 
-The authors wants to thank Michael Richardson and the 6tisch security design team for discussions and input contributing to this document.
+The authors wants to thank the participants of the 6tisch security design team for discussions and input contributing to this document.
 
 
 --- back
