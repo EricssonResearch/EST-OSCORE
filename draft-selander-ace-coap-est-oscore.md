@@ -1,7 +1,7 @@
 ---
-title: Protecting EST payloads with OSCORE
-# abbrev: EST-oscore
-docname: draft-selander-ace-coap-est-oscore-02
+title: Protecting EST Payloads with OSCORE
+abbrev: EST-OSCORE
+docname: draft-selander-ace-coap-est-oscore-latest
 
 # date: 2017-03-14
 
@@ -14,11 +14,8 @@ wg: ACE Working Group
 kw: Internet-Draft
 cat: std
 
-coding: us-ascii
+coding: utf-8
 pi:    # can use array (if all yes) or hash here
-#  - toc
-#  - sortrefs
-#  - symrefs
   toc: yes
   sortrefs:   # defaults to yes
   symrefs: yes
@@ -32,7 +29,7 @@ author:
       -
         ins: S. Raza
         name: Shahid Raza
-        org: RISE SICS
+        org: RISE
         email: shahid.raza@ri.se
       -
         ins: M. Furuhed
@@ -42,8 +39,8 @@ author:
       -
         ins: M. Vucinic
         name: Malisa Vucinic
-        org: University of Montenegro
-        email: malisav@ac.me
+        org: INRIA
+        email: malisa.vucinic@inria.fr
 
 
 
