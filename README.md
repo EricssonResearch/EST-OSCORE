@@ -3,8 +3,8 @@
 This is the working area for the Individual internet-draft, "Enrollment with Application Layer Security".
 
 * [Editor's copy](https://EricssonResearch.github.io/EALS/)
-* [Individual Draft] (https://tools.ietf.org/html/draft-selander-ace-eals)
-* [Compare Individual Draft and Editor's copy] (https://tools.ietf.org/rfcdiff?url1=https://tools.ietf.org/id/draft-selander-ace-eals.txt&url2=https://EricssonResearch.github.io/EALS/draft-selander-ace-eals.txt)
+* [Individual Draft](https://tools.ietf.org/html/draft-selander-ace-coap-est-oscore)
+* [Compare Individual Draft and Editor's copy](https://tools.ietf.org/rfcdiff?url1=https://tools.ietf.org/id/draft-selander-ace-coap-est-oscore.txt&url2=https://ericssonresearch.github.io/EALS/draft-selander-ace-coap-est-oscore.txt)
 
 
 ## Building the Draft
