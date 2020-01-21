@@ -5,7 +5,6 @@ docname: draft-selander-ace-coap-est-oscore-latest
 
 # date: 2017-03-14
 
-
 # stand_alone: true
 
 ipr: trust200902
