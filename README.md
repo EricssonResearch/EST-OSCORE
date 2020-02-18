@@ -1,6 +1,6 @@
-# Enrollment with Application Layer Security
+# Protecting EST Payloads with OSCORE
 
-This is the working area for the Individual internet-draft, "Enrollment with Application Layer Security".
+This is the working area for the Individual internet-draft, "Protecting EST Payloads with OSCORE".
 
 * [Editor's copy](https://EricssonResearch.github.io/EALS/)
 * [Individual Draft](https://tools.ietf.org/html/draft-selander-ace-coap-est-oscore)
