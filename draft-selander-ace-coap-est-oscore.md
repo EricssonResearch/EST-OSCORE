@@ -102,7 +102,7 @@ This specification builds on EST-CoAPs {{I-D.ietf-ace-coap-est}} but transport l
 * EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy.
 
 
-## Terminology   {#terminology}
+# Terminology   {#terminology}
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
