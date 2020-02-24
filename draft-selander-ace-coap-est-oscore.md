@@ -148,13 +148,6 @@ The discovery of EST resources defined in Section 5.1 of {{I-D.ietf-ace-coap-est
  
 The short EST-coaps URI paths defined in Section 5.1 of {{I-D.ietf-ace-coap-est}} also apply.
 
-# OSCORE-Based Security
-
-EST-oscore depends on the application layer security provided by OSCORE for protecting CoAP and CoAP-mappable HTTP independent of transport. The establishment of keys for OSCORE defines many of the properties of the protocol.
-
-If a key exchange protocols is used, fragmentation of the protocol messages needs to be handled. EDHOC {{I-D.selander-ace-cose-ecdhe}} may be carried in CoAP in which case Block fragmentation can be used.
-
-
 # Proxying
 
 As is noted Section 6 of {{I-D.ietf-ace-coap-est}}, in real-world deployments, the EST server will not always reside within the CoAP boundary.  The EST-server can exist outside the constrained network in a non-constrained network that does not support CoAP but HTTP, thus requiring an intermediary CoAP-to-HTTP proxy.
