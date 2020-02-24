@@ -112,6 +112,24 @@ normative meanings.
 
 This document uses terminology from {{I-D.ietf-ace-coap-est}} which in turn is based on {{RFC7030}} and, in turn, on {{RFC5272}}. 
 
+# OSCORE, key establishment and authentication
+EST-oscore clients and servers MUST perform mutual authentication before EST-oscore functions and services can be accessed. Before the initial enrollment the client MUST be configured with an Implicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authenticate the server. During the initial enrollment the client SHOULD populates its Explicit TA database and use it for subsequent authentications. During all interactions with the EST server, the client MUST authenticate the server. While the original EST specification {{RFC7030}} allows the client to perform certain actions without being authenticated by the server, this specification requires that the client MUST be authenticated for all functions.
+
+The EST-coaps specification {{I-D.ietf-ace-coap-est}} only supports certificate-based authentication during the DTLS handshake between the EST-coaps server and the client. This specification supports additional methods to perform key establishment and endpoint authentication.
+
+## EDHOC
+When using the EDHOC key establishment protocol to populate the OSCORE security context, the endpoints can use either raw public keys (RPK), pre-shared keys (PSK), or public key certificates to perform mutual authentication. During the initial enrollment at least one of the aforementioned types of cryptographic material MUST be available in the Implicit TA database. When the EST-oscore client issues a request to the /crts endpoint of the EST server, it SHALL return either a bag of certificates, a set of PSKs or a set of RPKs to be installed in the Explicit TA database. 
+
+The cryptographic material used for EST-oscore client authentication corresponds to the chosen EDHOC authentication method. This can either be
+
+ * previously issued certificates, PSKs or RPKs (e.g., existing cryptographic material issued by the EST server); this could be a common case for simple re-enrollment of clients.
+ * previously installed certificates, PSKs or RPK (e.g., installed by the manufacturer). Manufacturer installed cryptographic material is expected to have a very long life, as long as the device, but under some conditions could expire. In that case, the server MAY authenticate a client certificate against its trust store although the certificate is expired ({{sec-cons}}).
+
+## Trusted third party
+
+## Pre-shared keys
+
+
 # Protocol Design and Layering 
 
 EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{I-D.ietf-ace-coap-est}}. Figure 1 below shows the layered EST-oscore architecture. 
