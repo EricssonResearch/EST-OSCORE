@@ -130,12 +130,11 @@ EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST mess
 {: #fig-stack title="EST protected with OSCORE."}
 {: artwork-align="center"}
 
-EST-oscore follows closely the EST-coaps and EST design. The message types for simple enroll, reenroll, CA certificate retrieval, CSR Attributes request messages and server-side key generation messages apply. Section references in this paragraph refer to EST-coaps ({{I-D.ietf-ace-coap-est}}): The payload format, message bindings, CoAP response codes, message fragmentation based on Block-Wise, and the delayed responses specified in Section 5 apply.  
+EST-oscore follows closely the EST-coaps and EST design. 
  
 
-# Discovery and URI
-
-The discovery of EST resources defined in Section 5.1 of {{I-D.ietf-ace-coap-est}}, as well as the new Resource Type defined in Section 9.1 of {{I-D.ietf-ace-coap-est}} apply to EST-oscore. Support for OSCORE is indicated by the "osc" attribute defined in Section 9 of {{I-D.ietf-core-object-security}}, for example:
+## Discovery and URI
+The discovery of EST resources and the definition of the short EST-coaps URI paths specified in Section 5.1 of {{I-D.ietf-ace-coap-est}}, as well as the new Resource Type defined in Section 9.1 of {{I-D.ietf-ace-coap-est}} apply to EST-oscore. Support for OSCORE is indicated by the "osc" attribute defined in Section 9 of {{I-D.ietf-core-object-security}}, for example:
 
 ~~~~~~~~~~~
 
@@ -148,7 +147,75 @@ The discovery of EST resources defined in Section 5.1 of {{I-D.ietf-ace-coap-est
  
 The short EST-coaps URI paths defined in Section 5.1 of {{I-D.ietf-ace-coap-est}} also apply.
 
-# Proxying
+## Mandatory/optional EST Functions
+The EST-oscore has the same set of required-to-implement functions as EST-coaps. The content of Table 1 is adapted from Section 5.2 in {{I-D.ietf-ace-coap-est}} and uses the updated URI paths (see Section 4.1).
+
+~~~~~~~~~~~
+
++----------------+-----------------------------+
+| EST functions  | EST-oscore implementation   |
++----------------+-----------------------------+
+| /crts          | MUST                        |
+| /sen           | MUST                        |
+| /sren          | MUST                        |
+| /skg           | OPTIONAL                    | 
+| /skc           | OPTIONAL                    |
+| /att           | OPTIONAL                    |
++----------------+-----------------------------+
+
+~~~~~~~~~~~
+{: #tab-requires title="Mandatory and optional EST-oscore functions"}
+{: artwork-align="center"}
+
+## Payload formats
+Similar to EST-coaps, EST-oscore transports the ASN.1 structure of a given Media-Type in binary format. In addition it uses the same CoAP Content-Format Options to transport EST requests and responses. Table 2 summarizes the information from Section 5.3 in {{I-D.ietf-ace-coap-est}}.
+
+~~~~~~~~~~~
+
++-------+-----------------------------------------------------+-----+
+|  URI  | Content-Format                                      |  #  |
++-------+-----------------------------------------------------+-----+
+| /crts | N/A                                            (req)|  -  |
+|       | application/pkix-cert                          (res)| 287 |
+|       | application/pkcs-7-mime;smime-type=certs-only  (res)| 281 |
+| /sen  | application/pkcs10                             (req)| 286 |
+|       | application/pkix-cert                          (res)| 287 |
+|       | application/pkcs-7-mime;smime-type=certs-only  (res)| 281 |
+| /sren | application/pkcs10                             (req)| 286 |
+|       | application/pkix-cert                          (res)| 287 |
+|       | application/pkcs-7-mime;smime-type=certs-only  (res)| 281 |
+| /skg  | application/pkcs10                             (req)| 286 |
+|       | application/multipart-core                     (res)|  62 |
+| /skc  | application/pkcs10                             (req)| 286 |
+|       | application/multipart-core                     (res)|  62 |
+| /att  | N/A                                            (req)|  -  |
+|       | application/csrattrs                           (res)| 285 |
++-------+-----------------------------------------------------+-----+
+
+~~~~~~~~~~~
+{: #tab-mediatype title="EST functions and there associated Media-Type and IANA number"}
+{: artwork-align="center"}
+
+## Message Bindings
+The EST-oscore message characteristics are identical to those specified in Section 5.4 of {{I-D.ietf-ace-coap-est}}. It is RECOMMENDED that
+
+  * The EST-oscore servers support delayed responses
+  * CoAP supports the following options Oscore, Uri-Host, Uri-Path, Uri-Port, Content-Format, Block1, Block2, and Accept.
+  * The EST URLs based on https:// are translated to coap:// (but with mandatory use of the CoAP OSCORE option)
+
+
+## CoAP response codes
+See Section 5.5 in {{I-D.ietf-ace-coap-est}}
+
+## Message fragmentation
+The EDHOC key exchange with asymmetric keys can result in large message. It is recommended to prevent IP fragmentation, since it involves an error-prone datagram reconstitution. In addition the EST-oscore specification targets resource constrained networks such as IEEE 802.15.4 where fragment loss can trigger costly retransmissions. Even though ECC-based certificates are an improvement over the RSA or DSA counterparts, they can still amount to roughly a 1000 bytes per certificate depending on the used algorithms, curves, OIDs, Subject Alternative Names (SAN) and cert fields. Additionally, in response to a client request to /crts an EST-oscore server might answer with multiple certificates. This specification uses the CoAP Block1 and Block2 fragmentation mechanisms as described in Section 5.6 of {{I-D.ietf-ace-coap-est}} to limit the size of the CoAP payload.
+
+
+## Delayed Responses
+See Section 5.7 in {{I-D.ietf-ace-coap-est}}
+
+
+# HTTP-CoAP registrar 
 
 As is noted Section 6 of {{I-D.ietf-ace-coap-est}}, in real-world deployments, the EST server will not always reside within the CoAP boundary.  The EST-server can exist outside the constrained network in a non-constrained network that does not support CoAP but HTTP, thus requiring an intermediary CoAP-to-HTTP proxy.
 
