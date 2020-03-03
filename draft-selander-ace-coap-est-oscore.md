@@ -246,6 +246,9 @@ Similar to EST-coaps, EST-oscore transports the ASN.1 structure of a given Media
 |       | application/csrattrs                           (res) |  285  |
 {: #table_mediatypes cols="l l" title="EST functions and there associated Media-Type and IANA numbers"}
 
+NOTE: CBOR is becoming a de facto encoding scheme in IoT settings. There is already work in progress on CBOR encoding of X.509 certificates {{I-D.raza-ace-cbor-certificates}}, and this can be extended to other EST messages. 
+
+
 ## Message Bindings
 The EST-oscore message characteristics are identical to those specified in Section 5.4 of {{I-D.ietf-ace-coap-est}}. It is RECOMMENDED that
 
