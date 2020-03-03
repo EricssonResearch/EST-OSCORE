@@ -2,9 +2,9 @@
 
 This is the working area for the Individual internet-draft, "Protecting EST Payloads with OSCORE".
 
-* [Editor's copy](https://EricssonResearch.github.io/EALS/)
+* [Editor's copy](https://EricssonResearch.github.io/EST-OSCORE/)
 * [Individual Draft](https://tools.ietf.org/html/draft-selander-ace-coap-est-oscore)
-* [Compare Individual Draft and Editor's copy](https://tools.ietf.org/rfcdiff?url1=https://tools.ietf.org/id/draft-selander-ace-coap-est-oscore.txt&url2=https://ericssonresearch.github.io/EALS/draft-selander-ace-coap-est-oscore.txt)
+* [Compare Individual Draft and Editor's copy](https://tools.ietf.org/rfcdiff?url1=https://tools.ietf.org/id/draft-selander-ace-coap-est-oscore.txt&url2=https://ericssonresearch.github.io/EST-OSCORE/draft-selander-ace-coap-est-oscore.txt)
 
 
 ## Building the Draft
