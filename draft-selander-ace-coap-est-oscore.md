@@ -40,7 +40,11 @@ author:
         name: Malisa Vucinic
         org: INRIA
         email: malisa.vucinic@inria.fr
-
+      -
+        ins: T. Claeys
+        name: Timothy Claeys
+        org: INRIA
+        email: timothy.claeys@inria.fr
 
 
 normative:
