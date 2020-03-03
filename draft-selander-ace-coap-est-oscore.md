@@ -1,6 +1,6 @@
 ---
 title: Protecting EST Payloads with OSCORE
-abbrev: EST-OSCORE
+abbrev: EST-oscore
 docname: draft-selander-ace-coap-est-oscore-latest
 
 # date: 2017-03-14
@@ -81,7 +81,7 @@ This document specifies public-key certificate enrollment procedures protected w
 
 One of the challenges with deploying a Public Key Infrastructure (PKI) for the Internet of Things (IoT) is certificate enrollment, because existing enrollment protocols are not optimized for constrained environments {{RFC7228}}.
 
-One optimization of certificate enrollment targeting IoT deployments is specified in EST-CoAPs ({{I-D.ietf-ace-coap-est}}), which defines a version of Enrollment over Secure Transport {{RFC7030}} for transporting EST payloads over CoAP {{RFC7252}} and DTLS {{RFC6347}}, instead of secured HTTP.
+One optimization of certificate enrollment targeting IoT deployments is specified in EST-coaps ({{I-D.ietf-ace-coap-est}}), which defines a version of Enrollment over Secure Transport {{RFC7030}} for transporting EST payloads over CoAP {{RFC7252}} and DTLS {{RFC6347}}, instead of secured HTTP.
 
 This document describes a method for protecting EST payloads over CoAP or HTTP with OSCORE {{I-D.ietf-core-object-security}}. OSCORE specifies an extension to CoAP which protects the application layer message and can be applied independently of how CoAP messages are transported. OSCORE can also be applied to CoAP-mappable HTTP which enables end-to-end security for mixed CoAP and HTTP transfer of application layer data. Hence EST payloads can be protected end-to-end independent of underlying transport and through proxies translating between between CoAP and HTTP.
 
@@ -93,13 +93,13 @@ Yet other optimizations to certificate based enrollment are possible further imp
 
 
 
-## EST-CoAPs operational differences {#operational}
+## EST-coaps operational differences {#operational}
 
-This specification builds on EST-CoAPs {{I-D.ietf-ace-coap-est}} but transport layer security provided by DTLS is replaced, or complemented, by protection of the application layer data. This specification deviates from EST-CoAPs in the following respects:
+This specification builds on EST-coaps {{I-D.ietf-ace-coap-est}} but transport layer security provided by DTLS is replaced, or complemented, by protection of the application layer data. This specification deviates from EST-coaps in the following respects:
 
 * The DTLS record layer is replaced, or complemented, with OSCORE.
 * The DTLS handshake is replaced, or complemented, with an alternative key establishment, for example:
-   * A key exchange protocol, such as EDHOC {{I-D.selander-ace-cose-ecdhe}}. The use of a key exchange protocol completes the analogy with EST-CoAPs, and provides perfect forward secrecy (PFS) of the keys used to protect the EST messages.  However, PFS is not necessary for the enrollment procedure and adds significant overhead in terms of message size and round trips.
+   * A key exchange protocol, such as EDHOC {{I-D.selander-ace-cose-ecdhe}}. The use of a key exchange protocol completes the analogy with EST-coaps, and provides perfect forward secrecy (PFS) of the keys used to protect the EST messages.  However, PFS is not necessary for the enrollment procedure and adds significant overhead in terms of message size and round trips.
    * Trusted third party (TTP) based provisioning, such as the OSCORE profile of ACE {{I-D.ietf-ace-oscore-profile}}. This assumes existing security associations between the client and the TTP, and between the server and the TTP, and reduces the message size and round trips compared to a key exchange protocol.
    * Pre-shared keys (PSK). Although one reason for using a PKI is to avoid managing PSK, applying OSCORE directly with PSK specifically during deployment gives a one round-trip enrollment protocol with low message overhead, thereby further reducing the network load and time for commissioning.
 * EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy.
@@ -250,7 +250,7 @@ Similar to EST-coaps, EST-oscore transports the ASN.1 structure of a given Media
 The EST-oscore message characteristics are identical to those specified in Section 5.4 of {{I-D.ietf-ace-coap-est}}. It is RECOMMENDED that
 
   * The EST-oscore endpoints support delayed responses
-  * The endpoints supports the following CoAP options: Oscore, Uri-Host, Uri-Path, Uri-Port, Content-Format, Block1, Block2, and Accept.
+  * The endpoints supports the following CoAP options: OSCORE, Uri-Host, Uri-Path, Uri-Port, Content-Format, Block1, Block2, and Accept.
   * The EST URLs based on https:// are translated to coap://, but with mandatory use of the CoAP OSCORE option.
 
 
