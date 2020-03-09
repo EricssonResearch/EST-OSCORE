@@ -317,6 +317,8 @@ Another method to bootstrap EST services requires a pre-shared OSCORE context be
 
 The OSCORE specification {{RFC8613}} makes use of the 'kid context' header parameter in the COSE object to indicate which OSCORE security context to use.
 
+## EDHOC with alternative authentication methods
+{{edhoc}} describes the use of EDHOC in combination with certificates during the initial bootstrap phase. The latter requires that the Implicit TA is equipped with certificates capable of authenticating the EST-oscore server. Since EDHOC also supports authentication with RPKs and PSKs, the Implicit TA can be populated alternatively with RPKs and PSKs. Similarly to {{edhoc}}, client authentication can be performed with long-lived RPKs or long-lived PSKs, installed by the manufacturer. Re-enrollment requests can be authenticated through a valid certificate issued previously by the EST-oscore server or by using the key material available in the Implicit TA.
 
 
 # CBOR Encoding of EST Payloads
@@ -441,7 +443,8 @@ b9e52ee0da9f9884d8dd41248c49804ab923330e208a168172dcae127a02206a
 06c05957f1db8c4e207437b9ab7739cb857aa6dd9486627b8961606a2b68ae
 ~~~~~~~~~~~
 
-
+# Other Explicit TA Material
+TBD Currently the all EST specifications provide the /crts (or /cacerts) endpoint . A successful request from the client to this endpoint will be answered with a bag of certificates which is subsequently installed in the Explicit TA. Shoudl we optionally support new endpoints, e.g., /rpks and/or /psks, which would return a set or RPKs and PSKs to be installed in the Explicit TA. Support for this type of key material in the Explicit TA result in smaller messages sizes. 
 
 --- fluff
 
