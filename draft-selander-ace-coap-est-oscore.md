@@ -96,17 +96,14 @@ In order to protect certificate enrollment with OSCORE, the necessary keying mat
 Yet other optimizations to certificate based enrollment are possible further improve the performance of certificate enrollment and certificate based authentication, in particular the use of more compact representations of X.509 certificates such as {{I-D.raza-ace-cbor-certificates}}. 
 
 
-
 ## EST-coaps operational differences {#operational}
 
 This specification builds on EST-coaps {{I-D.ietf-ace-coap-est}} but transport layer security provided by DTLS is replaced, or complemented, by protection of the application layer data. This specification deviates from EST-coaps in the following respects:
 
 * The DTLS record layer is replaced, or complemented, with OSCORE.
-* The DTLS handshake is replaced, or complemented, with an alternative key establishment, for example:
-   * A key exchange protocol, such as EDHOC {{I-D.selander-ace-cose-ecdhe}}. The use of a key exchange protocol completes the analogy with EST-coaps, and provides perfect forward secrecy (PFS) of the keys used to protect the EST messages.  However, PFS is not necessary for the enrollment procedure and adds significant overhead in terms of message size and round trips.
-   * Trusted third party (TTP) based provisioning, such as the OSCORE profile of ACE {{I-D.ietf-ace-oscore-profile}}. This assumes existing security associations between the client and the TTP, and between the server and the TTP, and reduces the message size and round trips compared to a key exchange protocol.
-   * Pre-shared keys (PSK). Although one reason for using a PKI is to avoid managing PSK, applying OSCORE directly with PSK specifically during deployment gives a one round-trip enrollment protocol with low message overhead, thereby further reducing the network load and time for commissioning.
-* EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy.
+* The DTLS handshake is replaced, or complemented, with the EDHOC key exchange protocol {{I-D.selander-ace-cose-ecdhe}}. The use of certificate authentication with EDHOC completes the analogy with EST-coaps, and provides perfect forward secrecy (PFS) of the keys used to protect the EST messages. However, PFS is not necessary for the enrollment procedure and adds significant overhead in terms of message size and round trips. EDHOC can also leverage its support for static Diffie-Hellman keys. The latter implies that the certificates contain public keys that can be used for a Diffie-Hellman key exchange.
+   * {{alternative-auth}} discusses alternative authenticated key exchange methods.
+* The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy.
 
 
 # Terminology   {#terminology}
@@ -119,20 +116,20 @@ normative meanings.
 
 This document uses terminology from {{I-D.ietf-ace-coap-est}} which in turn is based on {{RFC7030}} and, in turn, on {{RFC5272}}. 
 
-# OSCORE, Key Establishment and Authentication
-EST-oscore clients and servers MUST perform mutual authentication before EST-oscore functions and services can be accessed. Before the initial enrollment the client MUST be configured with an Implicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authenticate the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications. During all interactions with the EST server, the client MUST authenticate the server. While the original EST specification {{RFC7030}} allows the client to perform certain actions without being authenticated by the server, this specification requires that the client MUST be authenticated for all functions.
+# OSCORE and Authenticated Key Establishment
+EST-oscore clients and servers MUST perform mutual authentication before EST-oscore functions and services can be accessed. Prior to the initial enrollment the client MUST be configured with an Implicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authenticate the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications. 
 
-The EST-coaps specification {{I-D.ietf-ace-coap-est}} only supports certificate-based authentication during the DTLS handshake between the EST-coaps server and the client. This specification supports additional methods, listed in {{operational}} to perform key establishment and endpoint authentication. 
+The EST-coaps specification {{I-D.ietf-ace-coap-est}} only supports certificate-based authentication during the DTLS handshake between the EST-coaps server and the client. This specification replaces the DTLS handshake with the certificate-based EDHOC key exchange protocol but provides additional authenticated methods in the {{alternative-auth}} 
 
-The {{RFC5272}} specification describes proof-of-identity as the ability of an endpoint, i.e., client, to prove its possession of a private key which is linked to a certified public key. Additionally, the RFC details how to use channel-binding information (extracted from the underlying TLS layer) to link the proof-of-identity to a proof-of-possession. A proof-of-possession is generated by the client when it signs the PKCS#10 Request during the enrollment phase. Connection-based proof-of-possession is OPTIONAL for EST-oscore clients and servers. When it is desired, a set of actions are required which depend on the underlying key establishment and authentication method.
+The {{RFC5272}} specification describes proof-of-identity as the ability of an endpoint, i.e., client, to prove its possession of a private key which is linked to a certified public key. Additionally, the RFC details how to use channel-binding information (extracted from the underlying TLS layer) to link the proof-of-identity to a proof-of-possession. A proof-of-possession is generated by the client when it signs the PKCS#10 Request during the enrollment phase. Connection-based proof-of-possession is OPTIONAL for EST-oscore clients and servers. In case of certificate-based EDHOC key establishment, a set of actions are required which are further described below.
 
 ## EDHOC   {#edhoc}
-When using the EDHOC key establishment protocol to populate the OSCORE security context, the endpoints can use either raw public keys (RPK), pre-shared keys (PSK), or public key certificates to perform mutual authentication. During the initial enrollment at least one of the aforementioned types of cryptographic material MUST be available in the Implicit TA database. When the EST-oscore client issues a request to the /crts endpoint of the EST server, it SHALL return either a bag of certificates, a set of PSKs or a set of RPKs to be installed in the Explicit TA database. 
+The EST-oscore client and server use the EDHOC key establishment protocol to populate the OSCORE security context. The endpoints MUST use public key certificates to perform mutual authentication. During the initial enrollment the Implicit TA database MUST contain certificates capable of authenticating the EST-oscore server. When the EST-oscore client issues a request to the /crts endpoint of the EST server, it SHALL return a bag of certificates to be installed in the Explicit TA database. 
 
-The cryptographic material used for EST-oscore client authentication corresponds to the chosen EDHOC authentication method. This can either be
+The cryptographic material used for EST-oscore client authentication can either be
 
- * previously issued certificates, PSKs or RPKs (e.g., existing cryptographic material issued by the EST server); this could be a common case for simple re-enrollment of clients.
- * previously installed certificates, PSKs or RPKs (e.g., installed by the manufacturer). Manufacturer installed cryptographic material is expected to have a very long life, as long as the device, but under some conditions could expire. In that case, the server MAY authenticate a client certificate against its trust store although the certificate is expired ({{sec-cons}}).
+ * previously issued certificates (e.g., an existing certificate issued by the EST server); this could be a common case for simple re-enrollment of clients.
+ * previously installed certificates (e.g., installed by the manufacturer). Manufacturer installed certificates are expected to have a very long life, as long as the device, but under some conditions could expire. In that case, the server MAY authenticate a client certificate against its trust store although the certificate is expired ({{sec-cons}}).
  
  When desired the client can use the EDHOC-Exporter API to extract channel-binding information and provide a connection-based proof-of possession. Channel-binding information is obtained as follows 
  
@@ -305,8 +302,9 @@ During initial enrollment the EST-oscore client uses its existing security assoc
 
 Once the client has retrieved the access token it follows the steps in {{I-D.ietf-ace-oscore-profile}} to install the OSCORE security context and presents the token to the EST-oscore server. The EST-oscore server installs the corresponding OSCORE context and can either verify the validity of the token locally or request a token introspection at the TTP. In either case EST policy decisions, e.g., which client can request enrollment or reenrollment, can be implemented at the TTP. Finally the EST-oscore client receives a response from the EST-oscore server.
 
+
 ## PSK Based Authentication
-A final approach to bootstrap EST services requires a pre-shared OSCORE context between the EST-oscore client and EST-oscore server. Authentication using the Implicit TA is no longer required since the shared security context authenticates both parties. The client and server have access to the same master secret as well as
+Another method to bootstrap EST services requires a pre-shared OSCORE context between the EST-oscore client and EST-oscore server. Authentication using the Implicit TA is no longer required since the shared security context authenticates both parties. The client and server have access to the same master secret as well as
 
   * a server identifier
   * a client identifier
@@ -317,8 +315,6 @@ A final approach to bootstrap EST services requires a pre-shared OSCORE context 
   * a replay window type and size
 
 The OSCORE specification {{RFC8613}} makes use of the 'kid context' header parameter in the COSE object to indicate which OSCORE security context to use.
-
-
 
 
 # CBOR Encoding of EST Payloads
