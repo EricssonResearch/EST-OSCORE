@@ -140,50 +140,6 @@ The cryptographic material used for EST-oscore client authentication corresponds
  
  where length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a ChallengePassword in the attributes section of the PKCS#10 Request to prove that the client is indeed in control of the private key at the time of the EDHOC key exchange.
 
-## Trusted third party
-Trusted third party (TTP) based provisioning, such as the OSCORE profile of ACE {{I-D.ietf-ace-oscore-profile}} assumes existing security associations between the client and the TTP, and between the server and the TTP. This setup allows for reduced message overhead and round trips compared to the full-fledged EDHOC key exchange. Following the ACE terminology the TTP plays the role of the Authorization Server (AS), the EST-oscore client corresponds to the ACE client and the EST-oscore server is the ACE Resource Server (RS).
-
-~~~~~~~~~~~
-
-+------------+                               +------------+
-|            |                               |            |
-|            | ---(A)- Token Request ------> |  Trusted   |
-|            |                               |   Third    |
-|            | <--(B)- Access Token -------  | Party (AS) |
-|            |                               |            |
-|            |                               +------------+
-| EST-oscore |                                  |     ^
-|   Client   |                                 (F)   (E)
-|(ACE Client)|                                  V     |
-|            |                               +------------+
-|            |                               |            | 
-|            | -(C)- Token + EST Request --> | EST-oscore | 
-|            |                               | server (RS)|
-|            | <--(D)--- EST response ------ |            |
-|            |                               |            | 
-+------------+                               +------------+
-
-
-~~~~~~~~~~~
-{: #fig-ttp title="Accessing EST services using a TTP for authenticated key establishment and authorization."}
-{: artwork-align="center"}
-
-During initial enrollment the EST-oscore client uses its existing security association with the TTP, which replaces the Implicit TA database, to establish an authenticated secure channel. The {{I-D.ietf-ace-oscore-profile}} ACE profile RECOMMENDS the use of OSCORE between client and TTP (AS), but TLS or DTLS MAY be used additionally or instead. The client requests an access token at the TTP corresponding the EST service it wants to access. If the client request was invalid, or not authorized according to the local EST policy, the AS returns an error response as described in Section 5.6.3 of {{I-D.ietf-ace-oauth-authz}}. In its responses the TTP (AS) SHOULD signal that the use of OSCORE is REQUIRED for a specific access token as indicated in section 4.3 of {{I-D.ietf-ace-oscore-profile}}. This means that the EST-oscore client MUST use OSCORE towards all EST-oscore servers (RS) for which this access token is valid, and follow Section 4.3 in {{I-D.ietf-ace-oscore-profile}} to derive the security context to run OSCORE. The ACE OSCORE profile RECOMMENDS the use of CBOR web token (CWT) as specified in {{RFC8392}}. The TTP (AS) MUST also provision an OSCORE security context to the EST-oscore client and EST-oscore server (RS), which is then used to secure the subsequent messages between the client and the server.  The details on how to transfer the OSCORE contexts are described in section 3.2 of {{I-D.ietf-ace-oscore-profile}}.
-
-Once the client has retrieved the access token it follows the steps in {{I-D.ietf-ace-oscore-profile}} to install the OSCORE security context and presents the token to the EST-oscore server. The EST-oscore server installs the corresponding OSCORE context and can either verify the validity of the token locally or request a token introspection at the TTP. In either case EST policy decisions, e.g., which client can request enrollment or reenrollment, can be implemented at the TTP. Finally the EST-oscore client receives a response from the EST-oscore server.
-
-## Pre-shared keys
-A final approach to bootstrap EST services requires a pre-shared OSCORE context between the EST-oscore client and EST-oscore server. Authentication using the Implicit TA is no longer required since the shared security context authenticates both parties. The client and server have access to the same master secret as well as
-
-  * a server identifier
-  * a client identifier
-  * a context identifier
-  * an AEAD algorithm
-  * an HKDF algorithm
-  * a salt
-  * a replay window type and size
-
-The OSCORE specification {{RFC8613}} makes use of the 'kid context' header parameter in the COSE object to indicate which OSCORE security context to use.
 
 # Protocol Design and Layering 
 EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{I-D.ietf-ace-coap-est}}. {{fig-stack}} below shows the layered EST-oscore architecture. 
@@ -315,11 +271,54 @@ TBD
 
 --- back
 
-# Other Authentication Methods 
+# Other Authentication Methods {#alternative-auth}
 
 ## TTP Assisted Authentication
+Trusted third party (TTP) based provisioning, such as the OSCORE profile of ACE {{I-D.ietf-ace-oscore-profile}} assumes existing security associations between the client and the TTP, and between the server and the TTP. This setup allows for reduced message overhead and round trips compared to the full-fledged EDHOC key exchange. Following the ACE terminology the TTP plays the role of the Authorization Server (AS), the EST-oscore client corresponds to the ACE client and the EST-oscore server is the ACE Resource Server (RS).
+
+~~~~~~~~~~~
+
++------------+                               +------------+
+|            |                               |            |
+|            | ---(A)- Token Request ------> |  Trusted   |
+|            |                               |   Third    |
+|            | <--(B)- Access Token -------  | Party (AS) |
+|            |                               |            |
+|            |                               +------------+
+| EST-oscore |                                  |     ^
+|   Client   |                                 (F)   (E)
+|(ACE Client)|                                  V     |
+|            |                               +------------+
+|            |                               |            | 
+|            | -(C)- Token + EST Request --> | EST-oscore | 
+|            |                               | server (RS)|
+|            | <--(D)--- EST response ------ |            |
+|            |                               |            | 
++------------+                               +------------+
+
+
+~~~~~~~~~~~
+{: #fig-ttp title="Accessing EST services using a TTP for authenticated key establishment and authorization."}
+{: artwork-align="center"}
+
+During initial enrollment the EST-oscore client uses its existing security association with the TTP, which replaces the Implicit TA database, to establish an authenticated secure channel. The {{I-D.ietf-ace-oscore-profile}} ACE profile RECOMMENDS the use of OSCORE between client and TTP (AS), but TLS or DTLS MAY be used additionally or instead. The client requests an access token at the TTP corresponding the EST service it wants to access. If the client request was invalid, or not authorized according to the local EST policy, the AS returns an error response as described in Section 5.6.3 of {{I-D.ietf-ace-oauth-authz}}. In its responses the TTP (AS) SHOULD signal that the use of OSCORE is REQUIRED for a specific access token as indicated in section 4.3 of {{I-D.ietf-ace-oscore-profile}}. This means that the EST-oscore client MUST use OSCORE towards all EST-oscore servers (RS) for which this access token is valid, and follow Section 4.3 in {{I-D.ietf-ace-oscore-profile}} to derive the security context to run OSCORE. The ACE OSCORE profile RECOMMENDS the use of CBOR web token (CWT) as specified in {{RFC8392}}. The TTP (AS) MUST also provision an OSCORE security context to the EST-oscore client and EST-oscore server (RS), which is then used to secure the subsequent messages between the client and the server.  The details on how to transfer the OSCORE contexts are described in section 3.2 of {{I-D.ietf-ace-oscore-profile}}.
+
+Once the client has retrieved the access token it follows the steps in {{I-D.ietf-ace-oscore-profile}} to install the OSCORE security context and presents the token to the EST-oscore server. The EST-oscore server installs the corresponding OSCORE context and can either verify the validity of the token locally or request a token introspection at the TTP. In either case EST policy decisions, e.g., which client can request enrollment or reenrollment, can be implemented at the TTP. Finally the EST-oscore client receives a response from the EST-oscore server.
 
 ## PSK Based Authentication
+A final approach to bootstrap EST services requires a pre-shared OSCORE context between the EST-oscore client and EST-oscore server. Authentication using the Implicit TA is no longer required since the shared security context authenticates both parties. The client and server have access to the same master secret as well as
+
+  * a server identifier
+  * a client identifier
+  * a context identifier
+  * an AEAD algorithm
+  * an HKDF algorithm
+  * a salt
+  * a replay window type and size
+
+The OSCORE specification {{RFC8613}} makes use of the 'kid context' header parameter in the COSE object to indicate which OSCORE security context to use.
+
+
 
 
 # CBOR Encoding of EST Payloads
