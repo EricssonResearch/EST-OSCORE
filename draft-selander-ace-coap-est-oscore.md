@@ -50,24 +50,23 @@ author:
 normative:
 
   RFC2119:
-  RFC2985:
-  RFC2986:
   RFC7049:
   RFC7252:
   RFC7959:
   RFC8152:
+  RFC8613:
   I-D.ietf-ace-coap-est:
-  I-D.ietf-core-object-security:
 
 
 informative:
 
+  RFC2985:
+  RFC2986:
   RFC5272:
   RFC6347:
   RFC7228:
   RFC7030:
   RFC8392:
-  RFC8613:
   I-D.ietf-6tisch-minimal-security:
   I-D.ietf-ace-oscore-profile:
   I-D.ietf-ace-oauth-authz:
@@ -89,11 +88,11 @@ One of the challenges with deploying a Public Key Infrastructure (PKI) for the I
 
 One optimization of certificate enrollment targeting IoT deployments is specified in EST-coaps ({{I-D.ietf-ace-coap-est}}), which defines a version of Enrollment over Secure Transport {{RFC7030}} for transporting EST payloads over CoAP {{RFC7252}} and DTLS {{RFC6347}}, instead of secured HTTP.
 
-This document describes a method for protecting EST payloads over CoAP or HTTP with OSCORE {{I-D.ietf-core-object-security}}. OSCORE specifies an extension to CoAP which protects the application layer message and can be applied independently of how CoAP messages are transported. OSCORE can also be applied to CoAP-mappable HTTP which enables end-to-end security for mixed CoAP and HTTP transfer of application layer data. Hence EST payloads can be protected end-to-end independent of underlying transport and through proxies translating between between CoAP and HTTP.
+This document describes a method for protecting EST payloads over CoAP or HTTP with OSCORE {{RFC8613}}. OSCORE specifies an extension to CoAP which protects the application layer message and can be applied independently of how CoAP messages are transported. OSCORE can also be applied to CoAP-mappable HTTP which enables end-to-end security for mixed CoAP and HTTP transfer of application layer data. Hence EST payloads can be protected end-to-end independent of underlying transport and through proxies translating between between CoAP and HTTP.
 
 OSCORE is designed for constrained environments, building on IoT standards such as CoAP, CBOR {{RFC7049}} and COSE {{RFC8152}}, and has in particular gained traction in settings where message sizes and the number of exchanged messages needs to be kept at a minimum, see e.g. {{I-D.ietf-6tisch-minimal-security}}, or for securing multicast CoAP messages {{I-D.ietf-core-oscore-groupcomm}}. Where OSCORE is implemented and used for communication security, the reuse of OSCORE for other purposes, such as enrollment, reduces the implementation footprint.
 
-In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{I-D.ietf-core-object-security}}) needs to be established between CoAP client and server, e.g. using a key exchange protocol; a trusted third party; or pre-established keys. Different options are allowed and with different properties as is indicated in the next section.
+In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between CoAP client and server, e.g. using a key exchange protocol; a trusted third party; or pre-established keys. Different options are allowed and with different properties as is indicated in the next section.
 
 Yet other optimizations to certificate based enrollment are possible further improve the performance of certificate enrollment and certificate based authentication, in particular the use of more compact representations of X.509 certificates such as {{I-D.raza-ace-cbor-certificates}}. 
 
@@ -208,7 +207,7 @@ EST-oscore follows closely the EST-coaps and EST design.
  
 
 ## Discovery and URI     {#discovery}
-The discovery of EST resources and the definition of the short EST-coaps URI paths specified in Section 5.1 of {{I-D.ietf-ace-coap-est}}, as well as the new Resource Type defined in Section 9.1 of {{I-D.ietf-ace-coap-est}} apply to EST-oscore. Support for OSCORE is indicated by the "osc" attribute defined in Section 9 of {{I-D.ietf-core-object-security}}, for example:
+The discovery of EST resources and the definition of the short EST-coaps URI paths specified in Section 5.1 of {{I-D.ietf-ace-coap-est}}, as well as the new Resource Type defined in Section 9.1 of {{I-D.ietf-ace-coap-est}} apply to EST-oscore. Support for OSCORE is indicated by the "osc" attribute defined in Section 9 of {{RFC8613}}, for example:
 
 ~~~~~~~~~~~
 
@@ -276,7 +275,7 @@ See Section 5.7 in {{I-D.ietf-ace-coap-est}}.
 # HTTP-CoAP registrar 
 As is noted in Section 6 of {{I-D.ietf-ace-coap-est}}, in real-world deployments, the EST server will not always reside within the CoAP boundary.  The EST-server can exist outside the constrained network in a non-constrained network that does not support CoAP but HTTP, thus requiring an intermediary CoAP-to-HTTP proxy.
 
-Since OSCORE is applicable to CoAP-mappable HTTP the EST payloads can be protected end-to-end between EST client and EST server independent of transport protocol or potential transport layer security which may need to be terminated in the proxy, see {{fig-proxy}}. When using the EDHOC key exchange protocol to establish a shared OSCORE security context, PKCS#10 request MAY be bound to the OSCORE security context using the procedure described in {{edhoc}}. The mappings between CoAP and HTTP referred to in Section 6 of {{I-D.ietf-ace-coap-est}} apply and the additional mappings resulting from the use of OSCORE are specified in Section 11 of {{I-D.ietf-core-object-security}}. 
+Since OSCORE is applicable to CoAP-mappable HTTP the EST payloads can be protected end-to-end between EST client and EST server independent of transport protocol or potential transport layer security which may need to be terminated in the proxy, see {{fig-proxy}}. When using the EDHOC key exchange protocol to establish a shared OSCORE security context, PKCS#10 request MAY be bound to the OSCORE security context using the procedure described in {{edhoc}}. The mappings between CoAP and HTTP referred to in Section 6 of {{I-D.ietf-ace-coap-est}} apply and the additional mappings resulting from the use of OSCORE are specified in Section 11 of {{RFC8613}}. 
 
 OSCORE provides end-to-end security between EST Server and EST Client. The use of TLS and DTLS is optional.
 
@@ -338,8 +337,9 @@ The response contains a chain of certificates used to establish an Explicit Trus
 
 CBOR encoding of X.509 certificates is specified in {{I-D.raza-ace-cbor-certificates}}. CBOR encoding of certificate chains is specified below. This allows for certificates encoded using the CBOR certificate format, or as binary X.509 data wrapped as a CBOR byte string. 
 
+CDDL:
 
-~~~~~~~~~~~ CDDL
+~~~~~~~~~~~
 certificate chain = (
    + certificate : bstr
 )
@@ -354,8 +354,9 @@ Existing EST standards specifies the enrollment request to be a PKCS#10 formated
 * subject public key, and
 * signature made by the subject private key.
 
+CDDL:
 
-~~~~~~~~~~~ CDDL
+~~~~~~~~~~~
 certificate request = (
    subject_common_name : bstr,
    public_key : bstr
