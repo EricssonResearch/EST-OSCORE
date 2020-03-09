@@ -343,7 +343,7 @@ certificate = x509_certificate / cbor_certificate
 
 ## Enrollment/Re-enrollment of Clients (/sen, /sren) ##
 
-Existing EST standards specifies the enrollment request to be a PKCS#10 formated message {{RFC2986}}. The essential information fields for the CA to verify are the following:
+Existing EST standards specify the enrollment request to be a PKCS#10 formated message {{RFC2986}}. The essential information fields for the CA to verify are the following:
 
 * Information about the subject, here condensed to the subject common name, 
 * subject public key, and
