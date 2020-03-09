@@ -444,7 +444,7 @@ b9e52ee0da9f9884d8dd41248c49804ab923330e208a168172dcae127a02206a
 ~~~~~~~~~~~
 
 # Other Explicit TA Material
-TBD Currently the all EST specifications provide the /crts (or /cacerts) endpoint . A successful request from the client to this endpoint will be answered with a bag of certificates which is subsequently installed in the Explicit TA. Shoudl we optionally support new endpoints, e.g., /rpks and/or /psks, which would return a set or RPKs and PSKs to be installed in the Explicit TA. Support for this type of key material in the Explicit TA result in smaller messages sizes. 
+TBD Currently the all EST specifications provide the /crts (or /cacerts) endpoint . A successful request from the client to this endpoint will be answered with a bag of certificates which is subsequently installed in the Explicit TA. Should we optionally support new endpoints, e.g., /rpks and/or /psks, which would return a set or RPKs and PSKs to be installed in the Explicit TA? Support for this type of key material in the Explicit TA result in smaller messages sizes. 
 
 --- fluff
 
