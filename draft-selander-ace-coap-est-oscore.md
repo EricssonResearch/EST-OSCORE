@@ -70,7 +70,7 @@ informative:
   I-D.ietf-6tisch-minimal-security:
   I-D.ietf-ace-oscore-profile:
   I-D.ietf-ace-oauth-authz:
-  I-D.selander-ace-cose-ecdhe:
+  I-D.selander-lake-edhoc:
   I-D.ietf-core-oscore-groupcomm:
   I-D.raza-ace-cbor-certificates:
 
@@ -92,9 +92,7 @@ This document describes a method for protecting EST payloads over CoAP or HTTP w
 
 OSCORE is designed for constrained environments, building on IoT standards such as CoAP, CBOR {{RFC7049}} and COSE {{RFC8152}}, and has in particular gained traction in settings where message sizes and the number of exchanged messages needs to be kept at a minimum, see e.g. {{I-D.ietf-6tisch-minimal-security}}, or for securing multicast CoAP messages {{I-D.ietf-core-oscore-groupcomm}}. Where OSCORE is implemented and used for communication security, the reuse of OSCORE for other purposes, such as enrollment, reduces the implementation footprint.
 
-In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between CoAP client and server, e.g. using a key exchange protocol; a trusted third party; or pre-established keys. Different options are allowed and with different properties as is indicated in the next section.
-
-Yet other optimizations to certificate based enrollment are possible further improve the performance of certificate enrollment and certificate based authentication, in particular the use of more compact representations of X.509 certificates such as {{I-D.raza-ace-cbor-certificates}}. 
+Another way to optimize the performance of certificate enrollment and certificate based authentication is the use of more compact representations of EST payloads (see {{cbor-payloads}}) and of X.509 certificates (see {{I-D.raza-ace-cbor-certificates}}. 
 
 
 ## EST-coaps operational differences {#operational}
@@ -102,8 +100,8 @@ Yet other optimizations to certificate based enrollment are possible further imp
 This specification builds on EST-coaps {{I-D.ietf-ace-coap-est}} but transport layer security provided by DTLS is replaced, or complemented, by protection of the application layer data. This specification deviates from EST-coaps in the following respects:
 
 * The DTLS record layer is replaced, or complemented, with OSCORE.
-* The DTLS handshake is replaced, or complemented, with the EDHOC key exchange protocol {{I-D.selander-ace-cose-ecdhe}}. The use of certificate authentication with EDHOC completes the analogy with EST-coaps, and provides perfect forward secrecy (PFS) of the keys used to protect the EST messages. However, PFS is not necessary for the enrollment procedure and adds significant overhead in terms of message size and round trips. EDHOC can also leverage its support for static Diffie-Hellman keys. The latter implies that the certificates contain public keys that can be used for a Diffie-Hellman key exchange.
-   * {{alternative-auth}} discusses alternative authenticated key exchange methods.
+* The DTLS handshake is replaced, or complemented, with the EDHOC key exchange protocol {{I-D.selander-lake-edhoc}} completing the analogy with EST-coaps. EDHOC can also leverage its support for static Diffie-Hellman keys. The latter enables that certificates containing static DH public keys can be used for authentication of a Diffie-Hellman key exchange.
+   * The use of a Diffie-Hellman key exchange authenticated with certificates adds significant overhead in terms of message size and round trips which is not necessary for the enrollment procedure. The main reason for specifying this is to align with EST-coaps, and reuse a security protocol rather than defining a special security protocol for enrollment. {{alternative-auth}} discusses alternative authentication and secure communication methods.
 * The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy.
 
 
@@ -120,9 +118,9 @@ This document uses terminology from {{I-D.ietf-ace-coap-est}} which in turn is b
 # OSCORE and Authenticated Key Establishment
 EST-oscore clients and servers MUST perform mutual authentication before EST-oscore functions and services can be accessed. Prior to the initial enrollment the client MUST be configured with an Implicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authenticate the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications. 
 
-The EST-coaps specification {{I-D.ietf-ace-coap-est}} only supports certificate-based authentication during the DTLS handshake between the EST-coaps server and the client. This specification replaces the DTLS handshake with the certificate-based EDHOC key exchange protocol but provides additional authenticated methods in the {{alternative-auth}} 
+The EST-coaps specification {{I-D.ietf-ace-coap-est}} only supports certificate-based authentication during the DTLS handshake between the EST-coaps server and the client. This specification replaces the DTLS handshake with the certificate-based EDHOC key exchange protocol and provides additional authenticated methods in the {{alternative-auth}} 
 
-The {{RFC5272}} specification describes proof-of-identity as the ability of an endpoint, i.e., client, to prove its possession of a private key which is linked to a certified public key. Additionally, the RFC details how to use channel-binding information (extracted from the underlying TLS layer) to link the proof-of-identity to a proof-of-possession. A proof-of-possession is generated by the client when it signs the PKCS#10 Request during the enrollment phase. Connection-based proof-of-possession is OPTIONAL for EST-oscore clients and servers. In case of certificate-based EDHOC key establishment, a set of actions are required which are further described below.
+The {{RFC5272}} specification describes proof-of-identity as the ability of an endpoint, i.e., client, to prove its possession of a private key which is linked to a certified public key. Additionally, {{RFC5272}} details how to use channel-binding information (extracted from the underlying TLS layer) to link the proof-of-identity to a proof-of-possession. A proof-of-possession is generated by the client when it signs the PKCS#10 Request during the enrollment phase. Connection-based proof-of-possession is OPTIONAL for EST-oscore clients and servers. In case of certificate-based EDHOC key establishment, a set of actions are required which are further described below.
 
 ## EDHOC   {#edhoc}
 The EST-oscore client and server use the EDHOC key establishment protocol to populate the OSCORE security context. The endpoints MUST use public key certificates to perform mutual authentication. During the initial enrollment the Implicit TA database MUST contain certificates capable of authenticating the EST-oscore server. When the EST-oscore client issues a request to the /crts endpoint of the EST server, it SHALL return a bag of certificates to be installed in the Explicit TA database. 
@@ -184,7 +182,7 @@ The EST-oscore specification has the same set of required-to-implement functions
 {: #table_functions cols="l l" title="Mandatory and optional EST-oscore functions"}
 
 ## Payload formats
-Similar to EST-coaps, EST-oscore transports the ASN.1 structure of a given Media-Type in binary format. In addition, it uses the same CoAP Content-Format Options to transport EST requests and responses. {{table_mediatypes}} summarizes the information from Section 5.3 in {{I-D.ietf-ace-coap-est}}.
+Similar to EST-coaps, EST-oscore allows transport of the ASN.1 structure of a given Media-Type in binary format. In addition, EST-oscore uses the same CoAP Content-Format Options to transport EST requests and responses . {{table_mediatypes}} summarizes the information from Section 5.3 in {{I-D.ietf-ace-coap-est}}.
 
 |  URI  | Content-Format                                       | #IANA |
 | /crts | N/A                                            (req) |   -   |
@@ -204,7 +202,7 @@ Similar to EST-coaps, EST-oscore transports the ASN.1 structure of a given Media
 |       | application/csrattrs                           (res) |  285  |
 {: #table_mediatypes cols="l l" title="EST functions and there associated Media-Type and IANA numbers"}
 
-NOTE: CBOR is becoming a de facto encoding scheme in IoT settings. There is already work in progress on CBOR encoding of X.509 certificates {{I-D.raza-ace-cbor-certificates}}, and this can be extended to other EST messages. 
+NOTE: CBOR is becoming a de facto encoding scheme in IoT settings. There is already work in progress on CBOR encoding of X.509 certificates {{I-D.raza-ace-cbor-certificates}}, and this can be extended to other EST messages, see {{cbor-payloads}}. 
 
 
 ## Message Bindings
@@ -219,7 +217,7 @@ The EST-oscore message characteristics are identical to those specified in Secti
 See Section 5.5 in {{I-D.ietf-ace-coap-est}}.
 
 ## Message fragmentation
-The EDHOC key exchange with asymmetric keys and certificates for authentication can result in large messages. It is RECOMMENDED to prevent IP fragmentation, since it involves an error-prone datagram reconstitution. In addition, this specification targets resource constrained networks such as IEEE 802.15.4 where throughput is limited and fragment loss can trigger costly retransmissions. Even though ECC-based certificates are an improvement over the RSA or DSA counterparts, they can still amount to roughly a 1000 bytes per certificate depending on the used algorithms, curves, OIDs, Subject Alternative Names (SAN) and cert fields. Additionally, in response to a client request to /crts an EST-oscore server might answer with multiple certificates. This specification employs the CoAP Block1 and Block2 fragmentation mechanisms as described in Section 5.6 of {{I-D.ietf-ace-coap-est}} to limit the size of the CoAP payload.
+The EDHOC key exchange with asymmetric keys and certificates for authentication can result in large messages. It is RECOMMENDED to prevent IP fragmentation, since it involves an error-prone datagram reconstitution. In addition, this specification targets resource constrained networks such as IEEE 802.15.4 where throughput is limited and fragment loss can trigger costly retransmissions. Even though ECC-based certificates are an improvement over the RSA or DSA counterparts, they can still amount to roughly a 1000 bytes per certificate depending on the used algorithms, curves, OIDs, Subject Alternative Names (SAN) and cert fields. Additionally, in response to a client request to /crts an EST-oscore server might answer with multiple certificates. This is another motivation for the need for more compact EST payloads, see {{cbor-payloads}}. This specification further employs the CoAP Block1 and Block2 fragmentation mechanisms as described in Section 5.6 of {{I-D.ietf-ace-coap-est}} to limit the size of the CoAP payload.
 
 
 ## Delayed Responses
@@ -271,6 +269,9 @@ TBD
 
 # Other Authentication Methods {#alternative-auth}
 
+In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between EST-oscore client and EST-oscore server. In this appendix we analyse alternatives to EDHOC authenticated with certificates, which was assumed in the body of this specification.
+
+
 ## TTP Assisted Authentication
 Trusted third party (TTP) based provisioning, such as the OSCORE profile of ACE {{I-D.ietf-ace-oscore-profile}} assumes existing security associations between the client and the TTP, and between the server and the TTP. This setup allows for reduced message overhead and round trips compared to the full-fledged EDHOC key exchange. Following the ACE terminology the TTP plays the role of the Authorization Server (AS), the EST-oscore client corresponds to the ACE client and the EST-oscore server is the ACE Resource Server (RS).
 
@@ -305,23 +306,21 @@ Once the client has retrieved the access token it follows the steps in {{I-D.iet
 
 
 ## PSK Based Authentication
-Another method to bootstrap EST services requires a pre-shared OSCORE context between the EST-oscore client and EST-oscore server. Authentication using the Implicit TA is no longer required since the shared security context authenticates both parties. The client and server have access to the same master secret as well as
+Another method to bootstrap EST services requires a pre-shared OSCORE security context between the EST-oscore client and EST-oscore server. Authentication using the Implicit TA is no longer required since the shared security context authenticates both parties. The EST-oscore client and EST-oscore server need access to the same OSCORE Master Secret as well as the OSCORE identifiers (Sender ID and Recipient ID) from which an OSCORE security context can be derived, see {{RFC8613}}. Some optional parameters may be provisioned if different from the default value:
 
-  * a server identifier
-  * a client identifier
-  * a context identifier
-  * an AEAD algorithm
-  * an HKDF algorithm
-  * a salt
-  * a replay window type and size
+  * an ID context distinguishing between different OSCORE security contexts to use,
+  * an AEAD algorithm,
+  * an HKDF algorithm,
+  * a master salt, and 
+  * a replay window size.
 
-The OSCORE specification {{RFC8613}} makes use of the 'kid context' header parameter in the COSE object to indicate which OSCORE security context to use.
+
 
 ## EDHOC with alternative authentication methods
 {{edhoc}} describes the use of EDHOC in combination with certificates during the initial bootstrap phase. The latter requires that the Implicit TA is equipped with certificates capable of authenticating the EST-oscore server. Since EDHOC also supports authentication with RPKs and PSKs, the Implicit TA can be populated alternatively with RPKs and PSKs. Similarly to {{edhoc}}, client authentication can be performed with long-lived RPKs or long-lived PSKs, installed by the manufacturer. Re-enrollment requests can be authenticated through a valid certificate issued previously by the EST-oscore server or by using the key material available in the Implicit TA.
 
 
-# CBOR Encoding of EST Payloads
+# CBOR Encoding of EST Payloads {#cbor-payloads}
 
 Current EST based specifications transport messages using the ASN.1 data type declaration. It would be favorable to use a more compact representation better suitable for constrained device implementations. In this appendix we list CBOR encodings of requests and responses of the mandatory EST functions (see {{est-functions}}).
 
