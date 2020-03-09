@@ -54,18 +54,19 @@ normative:
   RFC7252:
   RFC7959:
   RFC8152:
+  RFC8613:
   I-D.ietf-ace-coap-est:
-  I-D.ietf-core-object-security:
 
 
 informative:
 
+  RFC2985:
+  RFC2986:
   RFC5272:
   RFC6347:
   RFC7228:
   RFC7030:
   RFC8392:
-  RFC8613:
   I-D.ietf-6tisch-minimal-security:
   I-D.ietf-ace-oscore-profile:
   I-D.ietf-ace-oauth-authz:
@@ -87,11 +88,11 @@ One of the challenges with deploying a Public Key Infrastructure (PKI) for the I
 
 One optimization of certificate enrollment targeting IoT deployments is specified in EST-coaps ({{I-D.ietf-ace-coap-est}}), which defines a version of Enrollment over Secure Transport {{RFC7030}} for transporting EST payloads over CoAP {{RFC7252}} and DTLS {{RFC6347}}, instead of secured HTTP.
 
-This document describes a method for protecting EST payloads over CoAP or HTTP with OSCORE {{I-D.ietf-core-object-security}}. OSCORE specifies an extension to CoAP which protects the application layer message and can be applied independently of how CoAP messages are transported. OSCORE can also be applied to CoAP-mappable HTTP which enables end-to-end security for mixed CoAP and HTTP transfer of application layer data. Hence EST payloads can be protected end-to-end independent of underlying transport and through proxies translating between between CoAP and HTTP.
+This document describes a method for protecting EST payloads over CoAP or HTTP with OSCORE {{RFC8613}}. OSCORE specifies an extension to CoAP which protects the application layer message and can be applied independently of how CoAP messages are transported. OSCORE can also be applied to CoAP-mappable HTTP which enables end-to-end security for mixed CoAP and HTTP transfer of application layer data. Hence EST payloads can be protected end-to-end independent of underlying transport and through proxies translating between between CoAP and HTTP.
 
 OSCORE is designed for constrained environments, building on IoT standards such as CoAP, CBOR {{RFC7049}} and COSE {{RFC8152}}, and has in particular gained traction in settings where message sizes and the number of exchanged messages needs to be kept at a minimum, see e.g. {{I-D.ietf-6tisch-minimal-security}}, or for securing multicast CoAP messages {{I-D.ietf-core-oscore-groupcomm}}. Where OSCORE is implemented and used for communication security, the reuse of OSCORE for other purposes, such as enrollment, reduces the implementation footprint.
 
-In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{I-D.ietf-core-object-security}}) needs to be established between CoAP client and server, e.g. using a key exchange protocol; a trusted third party; or pre-established keys. Different options are allowed and with different properties as is indicated in the next section.
+In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between CoAP client and server, e.g. using a key exchange protocol; a trusted third party; or pre-established keys. Different options are allowed and with different properties as is indicated in the next section.
 
 Yet other optimizations to certificate based enrollment are possible further improve the performance of certificate enrollment and certificate based authentication, in particular the use of more compact representations of X.509 certificates such as {{I-D.raza-ace-cbor-certificates}}. 
 
@@ -159,7 +160,7 @@ EST-oscore follows closely the EST-coaps and EST design.
  
 
 ## Discovery and URI     {#discovery}
-The discovery of EST resources and the definition of the short EST-coaps URI paths specified in Section 5.1 of {{I-D.ietf-ace-coap-est}}, as well as the new Resource Type defined in Section 9.1 of {{I-D.ietf-ace-coap-est}} apply to EST-oscore. Support for OSCORE is indicated by the "osc" attribute defined in Section 9 of {{I-D.ietf-core-object-security}}, for example:
+The discovery of EST resources and the definition of the short EST-coaps URI paths specified in Section 5.1 of {{I-D.ietf-ace-coap-est}}, as well as the new Resource Type defined in Section 9.1 of {{I-D.ietf-ace-coap-est}} apply to EST-oscore. Support for OSCORE is indicated by the "osc" attribute defined in Section 9 of {{RFC8613}}, for example:
 
 ~~~~~~~~~~~
 
@@ -170,7 +171,7 @@ The discovery of EST resources and the definition of the short EST-coaps URI pat
 
 ~~~~~~~~~~~
  
-## Mandatory/optional EST Functions
+## Mandatory/optional EST Functions {#est-functions}
 The EST-oscore specification has the same set of required-to-implement functions as EST-coaps. The content of {{table_functions}} is adapted from Section 5.2 in {{I-D.ietf-ace-coap-est}} and uses the updated URI paths (see {{discovery}}).
 
 | EST functions  | EST-oscore implementation   |
@@ -227,7 +228,7 @@ See Section 5.7 in {{I-D.ietf-ace-coap-est}}.
 # HTTP-CoAP registrar 
 As is noted in Section 6 of {{I-D.ietf-ace-coap-est}}, in real-world deployments, the EST server will not always reside within the CoAP boundary.  The EST-server can exist outside the constrained network in a non-constrained network that does not support CoAP but HTTP, thus requiring an intermediary CoAP-to-HTTP proxy.
 
-Since OSCORE is applicable to CoAP-mappable HTTP the EST payloads can be protected end-to-end between EST client and EST server independent of transport protocol or potential transport layer security which may need to be terminated in the proxy, see {{fig-proxy}}. When using the EDHOC key exchange protocol to establish a shared OSCORE security context, PKCS#10 request MAY be bound to the OSCORE security context using the procedure described in {{edhoc}}. The mappings between CoAP and HTTP referred to in Section 6 of {{I-D.ietf-ace-coap-est}} apply and the additional mappings resulting from the use of OSCORE are specified in Section 11 of {{I-D.ietf-core-object-security}}. 
+Since OSCORE is applicable to CoAP-mappable HTTP the EST payloads can be protected end-to-end between EST client and EST server independent of transport protocol or potential transport layer security which may need to be terminated in the proxy, see {{fig-proxy}}. When using the EDHOC key exchange protocol to establish a shared OSCORE security context, PKCS#10 request MAY be bound to the OSCORE security context using the procedure described in {{edhoc}}. The mappings between CoAP and HTTP referred to in Section 6 of {{I-D.ietf-ace-coap-est}} apply and the additional mappings resulting from the use of OSCORE are specified in Section 11 of {{RFC8613}}. 
 
 OSCORE provides end-to-end security between EST Server and EST Client. The use of TLS and DTLS is optional.
 
@@ -317,7 +318,128 @@ Another method to bootstrap EST services requires a pre-shared OSCORE context be
 The OSCORE specification {{RFC8613}} makes use of the 'kid context' header parameter in the COSE object to indicate which OSCORE security context to use.
 
 
+
 # CBOR Encoding of EST Payloads
+
+Current EST based specifications transport messages using the ASN.1 data type declaration. It would be favorable to use a more compact representation better suitable for constrained device implementations. In this appendix we list CBOR encodings of requests and responses of the mandatory EST functions (see {{est-functions}}).
+
+
+## Distribution of CA Certificates (/crts) ##
+
+The EST client can request a copy of the current CA certificates.
+In EST-coaps and EST-oscore this is done using a GET request to /crts (with empty payload). 
+The response contains a chain of certificates used to establish an Explicit Trust Anchor database for subsequent authentication of the EST server. 
+
+CBOR encoding of X.509 certificates is specified in {{I-D.raza-ace-cbor-certificates}}. CBOR encoding of certificate chains is specified below. This allows for certificates encoded using the CBOR certificate format, or as binary X.509 data wrapped as a CBOR byte string. 
+
+CDDL:
+
+~~~~~~~~~~~
+certificate chain = (
+   + certificate : bstr
+)
+certificate = x509_certificate / cbor_certificate
+~~~~~~~~~~~
+
+## Enrollment/Re-enrollment of Clients (/sen, /sren) ##
+
+Existing EST standards specifies the enrollment request to be a PKCS#10 formated message {{RFC2986}}. The essential information fields for the CA to verify are the following:
+
+* Information about the subject, here condensed to the subject common name, 
+* subject public key, and
+* signature made by the subject private key.
+
+CDDL:
+
+~~~~~~~~~~~
+certificate request = (
+   subject_common_name : bstr,
+   public_key : bstr
+   signature : bstr,
+   ? ( signature_alg : int, public_key_info : int )
+)
+~~~~~~~~~~~
+
+The response to the enrollment request is the subject certificate, for which CBOR encoding is specified in {{I-D.raza-ace-cbor-certificates}}.
+
+The same message content in request and response applies to re-enrollment.
+
+TBD  PKCS#10 allows inclusion of attributes, which can be used to specify extension requests, see Section 5.4.2 in {{RFC2985}}. Are these attributes important for the scenarios we care about, or can we allow the CA to decide this?
+
+### CBOR Certificate Request Examples ###
+
+Here is an example of CBOR encoding of certificate request as defined in the previous section. 
+
+
+114 bytes:
+
+(
+  h'0123456789ABCDF0',
+  h'61eb80d2abf7d7e4139c86b87e42466f1b4220d3f7ff9d6a1ae298fb9adbb464',
+  h'30440220064348b9e52ee0da9f9884d8dd41248c49804ab923330e208a168172dcae1
+  27a02206a06c05957f1db8c4e207437b9ab7739cb857aa6dd9486627b8961606a2b68ae'
+)
+
+In the example above the signature is generated on an ASN.1 data structure. To validate this, the receiver needs to reconstruct the original data structure. Alternatively, in native mode, the signature is generated on the profiled data structure, in which case the overall overhead is further reduced.
+
+
+### ASN.1 Certificate Request Examples ###
+
+A corresponding certificate request of the previous section using ASN.1 is shown in {{fig-ASN1}}.
+
+~~~~~~~~~~~
+SEQUENCE {
+   SEQUENCE {
+     INTEGER 0
+     SEQUENCE {
+       SET {
+         SEQUENCE {
+           OBJECT IDENTIFIER commonName (2 5 4 3)
+           UTF8String '01-23-45-67-89-AB-CD-F0'
+           }
+         }
+       }
+     SEQUENCE {
+       SEQUENCE {
+         OBJECT IDENTIFIER ecPublicKey (1 2 840 10045 2 1)
+         OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
+         }
+       BIT STRING
+         (65 byte public key)
+       }
+   SEQUENCE {
+     OBJECT IDENTIFIER ecdsaWithSHA256 (1 2 840 10045 4 3 2)
+     }
+   BIT STRING
+     (64 byte signature)
+~~~~~~~~~~~
+{: #fig-ASN1 title="ASN.1 Structure."}
+{: artwork-align="center"}
+
+
+In Base64, 375 bytes:
+
+~~~~~~~~~~~
+-----BEGIN CERTIFICATE REQUEST-----
+MIHcMIGEAgEAMCIxIDAeBgNVBAMMFzAxLTIzLTQ1LTY3LTg5LUFCLUNELUYwMFkw
+EwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEYeuA0qv31+QTnIa4fkJGbxtCINP3/51q
+GuKY+5rbtGSeZn3l8rVbU0jVEBWvKhAd98JeqgsuauGHRNWt2FqJ1aAAMAoGCCqG
+SM49BAMCA0cAMEQCIAZDSLnlLuDan5iE2N1BJIxJgEq5IzMOIIoWgXLcrhJ6AiBq
+BsBZV/HbjE4gdDe5q3c5y4V6pt2UhmJ7iWFgaitorg==
+-----END CERTIFICATE REQUEST-----
+~~~~~~~~~~~
+
+In hex, 221 bytes:
+
+~~~~~~~~~~~
+3081dc30818402010030223120301e06035504030c1730312d32332d34352d36
+372d38392d41422d43442d46303059301306072a8648ce3d020106082a8648ce
+3d0301070342000461eb80d2abf7d7e4139c86b87e42466f1b4220d3f7ff9d6a
+1ae298fb9adbb4649e667de5f2b55b5348d51015af2a101df7c25eaa0b2e6ae1
+8744d5add85a89d5a000300a06082a8648ce3d04030203470030440220064348
+b9e52ee0da9f9884d8dd41248c49804ab923330e208a168172dcae127a02206a
+06c05957f1db8c4e207437b9ab7739cb857aa6dd9486627b8961606a2b68ae
+~~~~~~~~~~~
 
 
 
