@@ -315,9 +315,16 @@ TBD
 
 --- back
 
-# Examples {#examples}
+# Other Authentication Methods 
 
-TBD
+## TTP Assisted Authentication
+
+## PSK Based Authentication
+
+
+# CBOR Encoding of EST Payloads
+
+
 
 --- fluff
 
