@@ -55,7 +55,7 @@ normative:
   RFC7959:
   RFC8152:
   RFC8613:
-  cbI-D.ietf-lake-edhoc:
+  I-D.ietf-lake-edhoc:
   I-D.ietf-ace-coap-est:
 
 
