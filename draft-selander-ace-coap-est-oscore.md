@@ -55,6 +55,7 @@ normative:
   RFC7959:
   RFC8152:
   RFC8613:
+  cbI-D.ietf-lake-edhoc:
   I-D.ietf-ace-coap-est:
 
 
@@ -70,9 +71,8 @@ informative:
   I-D.ietf-6tisch-minimal-security:
   I-D.ietf-ace-oscore-profile:
   I-D.ietf-ace-oauth-authz:
-  I-D.selander-lake-edhoc:
   I-D.ietf-core-oscore-groupcomm:
-  I-D.raza-ace-cbor-certificates:
+  I-D.mattsson-cose-cbor-cert-compress:
 
 
 --- abstract
@@ -92,7 +92,7 @@ This document describes a method for protecting EST payloads over CoAP or HTTP w
 
 OSCORE is designed for constrained environments, building on IoT standards such as CoAP, CBOR {{RFC7049}} and COSE {{RFC8152}}, and has in particular gained traction in settings where message sizes and the number of exchanged messages needs to be kept at a minimum, see e.g. {{I-D.ietf-6tisch-minimal-security}}, or for securing multicast CoAP messages {{I-D.ietf-core-oscore-groupcomm}}. Where OSCORE is implemented and used for communication security, the reuse of OSCORE for other purposes, such as enrollment, reduces the implementation footprint.
 
-Another way to optimize the performance of certificate enrollment and certificate based authentication is the use of more compact representations of EST payloads (see {{cbor-payloads}}) and of X.509 certificates (see {{I-D.raza-ace-cbor-certificates}}. 
+Another way to optimize the performance of certificate enrollment and certificate based authentication is the use of more compact representations of EST payloads (see {{cbor-payloads}}) and of X.509 certificates (see {{I-D.mattsson-cose-cbor-cert-compress}}. 
 
 
 ## EST-coaps operational differences {#operational}
@@ -100,7 +100,7 @@ Another way to optimize the performance of certificate enrollment and certificat
 This specification builds on EST-coaps {{I-D.ietf-ace-coap-est}} but transport layer security provided by DTLS is replaced, or complemented, by protection of the application layer data. This specification deviates from EST-coaps in the following respects:
 
 * The DTLS record layer is replaced, or complemented, with OSCORE.
-* The DTLS handshake is replaced, or complemented, with the EDHOC key exchange protocol {{I-D.selander-lake-edhoc}} completing the analogy with EST-coaps. EDHOC can also leverage its support for static Diffie-Hellman keys. The latter enables that certificates containing static DH public keys can be used for authentication of a Diffie-Hellman key exchange.
+* The DTLS handshake is replaced, or complemented, with the EDHOC key exchange protocol {{I-D.ietf-lake-edhoc}} completing the analogy with EST-coaps. EDHOC can also leverage its support for static Diffie-Hellman keys. The latter enables that certificates containing static DH public keys can be used for authentication of a Diffie-Hellman key exchange.
    * The use of a Diffie-Hellman key exchange authenticated with certificates adds significant overhead in terms of message size and round trips which is not necessary for the enrollment procedure. The main reason for specifying this is to align with EST-coaps, and reuse a security protocol rather than defining a special security protocol for enrollment. {{alternative-auth}} discusses alternative authentication and secure communication methods.
 * The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy.
 
@@ -202,7 +202,7 @@ Similar to EST-coaps, EST-oscore allows transport of the ASN.1 structure of a gi
 |       | application/csrattrs                           (res) |  285  |
 {: #table_mediatypes cols="l l" title="EST functions and there associated Media-Type and IANA numbers"}
 
-NOTE: CBOR is becoming a de facto encoding scheme in IoT settings. There is already work in progress on CBOR encoding of X.509 certificates {{I-D.raza-ace-cbor-certificates}}, and this can be extended to other EST messages, see {{cbor-payloads}}. 
+NOTE: CBOR is becoming a de facto encoding scheme in IoT settings. There is already work in progress on CBOR encoding of X.509 certificates {{I-D.mattsson-cose-cbor-cert-compress}}, and this can be extended to other EST messages, see {{cbor-payloads}}. 
 
 
 ## Message Bindings
@@ -331,7 +331,7 @@ The EST client can request a copy of the current CA certificates.
 In EST-coaps and EST-oscore this is done using a GET request to /crts (with empty payload). 
 The response contains a chain of certificates used to establish an Explicit Trust Anchor database for subsequent authentication of the EST server. 
 
-CBOR encoding of X.509 certificates is specified in {{I-D.raza-ace-cbor-certificates}}. CBOR encoding of certificate chains is specified below. This allows for certificates encoded using the CBOR certificate format, or as binary X.509 data wrapped as a CBOR byte string. 
+CBOR encoding of X.509 certificates is specified in {{I-D.mattsson-cose-cbor-cert-compress}}. CBOR encoding of certificate chains is specified below. This allows for certificates encoded using the CBOR certificate format, or as binary X.509 data wrapped as a CBOR byte string.
 
 CDDL:
 
@@ -361,7 +361,7 @@ certificate request = (
 )
 ~~~~~~~~~~~
 
-The response to the enrollment request is the subject certificate, for which CBOR encoding is specified in {{I-D.raza-ace-cbor-certificates}}.
+The response to the enrollment request is the subject certificate, for which CBOR encoding is specified in {{I-D.mattsson-cose-cbor-cert-compress}}.
 
 The same message content in request and response applies to re-enrollment.
 
