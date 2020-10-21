@@ -72,13 +72,15 @@ informative:
   I-D.ietf-ace-oscore-profile:
   I-D.ietf-ace-oauth-authz:
   I-D.ietf-core-oscore-groupcomm:
+  I-D.ietf-cose-x509:
   I-D.mattsson-cose-cbor-cert-compress:
-
+  I-D.palombini-core-oscore-edhoc:
+  
 
 --- abstract
 
 
-This document specifies public-key certificate enrollment procedures protected with application-layer security protocols suitable for Internet of Things (IoT) deployments. The protocols leverage payload formats defined in Enrollment over Secure Transport (EST) and existing IoT standards including the Constrained Application Protocol (CoAP), Concise Binary Object Representation (CBOR) and the CBOR Object Signing and Encryption (COSE) format. 
+This document specifies public-key certificate enrollment procedures protected with lightweight application-layer security protocols suitable for Internet of Things (IoT) deployments. The protocols leverage payload formats defined in Enrollment over Secure Transport (EST) and existing IoT standards including the Constrained Application Protocol (CoAP), Concise Binary Object Representation (CBOR) and the CBOR Object Signing and Encryption (COSE) format.
 
 --- middle
 
@@ -90,9 +92,16 @@ One optimization of certificate enrollment targeting IoT deployments is specifie
 
 This document describes a method for protecting EST payloads over CoAP or HTTP with OSCORE {{RFC8613}}. OSCORE specifies an extension to CoAP which protects the application layer message and can be applied independently of how CoAP messages are transported. OSCORE can also be applied to CoAP-mappable HTTP which enables end-to-end security for mixed CoAP and HTTP transfer of application layer data. Hence EST payloads can be protected end-to-end independent of underlying transport and through proxies translating between between CoAP and HTTP.
 
-OSCORE is designed for constrained environments, building on IoT standards such as CoAP, CBOR {{RFC7049}} and COSE {{RFC8152}}, and has in particular gained traction in settings where message sizes and the number of exchanged messages needs to be kept at a minimum, see e.g. {{I-D.ietf-6tisch-minimal-security}}, or for securing multicast CoAP messages {{I-D.ietf-core-oscore-groupcomm}}. Where OSCORE is implemented and used for communication security, the reuse of OSCORE for other purposes, such as enrollment, reduces the implementation footprint.
+OSCORE is designed for constrained environments, building on IoT standards such as CoAP, CBOR {{RFC7049}} and COSE {{RFC8152}}, and has in particular gained traction in settings where message sizes and the number of exchanged messages needs to be kept at a minimum, such as 6TiSCH {{I-D.ietf-6tisch-minimal-security}}, or for securing multicast CoAP messages {{I-D.ietf-core-oscore-groupcomm}}. Where OSCORE is implemented and used for communication security, the reuse of OSCORE for other purposes, such as enrollment, reduces the implementation footprint.
 
-Another way to optimize the performance of certificate enrollment and certificate based authentication is the use of more compact representations of EST payloads (see {{cbor-payloads}}) and of X.509 certificates (see {{I-D.mattsson-cose-cbor-cert-compress}}. 
+In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between EST-oscore client and EST-oscore server. For this purpose we assume the use of the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}. Other methods for key establishment are described in {{alternative-auth}}.
+
+Other ways to optimize the performance of certificate enrollment and certificate based authentication include the use of:
+
+* Compact representations of X.509 certificates (see {{I-D.mattsson-cose-cbor-cert-compress}})
+* Certificates by reference (see {{I-D.ietf-cose-x509}})
+* Compact representations of EST payloads (see {{cbor-payloads}})
+
 
 
 ## EST-coaps operational differences {#operational}
