@@ -185,7 +185,16 @@ The discovery of EST resources and the definition of the short EST-coaps URI pat
    </est>; rt="ace.est";osc
 
 ~~~~~~~~~~~
+
+## Distribution of RPKs
+
+The EST client can request a copy of the current CA public keys.
+
+TODO: map relevant parts of section 4.1 of RFC 7030 and other EST function related content from RFC7030 and EST-coaps
+
+RATIONALE: EST-coaps provides the /crts operation. A successful request from the client to this resource will be answered with a bag of certificates which is subsequently installed in the Explicit TA.  Analogously we define here the new EST function /rpks which returns a set of RPKs to be installed in the Explicit TA. Support for this type of key material in the Explicit TA result in smaller messages sizes. 
  
+
 ## Mandatory/optional EST Functions {#est-functions}
 The EST-oscore specification has the same set of required-to-implement functions as EST-coaps. The content of {{table_functions}} is adapted from Section 5.2 in {{I-D.ietf-ace-coap-est}} and uses the updated URI paths (see {{discovery}}).
 
@@ -459,8 +468,6 @@ b9e52ee0da9f9884d8dd41248c49804ab923330e208a168172dcae127a02206a
 06c05957f1db8c4e207437b9ab7739cb857aa6dd9486627b8961606a2b68ae
 ~~~~~~~~~~~
 
-# Other Explicit TA Material
-TBD Currently all EST specifications provide the /crts (or /cacerts) endpoint. A successful request from the client to this endpoint will be answered with a bag of certificates which is subsequently installed in the Explicit TA. Should we optionally support new endpoints, e.g., /rpks and/or /psks, which would return a set or RPKs and PSKs to be installed in the Explicit TA? Support for this type of key material in the Explicit TA result in smaller messages sizes. 
 
 --- fluff
 
