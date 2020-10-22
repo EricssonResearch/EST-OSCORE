@@ -216,6 +216,8 @@ The EST-oscore specification has the same set of required-to-implement functions
 | /att           | OPTIONAL                    |
 {: #table_functions cols="l l" title="Mandatory and optional EST-oscore functions"}
 
+TODO: Add /rpks OPTIONAL
+
 ## Payload formats
 Similar to EST-coaps, EST-oscore allows transport of the ASN.1 structure of a given Media-Type in binary format. In addition, EST-oscore uses the same CoAP Content-Format Options to transport EST requests and responses . {{table_mediatypes}} summarizes the information from Section 5.3 in {{I-D.ietf-ace-coap-est}}.
 
@@ -304,7 +306,7 @@ TBD
 
 # Other Authentication Methods {#alternative-auth}
 
-In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between EST-oscore client and EST-oscore server. In this appendix we analyse alternatives to EDHOC authenticated with certificates, which was assumed in the body of this specification.
+In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between EST-oscore client and EST-oscore server. In this appendix we analyse alternatives to EDHOC, which was assumed in the body of this specification.
 
 
 ## TTP Assisted Authentication
