@@ -96,7 +96,7 @@ OSCORE is designed for constrained environments, building on IoT standards such 
 
 In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between EST-oscore client and EST-oscore server. For this purpose we assume the use of the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}. Other methods for key establishment are described in {{alternative-auth}}.
 
-Other ways to optimize the performance of certificate enrollment and certificate based authentication include the use of:
+Other ways to optimize the performance of certificate enrollment and certificate based authentication described in this draft include the use of:
 
 * Compact representations of X.509 certificates (see {{I-D.mattsson-cose-cbor-cert-compress}})
 * Certificates by reference (see {{I-D.ietf-cose-x509}})
@@ -104,14 +104,21 @@ Other ways to optimize the performance of certificate enrollment and certificate
 
 
 
-## EST-coaps operational differences {#operational}
+## Operational Differences with EST-coaps  {#operational}
 
-This specification builds on EST-coaps {{I-D.ietf-ace-coap-est}} but transport layer security provided by DTLS is replaced, or complemented, by protection of the application layer data. This specification deviates from EST-coaps in the following respects:
+The protection of EST payloads defined in this document builds on EST-coaps {{I-D.ietf-ace-coap-est}} but transport layer security provided by DTLS is replaced, or complemented, by protection of the transfer- and application layer data (i.e., CoAP message fields and payload). This specification deviates from EST-coaps in the following respects:
 
 * The DTLS record layer is replaced, or complemented, with OSCORE.
-* The DTLS handshake is replaced, or complemented, with the EDHOC key exchange protocol {{I-D.ietf-lake-edhoc}} completing the analogy with EST-coaps. EDHOC can also leverage its support for static Diffie-Hellman keys. The latter enables that certificates containing static DH public keys can be used for authentication of a Diffie-Hellman key exchange.
-   * The use of a Diffie-Hellman key exchange authenticated with certificates adds significant overhead in terms of message size and round trips which is not necessary for the enrollment procedure. The main reason for specifying this is to align with EST-coaps, and reuse a security protocol rather than defining a special security protocol for enrollment. {{alternative-auth}} discusses alternative authentication and secure communication methods.
-* The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy.
+* The DTLS handshake is replaced, or complemented, with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}.
+   * Authentication based on certificates is complemented with  authentication based on raw public keys.
+   * Authentication based on signature keys is complemented with authentication based on static Diffie-Hellman keys, for certificates/raw public keys.
+   * Authentication based on certificate by value is complemented with authentication based on certificate/raw public keys by reference.
+* The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy (see {{proxying}}).
+
+So, while the actual payloads protected by EST-oscore are identical to that of EST-coaps, there are differences with respect to authentication.
+The reason for this deviation is that a significant overhead can be removed from the authentication procedure in terms of message sizes and round trips by using a different handshake, public key type or transported credential, and this is independent of the enrollment procedure.
+
+{{alternative-auth}} discusses alternative authentication and secure communication methods.
 
 
 # Terminology   {#terminology}
@@ -232,7 +239,7 @@ The EDHOC key exchange with asymmetric keys and certificates for authentication 
 ## Delayed Responses
 See Section 5.7 in {{I-D.ietf-ace-coap-est}}.
 
-# HTTP-CoAP registrar 
+# HTTP-CoAP registrar {#proxying}
 As is noted in Section 6 of {{I-D.ietf-ace-coap-est}}, in real-world deployments, the EST server will not always reside within the CoAP boundary.  The EST-server can exist outside the constrained network in a non-constrained network that does not support CoAP but HTTP, thus requiring an intermediary CoAP-to-HTTP proxy.
 
 Since OSCORE is applicable to CoAP-mappable HTTP the EST payloads can be protected end-to-end between EST client and EST server independent of transport protocol or potential transport layer security which may need to be terminated in the proxy, see {{fig-proxy}}. When using the EDHOC key exchange protocol to establish a shared OSCORE security context, PKCS#10 request MAY be bound to the OSCORE security context using the procedure described in {{edhoc}}. The mappings between CoAP and HTTP referred to in Section 6 of {{I-D.ietf-ace-coap-est}} apply and the additional mappings resulting from the use of OSCORE are specified in Section 11 of {{RFC8613}}. 
