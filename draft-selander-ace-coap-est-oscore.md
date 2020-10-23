@@ -92,7 +92,7 @@ One optimization of certificate enrollment targeting IoT deployments is specifie
 
 This document describes a method for protecting EST payloads over CoAP or HTTP with OSCORE {{RFC8613}}. OSCORE specifies an extension to CoAP which protects the application layer message and can be applied independently of how CoAP messages are transported. OSCORE can also be applied to CoAP-mappable HTTP which enables end-to-end security for mixed CoAP and HTTP transfer of application layer data. Hence EST payloads can be protected end-to-end independent of underlying transport and through proxies translating between between CoAP and HTTP.
 
-OSCORE is designed for constrained environments, building on IoT standards such as CoAP, CBOR {{RFC7049}} and COSE {{RFC8152}}, and has in particular gained traction in settings where message sizes and the number of exchanged messages needs to be kept at a minimum, such as 6TiSCH {{I-D.ietf-6tisch-minimal-security}}, or for securing multicast CoAP messages {{I-D.ietf-core-oscore-groupcomm}}. Where OSCORE is implemented and used for communication security, the reuse of OSCORE for other purposes, such as enrollment, reduces the implementation footprint.
+OSCORE is designed for constrained environments, building on IoT standards such as CoAP, CBOR {{RFC7049}} and COSE {{RFC8152}}, and has in particular gained traction in settings where message sizes and the number of exchanged messages needs to be kept at a minimum, such as 6TiSCH {{I-D.ietf-6tisch-minimal-security}}, or for securing multicast CoAP messages {{I-D.ietf-core-oscore-groupcomm}}. Where OSCORE is implemented and used for communication security, the reuse of OSCORE for other purposes, such as enrollment, reduces the code footprint.
 
 In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between EST-oscore client and EST-oscore server. For this purpose we assume the use of the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}. Other methods for key establishment are described in {{alternative-auth}}.
 
@@ -109,17 +109,16 @@ Other ways to optimize the performance of certificate enrollment and certificate
 The protection of EST payloads defined in this document builds on EST-coaps {{I-D.ietf-ace-coap-est}} but transport layer security provided by DTLS is replaced, or complemented, by protection of the transfer- and application layer data (i.e., CoAP message fields and payload). This specification deviates from EST-coaps in the following respects:
 
 * The DTLS record layer is replaced, or complemented, with OSCORE.
-* The DTLS handshake is replaced, or complemented, with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}.
+* The DTLS handshake is replaced, or complemented, with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}, and makes use of the following features:
    * Authentication based on certificates is complemented with  authentication based on raw public keys.
    * Authentication based on signature keys is complemented with authentication based on static Diffie-Hellman keys, for certificates/raw public keys.
    * Authentication based on certificate by value is complemented with authentication based on certificate/raw public keys by reference.
-* One new EST payload /rpks is defined for installation of explicit TAs in the EST client.
+* One new EST function, /rpks, is defined for installation of explicit TAs in the EST client.
 * The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy (see {{proxying}}).
 
-So, while the actual payloads protected by EST-oscore are essentially the same as that of EST-coaps, there are differences with respect to authentication.
-The reason for these deviations is that a significant overhead can be removed in terms of message sizes and round trips by using a different handshake, public key type or transported credential, and this is independent of the enrollment procedure.
+So, while the same authentication scheme (Diffie-Hellman key exchange authenticated with transported certificates) and the same EST payloads as EST-coaps also apply to EST-oscore, the latter specifies other authentication schemes and a new matching EST function. The reason for these deviations is that a significant overhead can be removed in terms of message sizes and round trips by using a different handshake, public key type or transported credential, and those are independent of the actual enrollment procedure.
 
-{{alternative-auth}} discusses alternative authentication and secure communication methods.
+{{alternative-auth}} discusses yet other authentication and secure communication methods.
 
 
 # Terminology   {#terminology}
