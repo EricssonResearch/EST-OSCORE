@@ -139,7 +139,7 @@ The term "Trust Anchor" follows the terminology of {{RFC6024}}: "A trust anchor 
 One example of specifying more compact alternatives to X.509 certificates for exchanging trust anchor information is provided by the TrustAnchorInfo structure of {{RFC5914}}, the mandatory parts of which essentially is the SubjectPublicKeyInfo structure {{RFC5280}}, i.e. the algorithm followed by the public key.
 
 
-# OSCORE and Authenticated Key Establishment
+# Authentication
 
 
 EST-oscore clients and servers MUST perform mutual authentication. The client MUST authenticate the server before the enrolment is complete. The server MUST authenticate the client before issuing a certificate. The client MUST be configured with an Implicit or Explicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authorize the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications.
