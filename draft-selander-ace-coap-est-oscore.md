@@ -142,7 +142,7 @@ One example of specifying more compact alternatives to X.509 certificates for ex
 # OSCORE and Authenticated Key Establishment
 
 
-EST-oscore clients and servers MUST perform mutual authentication. The client MUST authenticate the server before making the enrolment request. The server MUST authenticate the client before issuing a certificate. Prior to the initial enrollment the client MUST be configured with an Implicit or Explicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authorize the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications.
+EST-oscore clients and servers MUST perform mutual authentication. The client MUST authenticate the server before the enrolment is complete. The server MUST authenticate the client before issuing a certificate. The client MUST be configured with an Implicit or Explicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authorize the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications.
 
 EST-oscore, like EST-coaps, supports certificate-based authentication between EST client and server. This specification replaces the DTLS handshake in EST-coaps with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}} and provides additional authentication methods, see {{edhoc}} and {{alternative-auth}}.
 
