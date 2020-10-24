@@ -129,9 +129,16 @@ document are to be interpreted as described in {{RFC2119}}. These
 words may also appear in this document in lowercase, absent their
 normative meanings.
 
-This document uses terminology from {{I-D.ietf-ace-coap-est}} which in turn is based on {{RFC7030}} and, in turn, on {{RFC5272}}. 
+This document uses terminology from {{I-D.ietf-ace-coap-est}} which in turn is based on {{RFC7030}} and, in turn, on {{RFC5272}}.
+
+The term "Trust Anchor" follows the terminology of {{RFC6024}}: "A trust anchor represents an authoritative entity via a public key and associated data. The public key is used to verify digital signatures, and the associated data is used to constrain the types of information for which the trust anchor is authoritative." 
+
+One example of specifying more compact alternatives to X.509 certificates for exchanging trust anchor information is provided by the TrustAnchorInfo structure of {{RFC5914}}, the mandatory parts of which essentially is the SubjectPublicKeyInfo structure {{RFC5280}}, i.e. the algorithm followed by the public key.
+
 
 # OSCORE and Authenticated Key Establishment
+
+
 EST-oscore clients and servers MUST perform mutual authentication. The client MUST authenticate the server before making the enrolment request. The server MUST authenticate the client before issuing a certificate. Prior to the initial enrollment the client MUST be configured with an Implicit or Explicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authorize the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications.
 
 EST-oscore, like EST-coaps, supports certificate-based authentication between EST client and server. This specification replaces the DTLS handshake in EST-coaps with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}} and provides additional authentication methods, see {{edhoc}} and {{alternative-auth}}.
