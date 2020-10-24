@@ -116,7 +116,7 @@ The protection of EST payloads defined in this document builds on EST-coaps {{I-
    * Authentication based on certificates is complemented with  authentication based on raw public keys.
    * Authentication based on signature keys is complemented with authentication based on static Diffie-Hellman keys, for certificates/raw public keys.
    * Authentication based on certificate by value is complemented with authentication based on certificate/raw public keys by reference.
-* One new EST function, /rpks, is defined for installation of explicit TAs in the EST client.
+* One new EST function, /rpks, is defined for installation of compact explicit TAs in the EST client.
 * The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy (see {{proxying}}).
 
 So, while the same authentication scheme (Diffie-Hellman key exchange authenticated with transported certificates) and the same EST payloads as EST-coaps also apply to EST-oscore, the latter specifies other authentication schemes and a new matching EST function. The reason for these deviations is that a significant overhead can be removed in terms of message sizes and round trips by using a different handshake, public key type or transported credential, and those are independent of the actual enrollment procedure.
