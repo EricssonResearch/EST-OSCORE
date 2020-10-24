@@ -109,7 +109,7 @@ Other ways to optimize the performance of certificate enrollment and certificate
 
 ## Operational Differences with EST-coaps  {#operational}
 
-The protection of EST payloads defined in this document builds on EST-coaps {{I-D.ietf-ace-coap-est}} but transport layer security provided by DTLS is replaced, or complemented, by protection of the transfer- and application layer data (i.e., CoAP message fields and payload). This specification deviates from EST-coaps in the following respects:
+The protection of EST payloads defined in this document builds on EST-coaps {{I-D.ietf-ace-coap-est}} but transport layer security is replaced, or complemented, by protection of the transfer- and application layer data (i.e., CoAP message fields and payload). This specification deviates from EST-coaps in the following respects:
 
 * The DTLS record layer is replaced, or complemented, with OSCORE.
 * The DTLS handshake is replaced, or complemented, with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}, and makes use of the following features:
