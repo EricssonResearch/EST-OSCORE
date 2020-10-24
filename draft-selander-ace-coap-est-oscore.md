@@ -176,7 +176,7 @@ TODO: Integrate this section in the body
 TODO: Review Implicit TA vs Explicit TA
 
 # Protocol Design and Layering 
-EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{I-D.ietf-ace-coap-est}}. {{fig-stack}} below shows the layered EST-oscore architecture. 
+EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{I-D.ietf-ace-coap-est}}. Instead of DTLS record layer, OSCORE {{RFC8613}} is used to protect the EST payloads. {{fig-stack}} below shows the layered EST-oscore architecture. 
 
 ~~~~~~~~~~~
 
@@ -192,7 +192,7 @@ EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST mess
 {: #fig-stack title="EST protected with OSCORE."}
 {: artwork-align="center"}
 
-EST-oscore follows closely the EST-coaps and EST design. 
+EST-oscore follows the EST-coaps and EST design. 
  
 
 ## Discovery and URI     {#discovery}
