@@ -64,6 +64,9 @@ informative:
   RFC2985:
   RFC2986:
   RFC5272:
+  RFC5280:
+  RFC5914:
+  RFC6024:
   RFC6347:
   RFC7228:
   RFC7030:
