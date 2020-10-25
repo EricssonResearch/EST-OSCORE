@@ -52,6 +52,7 @@ normative:
   RFC2119:
   RFC7049:
   RFC7252:
+  RFC7925:
   RFC7959:
   RFC8152:
   RFC8613:
@@ -136,44 +137,60 @@ This document uses terminology from {{I-D.ietf-ace-coap-est}} which in turn is b
 
 The term "Trust Anchor" follows the terminology of {{RFC6024}}: "A trust anchor represents an authoritative entity via a public key and associated data. The public key is used to verify digital signatures, and the associated data is used to constrain the types of information for which the trust anchor is authoritative." 
 
-One example of specifying more compact alternatives to X.509 certificates for exchanging trust anchor information is provided by the TrustAnchorInfo structure of {{RFC5914}}, the mandatory parts of which essentially is the SubjectPublicKeyInfo structure {{RFC5280}}, i.e. an algorithm identifier followed by a public key.
+One example of specifying more compact alternatives to X.509 certificates for exchanging trust anchor information is provided by the TrustAnchorInfo structure of {{RFC5914}}, the mandatory parts of which essentially is the SubjectPublicKeyInfo structure {{RFC5280}}, i.e., an algorithm identifier followed by a public key.
 
 
 # Authentication
 
+This specification replaces the DTLS handshake in EST-coaps with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}. During initial enrollment the EST-oscore client and server run EDHOC {{I-D.ietf-lake-edhoc}} to authenticate and establish the OSCORE security context with which the EST payloads are protected.
 
-EST-oscore clients and servers MUST perform mutual authentication. The client MUST authenticate the server before the enrolment is complete. The server MUST authenticate the client before issuing a certificate. The client MUST be configured with an Implicit or Explicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authorize the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications.
+EST-oscore clients and servers MUST perform mutual authentication.
+The EST server and EST client are responsible for ensuring that an acceptable cipher suite is negotiated.
+The client MUST authenticate the server before accepting any server response. The server MUST authenticate the client and provide relevant information to the CA for decision about issuing a certificate.
 
-EST-oscore, like EST-coaps, supports certificate-based authentication between EST client and server. This specification replaces the DTLS handshake in EST-coaps with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}} and provides additional authentication methods, see {{edhoc}} and {{alternative-auth}}.
+## EDHOC
+
+EDHOC supports authentication with certificates/raw public keys (which we refer to as "credentials"), and the credentials may either be transported in the protocol, or referenced. This is determined by the identifier of the credential of the endpoint, ID_CRED_x for x= Initiator/Responder, which is transported in EDHOC. This identifier may be the credential itself (in which case the credential is transported), or a pointer such as a URI to the credential, or some other identifier which enables the receiving endpoint to retrieve the credential.
 
 
+## Certificate-based Authentication
+
+EST-oscore, like EST-coaps, supports certificate-based authentication between EST client and server. In this case the client MUST be configured with an Implicit or Explicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authenticate the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications.
+
+The EST client certificate SHOULD conform to {{RFC7925}}. The EST client certificate MAY be a natively signed CBOR certificate {{I-D.mattsson-cose-cbor-cert-compress}}
 
 
-
-## EDHOC   {#edhoc}
-The EST-oscore client and server use the EDHOC key establishment protocol to populate the OSCORE security context. The endpoints MUST use public key certificates to perform mutual authentication. During the initial enrollment the Implicit TA database MUST contain certificates capable of authenticating the EST-oscore server. When the EST-oscore client issues a request to the /crts endpoint of the EST server, it SHALL return a bag of certificates to be installed in the Explicit TA database. 
-
-The cryptographic material used for EST-oscore client authentication can either be
-
- * previously issued certificates (e.g., an existing certificate issued by the EST server); this could be a common case for simple re-enrollment of clients.
- * previously installed certificates (e.g., installed by the manufacturer). Manufacturer installed certificates are expected to have a very long life, as long as the device, but under some conditions could expire. In that case, the server MAY authenticate a client certificate against its trust store although the certificate is expired ({{sec-cons}}).
- 
 ## Channel Binding
 
 The {{RFC5272}} specification describes proof-of-possession as the ability of a client to prove its possession of a private key which is linked to a certified public key. In case of signature key, a proof-of-possession is generated by the client when it signs the PKCS#10 Request during the enrollment phase. Connection-based proof-of-possession is OPTIONAL for EST-oscore clients and servers.
 
- When desired the client can use the EDHOC-Exporter API to extract channel-binding information and provide a connection-based proof-of possession. Channel-binding information is obtained as follows 
+When desired the client can use the EDHOC-Exporter API to extract channel-binding information and provide a connection-based proof-of possession. Channel-binding information is obtained as follows 
  
  edhoc-unique = EDHOC-Exporter("EDHOC Unique", length),
  
- where length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a ChallengePassword in the attributes section of the PKCS#10 Request to prove that the client is indeed in control of the private key at the time of the EDHOC key exchange.
+ where length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a ChallengePassword in the attributes section of the PKCS#10 Request to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and was able to sign the certification request after the EDHOC session was established.
 
-## EDHOC with alternative authentication methods
 
-{{edhoc}} describes the use of EDHOC in combination with certificates during the initial bootstrap phase. The latter requires that the Implicit TA is equipped with certificates capable of authenticating the EST-oscore server. Since EDHOC also supports authentication with RPKs, the Implicit TA can be populated alternatively with RPKs. Similarly to {{edhoc}}, client authentication can be performed with long-lived RPKs installed by the manufacturer. Re-enrollment requests can be authenticated through a valid certificate issued previously by the EST-oscore server or by using the key material available in the Implicit TA.
+## Optimizations
 
-TODO: Integrate this section in the body
+* The last message of the EDHOC protocol, message_3, MAY be combined with an OSCORE request, enabling authenticated Diffie-Hellman key exchange and a protected CoAP request/response (which may contain an enrolment request and response) in two round trips {{I-D.palombini-core-oscore-edhoc}}.
+
+* The certificates MAY be compressed, e.g. using the CBOR encoding defined in {{I-D.mattsson-cose-cbor-cert-compress}}.
+
+* The certificate MAY be referenced instead of transported {{I-D.ietf-cose-x509}}. If the EST-oscore server can use information in ID_CRED_x to access the EST-oscore client certificate, e.g. in a directory or database provided by the issuer, then the certificate may not to be transported over a potentially constrained link from the client.
+
+* Conversely, the response to the PKCS#10 request MAY be a reference to the enrolled certificate instead of the certificate itself. The issuer may post the newly generated certificate to a directory or database, and provide the client with a pointer to the certificate in the enrolment response.
+
+
+## RPK-based Trust Anchors
+
+A trust anchor is typically a self-signed certificate of the CA public key. In order to reduce overhead in transporting, the trust anchor could be just the CA public key and associated data, e.g. the SubjectPublicKeyInfo, or a public key certificate without the signature. In either case they can be compactly encoded, e.g. using CBOR encoding {{I-D.mattsson-cose-cbor-cert-compress}}.
+
+Client authentication can be performed with long-lived RPKs installed by the manufacturer. Re-enrollment requests can be authenticated through a valid certificate issued previously by the EST-oscore server or by using the key material available in the Implicit TA.
+
 TODO: Review Implicit TA vs Explicit TA
+
+
 
 # Protocol Design and Layering 
 EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{I-D.ietf-ace-coap-est}}. Instead of DTLS record layer, OSCORE {{RFC8613}} is used to protect the EST payloads. {{fig-stack}} below shows the layered EST-oscore architecture. 
