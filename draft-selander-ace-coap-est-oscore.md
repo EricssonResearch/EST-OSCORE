@@ -135,9 +135,7 @@ normative meanings.
 
 This document uses terminology from {{I-D.ietf-ace-coap-est}} which in turn is based on {{RFC7030}} and, in turn, on {{RFC5272}}.
 
-The term "Trust Anchor" follows the terminology of {{RFC6024}}: "A trust anchor represents an authoritative entity via a public key and associated data. The public key is used to verify digital signatures, and the associated data is used to constrain the types of information for which the trust anchor is authoritative." 
-
-One example of specifying more compact alternatives to X.509 certificates for exchanging trust anchor information is provided by the TrustAnchorInfo structure of {{RFC5914}}, the mandatory parts of which essentially is the SubjectPublicKeyInfo structure {{RFC5280}}, i.e., an algorithm identifier followed by a public key.
+The term "Trust Anchor" follows the terminology of {{RFC6024}}: "A trust anchor represents an authoritative entity via a public key and associated data. The public key is used to verify digital signatures, and the associated data is used to constrain the types of information for which the trust anchor is authoritative." One example of specifying more compact alternatives to X.509 certificates for exchanging trust anchor information is provided by the TrustAnchorInfo structure of {{RFC5914}}, the mandatory parts of which essentially is the SubjectPublicKeyInfo structure {{RFC5280}}, i.e., an algorithm identifier followed by a public key.
 
 
 # Authentication
@@ -150,14 +148,14 @@ The client MUST authenticate the server before accepting any server response. Th
 
 ## EDHOC
 
-EDHOC supports authentication with certificates/raw public keys (which we refer to as "credentials"), and the credentials may either be transported in the protocol, or referenced. This is determined by the identifier of the credential of the endpoint, ID_CRED_x for x= Initiator/Responder, which is transported in EDHOC. This identifier may be the credential itself (in which case the credential is transported), or a pointer such as a URI to the credential, or some other identifier which enables the receiving endpoint to retrieve the credential.
+EDHOC supports authentication with certificates/raw public keys (referred to as "credentials"), and the credentials may either be transported in the protocol, or referenced. This is determined by the identifier of the credential of the endpoint, ID_CRED_x for x= Initiator/Responder, which is transported in an EDHOC message. This identifier may be the credential itself (in which case the credential is transported), or a pointer such as a URI to the credential (e.g., x5t, see {{I-D.ietf-cose-x509}}) or some other identifier which enables the receiving endpoint to retrieve the credential.
 
 
 ## Certificate-based Authentication
 
 EST-oscore, like EST-coaps, supports certificate-based authentication between EST client and server. In this case the client MUST be configured with an Implicit or Explicit Trust Anchor (TA) {{RFC7030}} database, enabling the client to authenticate the server. During the initial enrollment the client SHOULD populate its Explicit TA database and use it for subsequent authentications.
 
-The EST client certificate SHOULD conform to {{RFC7925}}. The EST client certificate MAY be a natively signed CBOR certificate {{I-D.mattsson-cose-cbor-cert-compress}}
+The EST client certificate SHOULD conform to {{RFC7925}}. The EST client and/or EST server certificate MAY be a (natively signed) CBOR certificate {{I-D.mattsson-cose-cbor-cert-compress}}.
 
 
 ## Channel Binding {#channel-binding}
@@ -168,7 +166,7 @@ When desired the client can use the EDHOC-Exporter API to extract channel-bindin
  
  edhoc-unique = EDHOC-Exporter("EDHOC Unique", length),
  
- where length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a ChallengePassword in the attributes section of the PKCS#10 Request to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and was able to sign the certification request after the EDHOC session was established.
+ where length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a challengePassword (see Section 5.4.1 of {{RFC2985}}) in the attributes section of the PKCS#10 Request to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and signed the certification request after the EDHOC session was established.
 
 
 ## Optimizations
@@ -177,18 +175,19 @@ When desired the client can use the EDHOC-Exporter API to extract channel-bindin
 
 * The certificates MAY be compressed, e.g. using the CBOR encoding defined in {{I-D.mattsson-cose-cbor-cert-compress}}.
 
-* The certificate MAY be referenced instead of transported {{I-D.ietf-cose-x509}}. If the EST-oscore server can use information in ID_CRED_x to access the EST-oscore client certificate, e.g. in a directory or database provided by the issuer, then the certificate may not to be transported over a potentially constrained link from the client.
+* The certificate MAY be referenced instead of transported {{I-D.ietf-cose-x509}}. The EST-oscore server MAY use information in the credential identifier field of the EDHOC message (ID_CRED_x) to access the EST-oscore client certificate, e.g., in a directory or database provided by the issuer. In this case the certificate may not need to be transported over a constrained link between EST client and server.
 
-* Conversely, the response to the PKCS#10 request MAY be a reference to the enrolled certificate instead of the certificate itself. The issuer may post the newly generated certificate to a directory or database, and provide the client with a pointer to the certificate in the enrolment response.
+* Conversely, the response to the PKCS#10 request MAY be a reference to the enrolled certificate rather than the certificate itself. The EST-oscore server MAY in the enrolment response to the EST-oscore client include a pointer to a directory or database where the certificate can be retrieved.
 
 
-## RPK-based Trust Anchors
 
-A trust anchor is typically a self-signed certificate of the CA public key. In order to reduce overhead in transporting, the trust anchor could be just the CA public key and associated data, e.g. the SubjectPublicKeyInfo, or a public key certificate without the signature. In either case they can be compactly encoded, e.g. using CBOR encoding {{I-D.mattsson-cose-cbor-cert-compress}}.
+## RPK-based Trust Anchors {#RPK-TA}
 
-Client authentication can be performed with long-lived RPKs installed by the manufacturer. Re-enrollment requests can be authenticated through a valid certificate issued previously by the EST-oscore server or by using the key material available in the Implicit TA.
+A trust anchor is commonly a self-signed certificate of the CA public key. In order to reduce transport overhead, the trust anchor could be just the CA public key and associated data (see {{terminology}}), e.g., the SubjectPublicKeyInfo, or a public key certificate without the signature. In either case they can be compactly encoded, e.g. using CBOR encoding {{I-D.mattsson-cose-cbor-cert-compress}}. A client MAY request an unsigned trust anchors using the /rpks function (see {{dist-rpks}}).
 
-TODO: Review Implicit TA vs Explicit TA
+Client authentication can be performed with long-lived RPKs installed by the manufacturer. Re-enrollment requests can be authenticated through a valid certificate issued previously by the EST-oscore server or by using the key material available in the Implicit TA database.
+
+TODO: Sanity check this. Review the use of Implicit TA vs. Explicit TA.
 
 
 
@@ -209,7 +208,7 @@ EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST mess
 {: #fig-stack title="EST protected with OSCORE."}
 {: artwork-align="center"}
 
-EST-oscore follows the EST-coaps and EST design. 
+EST-oscore follows much of the EST-coaps and EST design. 
  
 
 ## Discovery and URI     {#discovery}
@@ -224,14 +223,13 @@ The discovery of EST resources and the definition of the short EST-coaps URI pat
 
 ~~~~~~~~~~~
 
-## Distribution of RPKs
+## Distribution of RPKs {#dist-rpks}
 
 The EST client can request a copy of the current CA public keys.
 
-TODO: map relevant parts of section 4.1 of RFC 7030 and other EST function related content from RFC7030 and EST-coaps
+TODO: Map relevant parts of section 4.1 of RFC 7030 and other EST function related content from RFC7030 and EST-coaps.
 
-RATIONALE: EST-coaps provides the /crts operation. A successful request from the client to this resource will be answered with a bag of certificates which is subsequently installed in the Explicit TA.  Analogously we define here the new EST function /rpks which returns a set of RPKs to be installed in the Explicit TA. Support for this type of key material in the Explicit TA result in smaller messages sizes. 
- 
+RATIONALE: EST-coaps provides the /crts operation. A successful request from the client to this resource will be answered with a bag of certificates which is subsequently installed in the Explicit TA.  Motivated by the specification of more compact trust anchors (see {{terminology}}) we define here the new EST function /rpks which returns a set of RPKs to be installed in the Explicit TA database.
 
 ## Mandatory/optional EST Functions {#est-functions}
 The EST-oscore specification has the same set of required-to-implement functions as EST-coaps. The content of {{table_functions}} is adapted from Section 5.2 in {{I-D.ietf-ace-coap-est}} and uses the updated URI paths (see {{discovery}}).
@@ -283,7 +281,12 @@ The EST-oscore message characteristics are identical to those specified in Secti
 See Section 5.5 in {{I-D.ietf-ace-coap-est}}.
 
 ## Message fragmentation
-The EDHOC key exchange with asymmetric keys and certificates for authentication can result in large messages. It is RECOMMENDED to prevent IP fragmentation, since it involves an error-prone datagram reconstitution. In addition, this specification targets resource constrained networks such as IEEE 802.15.4 where throughput is limited and fragment loss can trigger costly retransmissions. Even though ECC-based certificates are an improvement over the RSA or DSA counterparts, they can still amount to roughly a 1000 bytes per certificate depending on the used algorithms, curves, OIDs, Subject Alternative Names (SAN) and cert fields. Additionally, in response to a client request to /crts an EST-oscore server might answer with multiple certificates. This is another motivation for the need for more compact EST payloads, see {{cbor-payloads}}. This specification further employs the CoAP Block1 and Block2 fragmentation mechanisms as described in Section 5.6 of {{I-D.ietf-ace-coap-est}} to limit the size of the CoAP payload.
+
+The EDHOC key exchange is optimized for message overhead, in particular the use of static DH keys instead of signature keys for authentication (e.g., method 3 of {{I-D.ietf-lake-edhoc}}). Together with various measures listed in this document such as CBOR payloads ({{cbor-payloads}}), CBOR certificates {{I-D.mattsson-cose-cbor-cert-compress}}, certificates by reference ({{optimizations}}), and trust anchors without signature ({{RPK-TA}}), a significant reduction of message sizes can be achieved.
+
+Nevertheless, depending on application, the protocol messages may become larger than available frame size resulting in fragmentation and, in resource constrained networks such as IEEE 802.15.4 where throughput is limited, fragment loss can trigger costly retransmissions.
+
+It is RECOMMENDED to prevent IP fragmentation, since it involves an error-prone datagram reconstitution. To limit the size of the CoAP payload, this specification mandates the implementation of CoAP option Block1 and Block2 fragmentation mechanism {{RFC7959}} as described in Section 5.6 of {{I-D.ietf-ace-coap-est}}.
 
 
 ## Delayed Responses
@@ -428,7 +431,9 @@ The response to the enrollment request is the subject certificate, for which CBO
 
 The same message content in request and response applies to re-enrollment.
 
-TBD  PKCS#10 allows inclusion of attributes, which can be used to specify extension requests, see Section 5.4.2 in {{RFC2985}}. Are these attributes important for the scenarios we care about, or can we allow the CA to decide this?
+TODO:  PKCS#10 allows inclusion of attributes, which can be used to specify extension requests, see Section 5.4.2 of {{RFC2985}}. CBOR encoding of the challengePassword attribute needs to be defined (see {{channel-binding}}). What other attributes are relevant?
+
+
 
 ### CBOR Certificate Request Examples ###
 
