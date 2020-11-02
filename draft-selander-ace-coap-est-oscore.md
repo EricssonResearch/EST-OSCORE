@@ -22,7 +22,7 @@ pi:    # can use array (if all yes) or hash here
 author:
       -
         ins: G. Selander
-        name: Göran Selander
+        name: Goeran Selander
         org: Ericsson AB
         email: goran.selander@ericsson.com
       -
