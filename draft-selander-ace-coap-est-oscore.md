@@ -3,21 +3,18 @@ title: Protecting EST Payloads with OSCORE
 abbrev: EST-oscore
 docname: draft-selander-ace-coap-est-oscore-latest
 
-# date: 2017-03-14
-
-# stand_alone: true
-
 ipr: trust200902
-area: Security
-wg: ACE Working Group
-kw: Internet-Draft
 cat: std
-
+submissiontype: IETF
+area: Security
+workgroup: ACE Working Group
+keyword: Internet-Draft
 coding: utf-8
-pi:    # can use array (if all yes) or hash here
+pi: # can use array (if all yes) or hash here
   toc: yes
-  sortrefs:   # defaults to yes
+  sortrefs: yes
   symrefs: yes
+  tocdepth: 2
 
 author:
       -
