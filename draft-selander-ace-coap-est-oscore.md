@@ -160,11 +160,9 @@ The {{RFC5272}} specification describes proof-of-possession as the ability of a 
 
 When desired the client can use the EDHOC-Exporter API to extract channel-binding information and provide a connection-based proof-of possession. Channel-binding information is obtained as follows
 
- edhoc-unique = EDHOC-Exporter("EDHOC Unique", length),
+ edhoc-unique = EDHOC-Exporter(TBD1, "EDHOC Unique", length),
 
- where length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a challengePassword (see Section 5.4.1 of {{RFC2985}}) in the attributes section of the PKCS#10 Request to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and signed the certification request after the EDHOC session was established.
-
-TODO: Align with the latest version of EDHOC
+ where TBD1 is a registered label from the EDHOC Exporter Label registry, length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a challengePassword (see Section 5.4.1 of {{RFC2985}}) in the attributes section of the PKCS#10 Request to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and signed the certification request after the EDHOC session was established.
 
 ## Optimizations
 
@@ -328,6 +326,20 @@ TBD
 
 # IANA Considerations  {#iana}
 
+## EDHOC Exporter Label Registry
+
+IANA is requested to register the following entry in the "EDHOC Exporter Label" registry under the group name "Ephemeral Diffie-Hellman Over COSE (EDHOC).
+
+~~~~~~~~~~~ aasvg
+
++-------------+------------------------------+-------------------+
+| Label       | Description                  | Reference         |
++=============+==============================+===================+
+| TBD1        | EDHOC unique                 | [[this document]] |
++-------------+------------------------------+-------------------+
+
+~~~~~~~~~~~
+{: #fig-exporter-label title="EDHOC Exporter Label"}
 
 # Acknowledgments
 
