@@ -277,6 +277,18 @@ It is RECOMMENDED to prevent IP fragmentation, since it involves an error-prone 
 ## Delayed Responses
 See Section 4.7 in {{RFC9148}}.
 
+## Enrollment of Static DH Keys
+
+This section specifies how the EST client enrolls a static DH key.
+Because a DH key pair cannot be used for signing operations, the EST client attempting to enroll a DH key must use an alternative proof-of-possesion algorithm.
+The EST client obtained the CA certs including the CA's DH certificate using the /crts function.
+The certificate indicates the DH group parameters which MUST be respected by the EST client when generating its own DH key pair.
+The EST client prepares the PKCS #10 object and signs it by following the steps in Section 4 of {{RFC6955}}.
+The Key Derivation Function (KDF) and a MAC MUST be set to the algorithms used by the EDHOC key exchange.
+As per {{I-D.ietf-lake-edhoc}}, if the negotiated EDHOC hash algorithm is SHA-2, then the KDF MUST be set to HKDF and MAC MUST be set to the HMAC {{RFC5869}}.
+
+TODO: How to define other KDFs used by EDHOC?
+
 # HTTP-CoAP Proxy {#proxying}
 As noted in Section 5 of {{RFC9148}}, in real-world deployments, the EST server will not always reside within the CoAP boundary.  The EST-server can exist outside the constrained network in a non-constrained network that supports HTTP but not CoAP, thus requiring an intermediary CoAP-to-HTTP proxy.
 
