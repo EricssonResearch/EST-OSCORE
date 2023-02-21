@@ -205,13 +205,21 @@ The discovery of EST resources and the definition of the short EST-coaps URI pat
 
 ~~~~~~~~~~~
 
-## Distribution of RPKs {#dist-rpks}
+## Request for Distribution of RPKs {#dist-rpks}
 
 The EST client can request a copy of the current CA public keys.
 
+EST-coaps provides the /crts operation. A successful request from the client to this resource will be answered with a bag of certificates which is subsequently installed in the Explicit TA.  Motivated by the specification of more compact trust anchors (see {{terminology}}) we define here the new EST function /rpks which returns a set of RPKs to be installed in the Explicit TA database.
+
+The EST client requests the EST CA RPKs by issuing a CoAP GET message using an operation path of "/rpks". EST clients and servers MAY support the /rpks function. Clients SHOULD request an up-to-date response before stored information has expired in order to ensure the EST CA TA database is up to date.
+
 TODO: Map relevant parts of section 4.1 of RFC 7030 and other EST function related content from RFC7030 and EST-coaps.
 
-RATIONALE: EST-coaps provides the /crts operation. A successful request from the client to this resource will be answered with a bag of certificates which is subsequently installed in the Explicit TA.  Motivated by the specification of more compact trust anchors (see {{terminology}}) we define here the new EST function /rpks which returns a set of RPKs to be installed in the Explicit TA database.
+## Response for Distribution of RPKs
+
+If successful, the server response MUST have a CoAP 200 response code. Any other response code indicates an error and the client MUST abort the protocol.
+
+TODO: A successful response MUST be
 
 ## Mandatory/optional EST Functions {#est-functions}
 The EST-oscore specification has the same set of required-to-implement functions as EST-coaps. The content of {{table_functions}} is adapted from Section 4.2 in {{RFC9148}} and uses the updated URI paths (see {{discovery}}).
