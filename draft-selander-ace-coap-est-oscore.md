@@ -47,6 +47,8 @@ author:
 normative:
 
   RFC2119:
+  RFC5869:
+  RFC6955:
   RFC7049:
   RFC7252:
   RFC7925:
@@ -69,8 +71,6 @@ informative:
   RFC7030:
   RFC8392:
   RFC9031:
-  RFC9203:
-  RFC9200:
   I-D.ietf-core-oscore-groupcomm:
   I-D.ietf-core-oscore-edhoc:
   I-D.ietf-cose-x509:
@@ -154,7 +154,7 @@ When desired the client can use the EDHOC-Exporter API to extract channel-bindin
 
  edhoc-unique = EDHOC-Exporter(TBD1, "EDHOC Unique", length),
 
- where TBD1 is a registered label from the EDHOC Exporter Label registry, length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a challengePassword (see Section 5.4.1 of {{RFC2985}}) in the attributes section of the PKCS#10 Request to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and signed the certification request after the EDHOC session was established.
+ where TBD1 is a registered label from the EDHOC Exporter Label registry, length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a challengePassword (see Section 5.4.1 of {{RFC2985}}) in the attributes section of the PKCS#10 Request {{RFC2986}} to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and signed the certification request after the EDHOC session was established.
 
 TBD: Understand what function is tls-unqiue giving in EST-coaps and whether this is the same function we need? Bind the authentication credential to the credential being enrolledi. Certificate re-enrollemnt: you might use the same public key as the one we are authenticating with. Verify when is edhoc/tls -unique needed to be used? Compare EST-oscore and check security considerations.
 
@@ -222,7 +222,7 @@ TODO: Map relevant parts of section 4.1 of RFC 7030 and other EST function relat
 If successful, the server response MUST have a CoAP 200 response code. Any other response code indicates an error and the client MUST abort the protocol.
 
 TODO: A successful response MUST be
-TODO: See EDHOC CCS, Figure 6 in draft-ietf-lake-edhoc-19
+TODO: See EDHOC CCS, Figure 6 in draft-ietf-lake-edhoc-19, reference {{RFC8392}}
 
 ## Mandatory/optional EST Functions {#est-functions}
 The EST-oscore specification has the same set of required-to-implement functions as EST-coaps. The content of {{table_functions}} is adapted from Section 4.2 in {{RFC9148}} and uses the updated URI paths (see {{discovery}}).
