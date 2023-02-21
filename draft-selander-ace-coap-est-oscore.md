@@ -40,8 +40,7 @@ author:
       -
         ins: T. Claeys
         name: Timothy Claeys
-        org: INRIA
-        email: timothy.claeys@inria.fr
+        email: timothy.claeys@gmail.com
 
 
 normative:
