@@ -1,4 +1,4 @@
 # License
 
 See the
-[guidelines for contributions](https://github.com/EricssonResearch/EALS/blob/master/CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/EricssonResearch/EST-OSCORE/blob/master/CONTRIBUTING.md).

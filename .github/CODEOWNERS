@@ -1,0 +1,3 @@
+# Automatically generated CODEOWNERS
+# Regenerate with `make update-codeowners`
+draft-selander-ace-coap-est-oscore.md goran.selander@ericsson.com shahid.raza@ri.se martin.furuhed@nexusgroup.com malisa.vucinic@inria.fr timothy.claeys@gmail.com
