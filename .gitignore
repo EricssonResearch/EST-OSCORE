@@ -11,3 +11,4 @@ venv/
 issues.json
 lib
 draft-selander-ace-eals.md
+.DS_Store
