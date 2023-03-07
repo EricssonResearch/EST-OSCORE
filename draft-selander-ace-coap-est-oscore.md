@@ -110,7 +110,6 @@ The protection of EST payloads defined in this document builds on EST-coaps {{RF
    * Authentication based on certificates is complemented with  authentication based on raw public keys.
    * Authentication based on signature keys is complemented with authentication based on static Diffie-Hellman keys, for certificates/raw public keys.
    * Authentication based on certificate by value is complemented with authentication based on certificate/raw public keys by reference.
-* One new EST function, /rpks, is defined for installation of compact explicit TAs in the EST client.
 * The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy (see {{proxying}}). The concept "Registrar" and its required trust relation with EST server as described in Section 5 of {{RFC9148}} is therefore redundant.
 
 So, while the same authentication scheme (Diffie-Hellman key exchange authenticated with transported certificates) and the same EST payloads as EST-coaps also apply to EST-oscore, the latter specifies other authentication schemes and a new matching EST function. The reason for these deviations is that a significant overhead can be removed in terms of message sizes and round trips by using a different handshake, public key type or transported credential, and those are independent of the actual enrollment procedure.
@@ -167,13 +166,7 @@ TBD: Understand what function is tls-unqiue giving in EST-coaps and whether this
 
 * Conversely, the response to the PKCS#10 request MAY be a reference to the enrolled certificate rather than the certificate itself. The EST-oscore server MAY in the enrolment response to the EST-oscore client include a pointer to a directory or database where the certificate can be retrieved.
 
-## RPK-based Trust Anchors {#RPK-TA}
 
-A trust anchor is commonly a self-signed certificate of the CA public key. In order to reduce transport overhead, the trust anchor could be just the CA public key and associated data (see {{terminology}}), e.g., the SubjectPublicKeyInfo, or a public key certificate without the signature. In either case they can be compactly encoded, e.g. using CBOR encoding {{I-D.ietf-cose-cbor-encoded-cert}}. A client MAY request an unsigned trust anchors using the /rpks function (see {{dist-rpks}}).
-
-Client authentication can be performed with long-lived RPKs installed by the manufacturer. Re-enrollment requests can be authenticated through a valid certificate issued previously by the EST-oscore server or by using the key material available in the Implicit TA database.
-
-TODO: Sanity check this. Review the use of Implicit TA vs. Explicit TA.
 
 # Protocol Design and Layering
 EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{RFC9148}}. Instead of DTLS record layer, OSCORE {{RFC8613}} is used to protect the EST payloads. DTLS handshake is replaced with EDHOC {{I-D.ietf-lake-edhoc}}. {{fig-stack}} below shows the layered EST-oscore architecture.
@@ -206,23 +199,6 @@ The discovery of EST resources and the definition of the short EST-coaps URI pat
 
 ~~~~~~~~~~~
 
-## Request for Distribution of RPKs {#dist-rpks}
-
-The EST client can request a copy of the current CA public keys.
-
-EST-coaps provides the /crts operation. A successful request from the client to this resource will be answered with a bag of certificates which is subsequently installed in the Explicit TA.  Motivated by the specification of more compact trust anchors (see {{terminology}}) we define here the new EST function /rpks which returns a set of RPKs to be installed in the Explicit TA database.
-
-The EST client requests the EST CA RPKs by issuing a CoAP GET message using an operation path of "/rpks". EST clients and servers MAY support the /rpks function. Clients SHOULD request an up-to-date response before stored information has expired in order to ensure the EST CA TA database is up to date.
-
-TODO: Map relevant parts of section 4.1 of RFC 7030 and other EST function related content from RFC7030 and EST-coaps.
-
-## Response for Distribution of RPKs
-
-If successful, the server response MUST have a CoAP 200 response code. Any other response code indicates an error and the client MUST abort the protocol.
-
-TODO: A successful response MUST be
-TODO: See EDHOC CCS, Figure 6 in draft-ietf-lake-edhoc-19, reference {{RFC8392}}
-
 ## Mandatory/optional EST Functions {#est-functions}
 The EST-oscore specification has the same set of required-to-implement functions as EST-coaps. The content of {{table_functions}} is adapted from Section 4.2 in {{RFC9148}} and uses the updated URI paths (see {{discovery}}).
 
@@ -233,8 +209,16 @@ The EST-oscore specification has the same set of required-to-implement functions
 | /skg           | OPTIONAL                    |
 | /skc           | OPTIONAL                    |
 | /att           | OPTIONAL                    |
-| /rpks          | OPTIONAL                    |
 {: #table_functions cols="l l" title="Mandatory and optional EST-oscore functions"}
+
+### /crts {#crts}
+
+EST-coaps provides the /crts operation.
+A successful request from the client to this resource will be answered with a bag of certificates which is subsequently installed in the Explicit TA.
+
+A trust anchor is commonly a self-signed certificate of the CA public key.
+In order to reduce transport overhead, the trust anchor could be just the CA public key and associated data (see {{terminology}}), e.g., the SubjectPublicKeyInfo, or a public key certificate without the signature.
+In either case they can be compactly encoded, e.g. using CBOR encoding {{I-D.ietf-cose-cbor-encoded-cert}}.
 
 ## Payload formats
 Similar to EST-coaps, EST-oscore allows transport of the ASN.1 structure of a given Media-Type in binary format. In addition, EST-oscore uses the same CoAP Content-Format Options to transport EST requests and responses . {{table_mediatypes}} summarizes the information from Section 4.3 in {{RFC9148}}.
@@ -270,7 +254,7 @@ See Section 4.5 in {{RFC9148}}.
 
 ## Message fragmentation
 
-The EDHOC key exchange is optimized for message overhead, in particular the use of static DH keys instead of signature keys for authentication (e.g., method 3 of {{I-D.ietf-lake-edhoc}}). Together with various measures listed in this document such as CBOR-encoded payloads ({{I-D.ietf-cose-cbor-encoded-cert}}), CBOR certificates {{I-D.ietf-cose-cbor-encoded-cert}}, certificates by reference ({{optimizations}}), and trust anchors without signature ({{RPK-TA}}), a significant reduction of message sizes can be achieved.
+The EDHOC key exchange is optimized for message overhead, in particular the use of static DH keys instead of signature keys for authentication (e.g., method 3 of {{I-D.ietf-lake-edhoc}}). Together with various measures listed in this document such as CBOR-encoded payloads ({{I-D.ietf-cose-cbor-encoded-cert}}), CBOR certificates {{I-D.ietf-cose-cbor-encoded-cert}}, certificates by reference ({{optimizations}}), and trust anchors without signature ({{crts}}), a significant reduction of message sizes can be achieved.
 
 Nevertheless, depending on application, the protocol messages may become larger than available frame size resulting in fragmentation and, in resource constrained networks such as IEEE 802.15.4 where throughput is limited, fragment loss can trigger costly retransmissions.
 
