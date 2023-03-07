@@ -154,8 +154,6 @@ When desired the client can use the EDHOC-Exporter API to extract channel-bindin
 
  where TBD1 is a registered label from the EDHOC Exporter Label registry, length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a challengePassword (see Section 5.4.1 of {{RFC2985}}) in the attributes section of the PKCS#10 Request {{RFC2986}} to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and signed the certification request after the EDHOC session was established.
 
-TBD: Understand what function is tls-unqiue giving in EST-coaps and whether this is the same function we need? Bind the authentication credential to the credential being enrolledi. Certificate re-enrollemnt: you might use the same public key as the one we are authenticating with. Verify when is edhoc/tls -unique needed to be used? Compare EST-oscore and check security considerations.
-
 ## Optimizations
 
 * The last message of the EDHOC protocol, message_3, MAY be combined with an OSCORE request, enabling authenticated Diffie-Hellman key exchange and a protected CoAP request/response (which may contain an enrolment request and response) in two round trips {{I-D.ietf-core-oscore-edhoc}}.
@@ -165,8 +163,6 @@ TBD: Understand what function is tls-unqiue giving in EST-coaps and whether this
 * The certificate MAY be referenced instead of transported {{I-D.ietf-cose-x509}}. The EST-oscore server MAY use information in the credential identifier field of the EDHOC message (ID_CRED_x) to access the EST-oscore client certificate, e.g., in a directory or database provided by the issuer. In this case the certificate may not need to be transported over a constrained link between EST client and server.
 
 * Conversely, the response to the PKCS#10 request MAY be a reference to the enrolled certificate rather than the certificate itself. The EST-oscore server MAY in the enrolment response to the EST-oscore client include a pointer to a directory or database where the certificate can be retrieved.
-
-
 
 # Protocol Design and Layering
 EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{RFC9148}}. Instead of DTLS record layer, OSCORE {{RFC8613}} is used to protect the EST payloads. DTLS handshake is replaced with EDHOC {{I-D.ietf-lake-edhoc}}. {{fig-stack}} below shows the layered EST-oscore architecture.
@@ -308,6 +304,8 @@ OSCORE provides end-to-end security between EST Server and EST Client. The use o
 # Security Considerations  {#sec-cons}
 
 TBD: Compare with RFC9148
+
+TBD: Channel binding security considerations: 3SHAKE attack and EDHOC.
 
 # Privacy Considerations
 
