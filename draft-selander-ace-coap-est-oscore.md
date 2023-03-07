@@ -176,7 +176,7 @@ Client authentication can be performed with long-lived RPKs installed by the man
 TODO: Sanity check this. Review the use of Implicit TA vs. Explicit TA.
 
 # Protocol Design and Layering
-EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{RFC9148}}. Instead of DTLS record layer, OSCORE {{RFC8613}} is used to protect the EST payloads. {{fig-stack}} below shows the layered EST-oscore architecture.
+EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{RFC9148}}. Instead of DTLS record layer, OSCORE {{RFC8613}} is used to protect the EST payloads. DTLS handshake is replaced with EDHOC {{I-D.ietf-lake-edhoc}}. {{fig-stack}} below shows the layered EST-oscore architecture.
 
 ~~~~~~~~~~~
 
@@ -185,7 +185,7 @@ EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST mess
 +------------------------------------------------+
 |   CoAP with OSCORE   |   HTTP with OSCORE      |
 +------------------------------------------------+
-|   UDP  |  DTLS/UDP   |   TCP   |   TLS/TCP     |
+|   UDP  |  EDHOC/UDP  |   TCP   |   TLS/TCP     |
 +------------------------------------------------+
 
 ~~~~~~~~~~~
