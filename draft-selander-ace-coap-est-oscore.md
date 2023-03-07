@@ -19,7 +19,7 @@ pi: # can use array (if all yes) or hash here
 author:
       -
         ins: G. Selander
-        name: Goeran Selander
+        name: Göran Selander
         org: Ericsson AB
         email: goran.selander@ericsson.com
       -
@@ -33,9 +33,9 @@ author:
         org: Nexus
         email: martin.furuhed@nexusgroup.com
       -
-        ins: M. Vucinic
-        name: Malisa Vucinic
-        org: INRIA
+        ins: M. Vučinić
+        name: Mališa Vučinić
+        org: Inria
         email: malisa.vucinic@inria.fr
       -
         ins: T. Claeys
