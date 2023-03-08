@@ -54,6 +54,7 @@ normative:
   RFC7959:
   RFC8152:
   RFC8613:
+  RFC9052:
   RFC9148:
   I-D.ietf-lake-edhoc:
 
@@ -93,7 +94,7 @@ This document describes a method for protecting EST payloads over CoAP or HTTP w
 
 OSCORE is designed for constrained environments, building on IoT standards such as CoAP, CBOR {{RFC7049}} and COSE {{RFC8152}}, and has in particular gained traction in settings where message sizes and the number of exchanged messages needs to be kept at a minimum, such as 6TiSCH {{RFC9031}}, or for securing multicast CoAP messages {{I-D.ietf-core-oscore-groupcomm}}. Where OSCORE is implemented and used for communication security, the reuse of OSCORE for other purposes, such as enrollment, reduces the code footprint.
 
-In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between EST-oscore client and EST-oscore server. For this purpose we assume the use of the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}.
+In order to protect certificate enrollment with OSCORE, the necessary keying material (notably, the OSCORE Master Secret, see {{RFC8613}}) needs to be established between EST-oscore client and EST-oscore server. For this purpose we assume by default the use of the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}, although pre-shared OSCORE keying material would also be an option.
 
 Other ways to optimize the performance of certificate enrollment and certificate based authentication described in this draft include the use of:
 
@@ -266,11 +267,10 @@ Because a DH key pair cannot be used for signing operations, the EST client atte
 The EST client obtained the CA certs including the CA's DH certificate using the /crts function.
 The certificate indicates the DH group parameters which MUST be respected by the EST client when generating its own DH key pair.
 The EST client prepares the PKCS #10 object and signs it by following the steps in Section 4 of {{RFC6955}}.
-The Key Derivation Function (KDF) and a MAC MUST be set to the algorithms used by the EDHOC key exchange.
-As per {{I-D.ietf-lake-edhoc}}, if the negotiated EDHOC hash algorithm is SHA-2, then the KDF MUST be set to HKDF and MAC MUST be set to the HMAC {{RFC5869}}.
-
-TODO: How to define other KDFs used by EDHOC?
-TODO: Action on Goran to see how we can use the EDHOC negotiated KDF and MAC.
+The Key Derivation Function (KDF) and the MAC MUST be set to the HDKF and HMAC algorithms used by OSCORE.
+As per {{RFC8613}}, the HKDF MUST be one of the HMAC-based HKDF {{RFC5869}} algorithms defined for COSE {{RFC9052}}.
+The KDF and MAC is thus defined by the hash algorithm used by OSCORE in HKDF and HMAC, which by default is SHA-256.
+When EDHOC is used, then the hash algorithm is the application hash algorithm of the selected cipher suite.
 
 # HTTP-CoAP Proxy {#proxying}
 As noted in Section 5 of {{RFC9148}}, in real-world deployments, the EST server will not always reside within the CoAP boundary.  The EST-server can exist outside the constrained network in a non-constrained network that supports HTTP but not CoAP, thus requiring an intermediary CoAP-to-HTTP proxy.
