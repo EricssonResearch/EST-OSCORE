@@ -170,13 +170,15 @@ EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST mess
 
 ~~~~~~~~~~~
 
-+------------------------------------------------+
-|          EST request/response messages         |
-+------------------------------------------------+
-|   CoAP with OSCORE   |   HTTP with OSCORE      |
-+------------------------------------------------+
-|   UDP  |  EDHOC/UDP  |   TCP   |   TLS/TCP     |
-+------------------------------------------------+
+             +----------------+
+             |  EST messages  |
++------------+----------------+
+|    EDHOC   |    OSCORE      |
++------------+----------------+
+|       CoAP or HTTP          |
++-----------------------------+
+|        UDP or TCP           |
++-----------------------------+
 
 ~~~~~~~~~~~
 {: #fig-stack title="EST protected with OSCORE."}
