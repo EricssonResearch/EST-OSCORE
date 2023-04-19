@@ -1,7 +1,7 @@
 ---
 title: Protecting EST Payloads with OSCORE
 abbrev: EST-oscore
-docname: draft-selander-ace-coap-est-oscore-latest
+docname: draft-ietf-ace-coap-est-oscore-latest
 
 ipr: trust200902
 cat: std
