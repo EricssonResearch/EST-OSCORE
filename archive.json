@@ -1,0 +1,235 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2023-04-25T00:16:37.905267+00:00",
+  "repo": "EricssonResearch/EST-OSCORE",
+  "labels": [
+    {
+      "name": "bug",
+      "description": null,
+      "color": "ee0701"
+    },
+    {
+      "name": "duplicate",
+      "description": null,
+      "color": "cccccc"
+    },
+    {
+      "name": "enhancement",
+      "description": null,
+      "color": "84b6eb"
+    },
+    {
+      "name": "help wanted",
+      "description": null,
+      "color": "128A0C"
+    },
+    {
+      "name": "invalid",
+      "description": null,
+      "color": "e6e6e6"
+    },
+    {
+      "name": "question",
+      "description": null,
+      "color": "cc317c"
+    },
+    {
+      "name": "wontfix",
+      "description": null,
+      "color": "ffffff"
+    }
+  ],
+  "issues": [],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "MDExOlB1bGxSZXF1ZXN0MTEwMjc1Njcx",
+      "title": "added mcr address",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/1",
+      "state": "MERGED",
+      "author": "mcr",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2017-03-11T21:45:46Z",
+      "updatedAt": "2017-03-12T10:37:43Z",
+      "baseRepository": "EricssonResearch/EST-OSCORE",
+      "baseRefName": "master",
+      "baseRefOid": "760402de071441082b3a7b8e3201148c1e5de452",
+      "headRepository": "mcr/EALS",
+      "headRefName": "master",
+      "headRefOid": "21a2989b43086e33274078442af7a314467082e6",
+      "closedAt": "2017-03-12T10:37:42Z",
+      "mergedAt": "2017-03-12T10:37:42Z",
+      "mergedBy": "gselander",
+      "mergeCommit": {
+        "oid": "54f0a23b30254dd2bbf51dfa2a9c89798397a66d"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 2,
+      "id": "MDExOlB1bGxSZXF1ZXN0Mzc5MDcwMDc1",
+      "title": "Small spelling fixes and restructuring to align with CoAP-EST",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/2",
+      "state": "MERGED",
+      "author": "TimothyClaeys",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2020-02-24T16:00:34Z",
+      "updatedAt": "2020-03-09T13:29:55Z",
+      "baseRepository": "EricssonResearch/EST-OSCORE",
+      "baseRefName": "master",
+      "baseRefOid": "4a07d9cb646fec47591cddbe7f0674dee0addd92",
+      "headRepository": "TimothyClaeys/EST-OSCORE",
+      "headRefName": "pr_restructure",
+      "headRefOid": "1157dbd0ee386ee5227c34a9a0335f79f38b33f5",
+      "closedAt": "2020-03-03T17:34:13Z",
+      "mergedAt": "2020-03-03T17:34:13Z",
+      "mergedBy": "gselander",
+      "mergeCommit": {
+        "oid": "1157dbd0ee386ee5227c34a9a0335f79f38b33f5"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 3,
+      "id": "MDExOlB1bGxSZXF1ZXN0MzgwMjQ0MTY3",
+      "title": "Section 3: Key establishment and authentication",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/3",
+      "state": "MERGED",
+      "author": "TimothyClaeys",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "### This PR adds a section discussing key establishment and authentication of the EST endpoints.\r\n\r\n**Questions and remarks:**\r\n- EDHOC can use several types of cryptographic material to perform authentication. Depending on the type of authentication used the Implicit TA database must be initialized with the corresponding cryptographic material  (RPK, PSK or certificates). Will EST-OSCORE support all these methods or only EDHOC in combination with certificates (similar to DTLS and certificates in EST-CoAPS).\r\n\r\n- What type of key material does the TTP provide: 1) In case of PSKs, are these used directly in the OSCORE security context? 2) In case of RPKs or certificate, are these used in combination with an EDHOC exchange to derive a shared master secret?\r\n\r\n- Provisioned with PSK: directly used in OSCORE security context or use in EDHOC as authentication key?\r\n\r\n- CoAP + OSCORE = CoAPS ?\r\n",
+      "createdAt": "2020-02-26T13:09:31Z",
+      "updatedAt": "2020-03-09T13:29:45Z",
+      "baseRepository": "EricssonResearch/EST-OSCORE",
+      "baseRefName": "master",
+      "baseRefOid": "4a07d9cb646fec47591cddbe7f0674dee0addd92",
+      "headRepository": "TimothyClaeys/EST-OSCORE",
+      "headRefName": "pr_keys_and_auth",
+      "headRefOid": "6e2b4e2eb659207139f3a9083624c83e120cd217",
+      "closedAt": "2020-03-03T17:34:12Z",
+      "mergedAt": "2020-03-03T17:34:11Z",
+      "mergedBy": "gselander",
+      "mergeCommit": {
+        "oid": "41afa032680567b20b3ab4e6358f0db2af38da18"
+      },
+      "comments": [
+        {
+          "author": "gselander",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As agreed in the meeting, we merge this and do the remaining changes on the master branch.",
+          "createdAt": "2020-03-03T17:34:01Z",
+          "updatedAt": "2020-03-03T17:34:01Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 4,
+      "id": "MDExOlB1bGxSZXF1ZXN0Mzg1Njk1MDE3",
+      "title": "CBOR encoding of EST messages + editorials",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/4",
+      "state": "MERGED",
+      "author": "gselander",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2020-03-09T16:41:09Z",
+      "updatedAt": "2020-03-09T16:42:53Z",
+      "baseRepository": "EricssonResearch/EST-OSCORE",
+      "baseRefName": "master",
+      "baseRefOid": "e897dcebf6327705805505065a5bf972f2989839",
+      "headRepository": "EricssonResearch/EST-OSCORE",
+      "headRefName": "CBOR-encoding",
+      "headRefOid": "64977f1120642bf995db7b12bbb74fb6b83521ad",
+      "closedAt": "2020-03-09T16:42:52Z",
+      "mergedAt": "2020-03-09T16:42:52Z",
+      "mergedBy": "gselander",
+      "mergeCommit": {
+        "oid": "9d2ef15795aa3bc8deed63a90c972742519701be"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 5,
+      "id": "MDExOlB1bGxSZXF1ZXN0Mzg1NzMzMjMx",
+      "title": "Pr edhoc alt auth",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/5",
+      "state": "MERGED",
+      "author": "gselander",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2020-03-09T17:56:54Z",
+      "updatedAt": "2020-03-10T10:46:14Z",
+      "baseRepository": "EricssonResearch/EST-OSCORE",
+      "baseRefName": "master",
+      "baseRefOid": "9d2ef15795aa3bc8deed63a90c972742519701be",
+      "headRepository": "EricssonResearch/EST-OSCORE",
+      "headRefName": "pr_edhoc_alt_auth",
+      "headRefOid": "d49b536732d8df41aee315bb28f6a253031038a7",
+      "closedAt": "2020-03-09T18:13:32Z",
+      "mergedAt": "2020-03-09T18:13:32Z",
+      "mergedBy": "gselander",
+      "mergeCommit": {
+        "oid": "65cb5125d9b0e8cc5898f02fa9edf8b8288cc0ef"
+      },
+      "comments": [
+        {
+          "author": "TimothyClaeys",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Found a small typo in Appendix C. In the first sentence after TBD it should read: \"Currently ~~the~~ all\".",
+          "createdAt": "2020-03-09T18:04:34Z",
+          "updatedAt": "2020-03-09T18:04:34Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOBOvnCc5LfrVz",
+      "title": "Alternative figure",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/6",
+      "state": "OPEN",
+      "author": "gselander",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Here is a simplified figure inspired by the stack in Marek's LAKE presentation:\r\n\r\nhttps://datatracker.ietf.org/meeting/113/materials/slides-113-lake-developer-feedback-2-00.pdf",
+      "createdAt": "2023-03-07T16:34:58Z",
+      "updatedAt": "2023-03-08T10:12:30Z",
+      "baseRepository": "EricssonResearch/EST-OSCORE",
+      "baseRefName": "master",
+      "baseRefOid": "619307e7119e1342bdb967951f8a06efe7b5fcf5",
+      "headRepository": "EricssonResearch/EST-OSCORE",
+      "headRefName": "alt-figure",
+      "headRefOid": "2122a8ce7406a89b9d5cd335b9da21a052154999",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "LGTM",
+          "createdAt": "2023-03-08T10:12:30Z",
+          "updatedAt": "2023-03-08T10:12:30Z"
+        }
+      ],
+      "reviews": []
+    }
+  ]
+}
