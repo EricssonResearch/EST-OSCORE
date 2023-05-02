@@ -146,7 +146,7 @@ The server MUST also provide relevant information to the CA for decision about i
 
 ## EDHOC
 
-EDHOC supports authentication with certificates/raw public keys (referred to as "credentials"), and the credentials may either be transported in the protocol, or referenced. This is determined by the identifier of the credential of the endpoint, ID_CRED_x for x= Initiator/Responder, which is transported in an EDHOC message. This identifier may be the credential itself (in which case the credential is transported), or a pointer such as a URI to the credential (e.g., x5t, see {{I-D.ietf-cose-x509}}) or some other identifier which enables the receiving endpoint to retrieve the credential.
+EDHOC supports authentication with certificates/raw public keys (referred to as "credentials"), and the credentials may either be transported in the protocol, or referenced. This is determined by the identifier of the credential of the endpoint, ID_CRED_x for x= Initiator/Responder, which is transported in an EDHOC message. This identifier may be the credential itself (in which case the credential is transported), or a pointer such as a URI to the credential (e.g., x5u, see {{I-D.ietf-cose-x509}}) or some other identifier which enables the receiving endpoint to retrieve the credential.
 
 ## Certificate-based Authentication
 
