@@ -68,6 +68,7 @@ informative:
   RFC5914:
   RFC6024:
   RFC6347:
+  RFC9147:
   RFC7228:
   RFC7030:
   RFC8392:
@@ -89,7 +90,7 @@ This document specifies public-key certificate enrollment procedures protected w
 
 One of the challenges with deploying a Public Key Infrastructure (PKI) for the Internet of Things (IoT) is certificate enrollment, because existing enrollment protocols are not optimized for constrained environments {{RFC7228}}.
 
-One optimization of certificate enrollment targeting IoT deployments is specified in EST-coaps ({{RFC9148}}), which defines a version of Enrollment over Secure Transport {{RFC7030}} for transporting EST payloads over CoAP {{RFC7252}} and DTLS {{RFC6347}}, instead of secured HTTP.
+One optimization of certificate enrollment targeting IoT deployments is specified in EST-coaps ({{RFC9148}}), which defines a version of Enrollment over Secure Transport {{RFC7030}} for transporting EST payloads over CoAP {{RFC7252}} and DTLS {{RFC6347}} {{RFC9147}}, instead of secured HTTP.
 
 This document describes a method for protecting EST payloads over CoAP or HTTP with OSCORE {{RFC8613}}. OSCORE specifies an extension to CoAP which protects the application layer message and can be applied independently of how CoAP messages are transported. OSCORE can also be applied to CoAP-mappable HTTP which enables end-to-end security for mixed CoAP and HTTP transfer of application layer data. Hence EST payloads can be protected end-to-end independent of underlying transport and through proxies translating between between CoAP and HTTP.
 
