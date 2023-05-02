@@ -162,7 +162,7 @@ When desired the client can use the EDHOC-Exporter API to extract channel-bindin
 
  edhoc-unique = EDHOC-Exporter(TBD1, "EDHOC Unique", length),
 
- where TBD1 is a registered label from the EDHOC Exporter Label registry, length equals the desired length of the edhoc-unique byte string. The client then adds the edhoc-unique byte string as a challengePassword (see Section 5.4.1 of {{RFC2985}}) in the attributes section of the PKCS#10 Request {{RFC2986}} to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and signed the certification request after the EDHOC session was established.
+ where TBD1 is a registered label from the EDHOC Exporter Label registry, length equals the desired length of the edhoc-unique byte string. Unless otherwise indicated by an application profile, the length SHOULD be set to 32 bytes. The client then adds the edhoc-unique byte string as a challengePassword (see Section 5.4.1 of {{RFC2985}}) in the attributes section of the PKCS#10 Request {{RFC2986}} to prove to the server that the authenticated EDHOC client is in possession of the private key associated with the certification request, and signed the certification request after the EDHOC session was established.
 
 ## Optimizations
 
