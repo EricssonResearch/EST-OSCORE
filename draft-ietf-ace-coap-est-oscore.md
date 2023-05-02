@@ -116,7 +116,7 @@ The protection of EST payloads defined in this document builds on EST-coaps {{RF
    * Authentication based on certificates is complemented with  authentication based on raw public keys.
    * Authentication based on signature keys is complemented with authentication based on static Diffie-Hellman keys, for certificates/raw public keys.
    * Authentication based on certificate by value is complemented with authentication based on certificate/raw public keys by reference.
-* The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy (see {{proxying}}). The concept "Registrar" and its required trust relation with EST server as described in Section 5 of {{RFC9148}} is therefore redundant.
+* The EST payloads protected by OSCORE can be proxied between constrained networks supporting CoAP/CoAPs and non-constrained networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection without any security processing in the proxy (see {{proxying}}). The concept "Registrar" and its required trust relation with EST server as described in Section 5 of {{RFC9148}} is therefore not applicable.
 
 So, while the same authentication scheme (Diffie-Hellman key exchange authenticated with transported certificates) and the same EST payloads as EST-coaps also apply to EST-oscore, the latter specifies other authentication schemes and a new matching EST function. The reason for these deviations is that a significant overhead can be removed in terms of message sizes and round trips by using a different handshake, public key type or transported credential, and those are independent of the actual enrollment procedure.
 
@@ -282,7 +282,7 @@ When EDHOC is used, then the hash algorithm is the application hash algorithm of
 # HTTP-CoAP Proxy {#proxying}
 As noted in Section 5 of {{RFC9148}}, in real-world deployments, the EST server will not always reside within the CoAP boundary.  The EST-server can exist outside the constrained network in a non-constrained network that supports HTTP but not CoAP, thus requiring an intermediary CoAP-to-HTTP proxy.
 
-Since OSCORE is applicable to CoAP-mappable HTTP (see Section 11 of {{RFC8613}}) the EST payloads can be protected end-to-end between EST client and EST server independent of transport protocol or potential transport layer security which may need to be terminated in the proxy, see {{fig-proxy}}. Therefore the concept "Registrar" and its required trust relation with EST server as described in Section 5 of {{RFC9148}} is redundant.
+Since OSCORE is applicable to CoAP-mappable HTTP (see Section 11 of {{RFC8613}}) the EST payloads can be protected end-to-end between EST client and EST server independent of transport protocol or potential transport layer security which may need to be terminated in the proxy, see {{fig-proxy}}. Therefore the concept "Registrar" and its required trust relation with EST server as described in Section 5 of {{RFC9148}} is not applicable.
 
 The mappings between CoAP and HTTP referred to in Section 8.1 of {{RFC9148}} apply, and additional mappings resulting from the use of OSCORE are specified in Section 11 of {{RFC8613}}.
 
