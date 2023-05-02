@@ -170,12 +170,12 @@ When desired the client can use the EDHOC-Exporter API to extract channel-bindin
 
 * The certificates MAY be compressed, e.g. using the CBOR encoding defined in {{I-D.ietf-cose-cbor-encoded-cert}}.
 
-* The certificate MAY be referenced instead of transported {{I-D.ietf-cose-x509}}. The EST-oscore server MAY use information in the credential identifier field of the EDHOC message (ID_CRED_x) to access the EST-oscore client certificate, e.g., in a directory or database provided by the issuer. In this case the certificate may not need to be transported over a constrained link between EST client and server.
+* The client certificate MAY be referenced instead of transported {{I-D.ietf-cose-x509}}. The EST-oscore server MAY use information in the credential identifier field of the EDHOC message (ID_CRED_x) to access the EST-oscore client certificate, e.g., in a directory or database provided by the issuer. In this case the certificate may not need to be transported over a constrained link between EST client and server.
 
-* Conversely, the response to the PKCS#10 request MAY be a reference to the enrolled certificate rather than the certificate itself. The EST-oscore server MAY in the enrolment response to the EST-oscore client include a pointer to a directory or database where the certificate can be retrieved.
+* Conversely, the response to the PKCS#10 request MAY specify a reference to the enrolled certificate rather than the certificate itself. The EST-oscore server MAY in the enrolment response to the EST-oscore client include a pointer to a directory or database where the certificate can be retrieved.
 
 # Protocol Design and Layering
-EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{RFC9148}}. Instead of DTLS record layer, OSCORE {{RFC8613}} is used to protect the EST payloads. DTLS handshake is replaced with EDHOC {{I-D.ietf-lake-edhoc}}. {{fig-stack}} below shows the layered EST-oscore architecture.
+EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{RFC9148}}. Instead of DTLS record layer, OSCORE {{RFC8613}} is used to protect the messages conveying the EST payloads. The DTLS handshake is complemented by or replaced with EDHOC {{I-D.ietf-lake-edhoc}}. {{fig-stack}} below shows the layered EST-oscore architecture. Note that {{fig-stack}} does not illustrate the potential use of DTLS.
 
 ~~~~~~~~~~~
 
