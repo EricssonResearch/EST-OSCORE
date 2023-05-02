@@ -134,11 +134,15 @@ The term "Trust Anchor" follows the terminology of {{RFC6024}}: "A trust anchor 
 
 # Authentication
 
-This specification replaces the DTLS handshake in EST-coaps with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}. During initial enrollment the EST-oscore client and server run EDHOC {{I-D.ietf-lake-edhoc}} to authenticate and establish the OSCORE security context with which the EST payloads are protected.
+This specification replaces, or complements, the DTLS handshake in EST-coaps with the lightweight authenticated key exchange protocol EDHOC {{I-D.ietf-lake-edhoc}}. During initial enrollment the EST-oscore client and server run EDHOC {{I-D.ietf-lake-edhoc}} to authenticate and establish the OSCORE Security Context used to protect the messages conveying EST payloads.
 
 EST-oscore clients and servers MUST perform mutual authentication.
 The EST server and EST client are responsible for ensuring that an acceptable cipher suite is negotiated.
-The client MUST authenticate the server before accepting any server response. The server MUST authenticate the client and provide relevant information to the CA for decision about issuing a certificate.
+The client MUST authenticate the server before accepting any server response.
+The server MUST authenticate the client.
+These requirements are fullfilled when using EDHOC {{I-D.ietf-lake-edhoc}}.
+
+The server MUST also provide relevant information to the CA for decision about issuing a certificate.
 
 ## EDHOC
 
