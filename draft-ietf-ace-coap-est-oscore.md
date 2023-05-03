@@ -261,11 +261,11 @@ See Section 4.5 in {{RFC9148}}.
 
 ## Message fragmentation
 
-The EDHOC key exchange is optimized for message overhead, in particular the use of static DH keys instead of signature keys for authentication (e.g., method 3 of {{I-D.ietf-lake-edhoc}}). Together with various measures listed in this document such as CBOR-encoded payloads ({{I-D.ietf-cose-cbor-encoded-cert}}), CBOR certificates {{I-D.ietf-cose-cbor-encoded-cert}}, certificates by reference ({{optimizations}}), and trust anchors without signature ({{crts}}), a significant reduction of message sizes can be achieved.
+The EDHOC key exchange is optimized for message overhead, in particular the use of static DH keys instead of signature keys for authentication (e.g., method 3 of {{I-D.ietf-lake-edhoc}}). Together with various measures listed in this document such as CBOR-encoded payloads {{RFC8949}}, CBOR certificates {{I-D.ietf-cose-cbor-encoded-cert}}, certificates by reference ({{optimizations}}), and trust anchors without signature ({{crts}}), a significant reduction of message sizes can be achieved.
 
 Nevertheless, depending on application, the protocol messages may become larger than available frame size resulting in fragmentation and, in resource constrained networks such as IEEE 802.15.4 where throughput is limited, fragment loss can trigger costly retransmissions.
 
-It is RECOMMENDED to prevent IP fragmentation, since it involves an error-prone datagram reconstitution. To limit the size of the CoAP payload, this specification mandates the implementation of CoAP option Block1 and Block2 fragmentation mechanism {{RFC7959}} as described in Section 4.6 of {{RFC9148}}.
+It is RECOMMENDED to prevent IP fragmentation, since it involves an error-prone datagram reassembly. To limit the size of the CoAP payload, this specification mandates the implementation of CoAP option Block1 and Block2 fragmentation mechanism {{RFC7959}} as described in Section 4.6 of {{RFC9148}}.
 
 ## Delayed Responses
 See Section 4.7 in {{RFC9148}}.
@@ -276,7 +276,7 @@ This section specifies how the EST client enrolls a static DH key.
 Because a DH key pair cannot be used for signing operations, the EST client attempting to enroll a DH key must use an alternative proof-of-possesion algorithm.
 The EST client obtained the CA certs including the CA's DH certificate using the /crts function.
 The certificate indicates the DH group parameters which MUST be respected by the EST client when generating its own DH key pair.
-The EST client prepares the PKCS #10 object and signs it by following the steps in Section 4 of {{RFC6955}}.
+The EST client prepares the PKCS #10 object and computes a MAC by following the steps in Section 4 of {{RFC6955}}.
 The Key Derivation Function (KDF) and the MAC MUST be set to the HDKF and HMAC algorithms used by OSCORE.
 As per {{RFC8613}}, the HKDF MUST be one of the HMAC-based HKDF {{RFC5869}} algorithms defined for COSE {{RFC9052}}.
 The KDF and MAC is thus defined by the hash algorithm used by OSCORE in HKDF and HMAC, which by default is SHA-256.
