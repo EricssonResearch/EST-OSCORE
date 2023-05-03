@@ -203,7 +203,7 @@ The discovery of EST resources and the definition of the short EST-coaps URI pat
      REQ: GET /.well-known/core?rt=ace.est.sen
 
      RES: 2.05 Content
-   </est>; rt="ace.est";osc
+   </est>; rt="ace.est.sen";osc
 
 ~~~~~~~~~~~
 
