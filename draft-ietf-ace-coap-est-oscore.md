@@ -285,11 +285,11 @@ When EDHOC is used, then the hash algorithm is the application hash algorithm of
 # HTTP-CoAP Proxy {#proxying}
 As noted in Section 5 of {{RFC9148}}, in real-world deployments, the EST server will not always reside within the CoAP boundary.  The EST-server can exist outside the constrained network in a non-constrained network that supports HTTP but not CoAP, thus requiring an intermediary CoAP-to-HTTP proxy.
 
-Since OSCORE is applicable to CoAP-mappable HTTP (see Section 11 of {{RFC8613}}) the EST payloads can be protected end-to-end between EST client and EST server independent of transport protocol or potential transport layer security which may need to be terminated in the proxy, see {{fig-proxy}}. Therefore the concept "Registrar" and its required trust relation with EST server as described in Section 5 of {{RFC9148}} is not applicable.
+Since OSCORE is applicable to CoAP-mappable HTTP (see Section 11 of {{RFC8613}}) the messages conveying the EST payloads can be protected end-to-end between EST client and EST server independent of transport protocol or potential transport layer security which may need to be terminated in the proxy, see {{fig-proxy}}. Therefore the concept "Registrar" and its required trust relation with EST server as described in Section 5 of {{RFC9148}} is not applicable.
 
 The mappings between CoAP and HTTP referred to in Section 8.1 of {{RFC9148}} apply, and additional mappings resulting from the use of OSCORE are specified in Section 11 of {{RFC8613}}.
 
-OSCORE provides end-to-end security between EST Server and EST Client. The use of TLS and DTLS is optional.
+OSCORE provides end-to-end security between EST Server and EST Client. The additional use of TLS and DTLS is optional.
 
 ~~~~~~~~~~~
                                        Constrained-Node Network
