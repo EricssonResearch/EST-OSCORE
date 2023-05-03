@@ -229,7 +229,7 @@ In order to reduce transport overhead, the trust anchor could be just the CA pub
 In either case they can be compactly encoded, e.g. using CBOR encoding {{I-D.ietf-cose-cbor-encoded-cert}}.
 
 ## Payload formats
-Similar to EST-coaps, EST-oscore allows transport of the ASN.1 structure of a given Media-Type in binary format. In addition, EST-oscore uses the same CoAP Content-Format Options to transport EST requests and responses . {{table_mediatypes}} summarizes the information from Section 4.3 in {{RFC9148}}.
+Similar to EST-coaps, EST-oscore allows transport of the ASN.1 structure of a given Media-Type in binary format. In addition, EST-oscore uses the same CoAP Content-Format identifiers when transferring EST requests and responses . {{table_mediatypes}} summarizes the information from Section 4.3 in {{RFC9148}}.
 
 |  URI  | Content-Format                                       | #IANA |
 | /crts | N/A                                            (req) |   -   |
@@ -247,8 +247,7 @@ Similar to EST-coaps, EST-oscore allows transport of the ASN.1 structure of a gi
 |       | application/multipart-core                     (res) |   62  |
 | /att  | N/A                                            (req) |   -   |
 |       | application/csrattrs                           (res) |  285  |
-{: #table_mediatypes cols="l l" title="EST functions and there associated Media-Type and IANA numbers"}
-
+{: #table_mediatypes cols="l l" title="EST functions and the associated CoAP Content-Format identifiers"}
 
 ## Message Bindings
 The EST-oscore message characteristics are identical to those specified in Section 4.4 of {{RFC9148}}. It is RECOMMENDED that
