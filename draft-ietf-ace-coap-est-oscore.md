@@ -250,7 +250,7 @@ Similar to EST-coaps, EST-oscore allows transport of the ASN.1 structure of a gi
 {: #table_mediatypes cols="l l" title="EST functions and the associated CoAP Content-Format identifiers"}
 
 ## Message Bindings
-The EST-oscore message characteristics are identical to those specified in Section 4.4 of {{RFC9148}}. It is RECOMMENDED that
+Note that the EST-oscore message characteristics are identical to those specified in Section 4.4 of {{RFC9148}}. It is therefore required that
 
   * The EST-oscore endpoints support delayed responses
   * The endpoints supports the following CoAP options: OSCORE, Uri-Host, Uri-Path, Uri-Port, Content-Format, Block1, Block2, and Accept.
