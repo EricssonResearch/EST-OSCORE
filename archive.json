@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-05-02T00:16:16.325141+00:00",
+  "timestamp": "2023-05-04T00:19:36.645434+00:00",
   "repo": "EricssonResearch/EST-OSCORE",
   "labels": [
     {
@@ -39,7 +39,24 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 7,
+      "id": "I_kwDOBOvnCc5k2nFB",
+      "title": "Marco's review",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/7",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "[General]\r\n\r\n* Replace RFC 7049 with RFC 8949\r\n\r\n* Replace RFC 8152 with RFC 9052 and RFC 9053\r\n\r\n* When mentioning DTLS and referring to RFC 6347, refer also to RFC 9147\r\n\r\n* As expected, the draft focuses on the EDHOC forward message flow, as it better maps against the EST expected workflow and ensures to protect the identity of the EST client. That said, can the use of the EDHOC reverse message flow be explicitly ruled out altogether?\r\n\r\n \r\n[Section 1]\r\n\r\n* s/secured HTTP/HTTP [RFC9110][RFC9112] and TLS [RFC8446]\r\n\r\n* s/which protects the application layer message/which protects messages at the application layer\r\n\r\n* s/multicast CoAP messages/CoAP group messages\r\n\r\n\r\n[Section 1.1]\r\n\r\n* \"The concept \"Registrar\" and its required trust relation with EST server as described in Section 5 of [RFC9148] is therefore redundant.\"\r\n\r\n   Do you really mean \"redundant\"? Isn't it actually \"inapplicable\"?\r\n\r\n   In the presence of end-to-end security through OSCORE between the EST client and server, an hypothetical Registrar cannot perform its task as it does instead in RFC 9148. In this case instead, an intermediary would be simply limited to be a (cross-)proxy, on which indeed less trust needs to be put.\r\n\r\n\r\n[Section 3.0]\r\n\r\n* \"This specification replaces the DTLS handshake in EST-coaps with the lightweight authenticated key exchange protocol EDHOC [I-D.ietf-lake-edhoc].\"\r\n\r\n   However, Section 1 talks about possible co-existence of OSCORE and DTLS, rather than of replacement. I think you mean \"replaces or complements\", like said in the previous sections.\r\n\r\n* \"... and establish the OSCORE security context with which the EST payloads are protected.\"\r\n\r\n   This should be \"... Security Context used to protect the messages conveying the EST payloads.\"\r\n\r\n* I suggest to split the second paragraph into two parts.\r\n\r\n  The first part ends with the current \"The server MUST authenticate the client\". The text can highlight that all those requirements are fulfilled when specifically using EDHOC.\r\n\r\n  The second part would say \"The server MUST also provide relevant information to the CA for decision about issuing a certificate\".\r\n\r\n\r\n[Section 3.1]\r\n\r\n* \"or a pointer such as a URI to the credential (e.g., x5t, see [I-D.ietf-cose-x509])\"\r\n\r\n   This is mixing a type of credential reference with the abbreviated name of a different reference type. Either say a hash and then the parameter x5t, or a URI and then the parameter x5u.\r\n\r\n\r\n[Section 3.3]\r\n\r\n* Section 1 says: \"pre-shared OSCORE keying material would also be an option.\"\r\n\r\n   In such a case, is channel binding simply not achievable?\r\n\r\n   Or is it somehow possible as long as the OSCORE keying material was established through some sort of interactive protocol (e.g., like the OSCORE profile of ACE, see RFC 9203)?\r\n\r\n* \"length equals the desired length of the edhoc-unique byte string\"\r\n\r\n   I think it's better to specify a length of the byte string to use, unless otherwise indicated/advertised (e.g., in a used EDHOC application profile). RFC 9148 considers 32 bytes (see its Section 3).\r\n\r\n\r\n[Section 3.4]\r\n\r\n* In scenarios using message_4, wouldn't it make sense to have the PKCS#10 request and response transported in an EAD_3 and EAD_4 item, respectively?\r\n\r\n* s/The certificate MAY be referenced/The client certificate MAY be referenced\r\n\r\n* s/response to the PKCS#10 request MAY be/response to the PKCS#10 request MAY specify\r\n\r\n\r\n[Section 4.0]\r\n\r\n* \"OSCORE [RFC8613] is used to protect the EST payloads.\"\r\n\r\n   This should be \"OSCORE [RFC8613] is used to protect the messages conveying the EST payloads.\"\r\n\r\n* s/DTLS handshake is replaced with EDHOC/The DTLS handshake is complemented by or replaced with EDHOC\r\n\r\n   Then the following sentence can clarify that the architecture shown in Figure 6 does not consider the additional use of DTLS.\r\n\r\n\r\n[Section 4.1]\r\n\r\n* In the shown example, the resource type should be rt=\"ace.est.sen\" also in the link specified in the response.\r\n\r\n* Per Section 9 of RFC 8613, the \"osc\" attribute is optionally included in a link to specify that a resource has to be accessed with OSCORE. Should it remain optional here too?\r\n\r\n   Consider a setup where OSCORE and DTLS are combined. Especially when discovering EST resources on a non-default port number, the links to those resources would have URI scheme \"coaps\". Then, the absence of the \"osc\" attribute might wrongly suggest that the EST server is actually using EST-coaps.\r\n\r\n   Therefore, it might be worth mandating the use of the attribute \"osc\" in links to EST resources accessed as in this specification.\r\n\r\n   An alternative would be defining a new set of EST-OSCORE-related Resource Type values, such as \"ace.est.osc.*\".\r\n\r\n\r\n[Section 4.2]\r\n\r\n* Regarding the response from /skc, is it possible to deviate from what is defined in RFC 9148 and *not* encrypt the private key? After all, end-to-end encryption of the whole EST payload is ensured by OSCORE.\r\n\r\n   If yes, that might open for a new Content-Format pair (284, 287), i.e., an unencrypted PKCS #8 private key together with a single certificate (not a PKCS#7 container).\r\n\r\n\r\n[Section 4.3]\r\n\r\n* \"EST-oscore uses the same CoAP Content-Format Options to transport EST requests and responses\"\r\n\r\n   I think you mean: \"EST-oscore uses the same CoAP Content-Format identifiers when transferring EST requests and responses\".\r\n\r\n* The caption of Table 2 should be: \"EST functions and the associated CoAP Content-Format identifiers\"\r\n\r\n* I suppose your intention is for the EST client and server to support Content-Formats just like in RFC 9148, i.e.:\r\n\r\n   \"Content-Format 281 MUST be supported by EST-coaps servers. Servers MAY also support Content-Format 287. It is up to the client to support only Content-Format 281, 287 or both.\"\r\n\r\n   I think it is good to have an explicit statement here too.\r\n\r\n* Like RFC 9148 does in its Table 3, it is good to also recap the Content-Format identifiers used for the different parts of the responses from /skg and /skc.\r\n\r\n\r\n[Section 4.4]\r\n\r\n* The list of requirements is preceded by \"It is RECOMMENDED that\". However, isn't it a MUST for (at least) the CoAP options OSCORE and Uri-Path?\r\n\r\n* \"The EST URLs based on https:// are translated to coap://, but with mandatory use of the CoAP OSCORE option.\"\r\n\r\n   The scheme \"coap\" is the translation target only if DTLS is not additionally used.\r\n\r\n\r\n[Section 4.6]\r\n\r\n* \"such as CBOR-encoded payloads ([I-D.ietf-cose-cbor-encoded-cert])\"\r\n\r\n   Perhaps you meant to refer to RFC 8949?\r\n\r\n* s/reconstitution/reassembly\r\n\r\n* \"this specification mandates the implementation of CoAP option Block1 and Block2 fragmentation mechanism [RFC7959]\"\r\n\r\n   This is good, but it contradicts the text in Section 4.4 where the support of the CoAP option Block1 and Block2 is only RECOMMENDED.\r\n\r\n\r\n[Section 4.8]\r\n\r\n* \"The EST client prepares the PKCS #10 object and signs it by following the steps in Section 4 of [RFC6955].\"\r\n\r\n   Even though Section 4 of RFC 6955 does use the words \"The value to be signed\", it is quite confusing to read \"signs it\" in this section, which correctly starts with saying that a Diffie-Hellman key pair cannot be used for signing operations.\r\n\r\n   I think that here it is worth saying \"and computing a MAC\" instead of \"and signs it\".\r\n\r\n\r\n[Section 5]\r\n\r\n* \"the EST payloads can be protected end-to-end\"\r\n\r\n   This should be \"the messages conveying the EST payloads can be protected end-to-end\"\r\n\r\n* \"Therefore the concept \"Registrar\" and its required trust relation with EST server as described in Section 5 of [RFC9148] is redundant.\"\r\n\r\n   See a previous comment about Section 1.1, on the word \"redundant\".\r\n\r\n* \"The use of TLS and DTLS is optional.\"\r\n\r\n   Proposed rephrasing: \"The additional use of TLS or DTLS is optional.\"\r\n\r\n* If a secure association is needed between the EST Client and the CoAP-to-HTTP Proxy, this may alternatively and more conveniently rely on OSCORE as well, see https://datatracker.ietf.org/doc/draft-tiloca-core-oscore-capable-proxies/\r\n\r\n\r\n[Nits]\r\n\r\n* Section 1\r\n--- s/of underlying transport/of the underlying transport\r\n--- s/needs to be kept/need to be kept\r\n--- s/between EST-oscore client/between the EST-oscore client\r\n\r\n* Section 1.1\r\n--- s/replaced, or complemented, with OSCORE/replaced by, or complemented with, OSCORE\r\n--- s/replaced, or complemented, with the lightweight/replaced by, or complemented with, the lightweight\r\n--- s/relation with EST/relation with the EST\r\n\r\n* Section 3\r\n--- s/initial enrollment the EST-oscore/initial enrollment, the EST-oscore\r\n--- s/EST-oscore clients and/The EST-oscore clients and\r\n\r\n* Section 3.2\r\n--- s/between EST client and/between the EST client and\r\n\r\n* Section 3.4\r\n--- s/e.g. using/e.g., using\r\n\r\n* Section 4\r\n--- s/Instead of DTLS record/Instead of the DTLS record\r\n\r\n* Section 4.2.1\r\n--- s/e.g. using/e.g., using\r\n\r\n* Section 4.6\r\n--- s/depending on application/depending on the application\r\n--- s/than available frame size resulting/than the available frame size thus resulting\r\n--- s/implementation of CoAP option/implementation of the CoAP option\r\n--- s/fragmentation mechanism/to enforce the fragmentation mechanism defined in\r\n\r\n* Section 5\r\n--- s/between EST client and EST server independent/between the EST client and EST server, irrespective\r\n",
+      "createdAt": "2023-05-02T08:56:40Z",
+      "updatedAt": "2023-05-02T09:00:01Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
@@ -202,21 +219,21 @@
       "id": "PR_kwDOBOvnCc5LfrVz",
       "title": "Alternative figure",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/6",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "gselander",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Here is a simplified figure inspired by the stack in Marek's LAKE presentation:\r\n\r\nhttps://datatracker.ietf.org/meeting/113/materials/slides-113-lake-developer-feedback-2-00.pdf",
       "createdAt": "2023-03-07T16:34:58Z",
-      "updatedAt": "2023-03-08T10:12:30Z",
+      "updatedAt": "2023-05-02T08:56:06Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "619307e7119e1342bdb967951f8a06efe7b5fcf5",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "alt-figure",
       "headRefOid": "2122a8ce7406a89b9d5cd335b9da21a052154999",
-      "closedAt": null,
+      "closedAt": "2023-05-02T08:56:05Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -227,6 +244,13 @@
           "body": "LGTM",
           "createdAt": "2023-03-08T10:12:30Z",
           "updatedAt": "2023-03-08T10:12:30Z"
+        },
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I believe this PR can be closed since we integrated a version of the proposed figure.",
+          "createdAt": "2023-05-02T08:56:05Z",
+          "updatedAt": "2023-05-02T08:56:05Z"
         }
       ],
       "reviews": []
