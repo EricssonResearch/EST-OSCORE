@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-05-04T00:19:36.645434+00:00",
+  "timestamp": "2023-05-07T00:17:24.006792+00:00",
   "repo": "EricssonResearch/EST-OSCORE",
   "labels": [
     {
@@ -253,6 +253,32 @@
           "updatedAt": "2023-05-02T08:56:05Z"
         }
       ],
+      "reviews": []
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOBOvnCc5PxThJ",
+      "title": "Non-controversial changes following Marco's review",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/8",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Addresses partially #7 ",
+      "createdAt": "2023-05-04T12:02:27Z",
+      "updatedAt": "2023-05-04T13:03:20Z",
+      "baseRepository": "EricssonResearch/EST-OSCORE",
+      "baseRefName": "master",
+      "baseRefOid": "0cd1b7e473536f465520e131fcead870c9fff8a7",
+      "headRepository": "EricssonResearch/EST-OSCORE",
+      "headRefName": "7-marcos-review",
+      "headRefOid": "f7addb6fea6e23e03758b754e8cf10357b714deb",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
       "reviews": []
     }
   ]
