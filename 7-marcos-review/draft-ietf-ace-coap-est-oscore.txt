@@ -5,13 +5,13 @@
 ACE Working Group                                            G. Selander
 Internet-Draft                                               Ericsson AB
 Intended status: Standards Track                                 S. Raza
-Expires: 5 November 2023                                            RISE
+Expires: 12 November 2023                                           RISE
                                                               M. Furuhed
                                                                    Nexus
                                                               M. Vučinić
                                                                    Inria
                                                                T. Claeys
-                                                              4 May 2023
+                                                             11 May 2023
 
 
                   Protecting EST Payloads with OSCORE
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 November 2023.
+   This Internet-Draft will expire on 12 November 2023.
 
 Copyright Notice
 
@@ -438,8 +438,9 @@ Table of Contents
 
 4.4.  Message Bindings
 
-   The EST-oscore message characteristics are identical to those
-   specified in Section 4.4 of [RFC9148].  It is REQUIRED that
+   Note that the EST-oscore message characteristics are identical to
+   those specified in Section 4.4 of [RFC9148].  It is therefore
+   required that
 
    *  The EST-oscore endpoints support delayed responses
 
