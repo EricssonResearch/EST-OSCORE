@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-05-07T00:17:24.006792+00:00",
+  "timestamp": "2023-05-14T00:17:40.571758+00:00",
   "repo": "EricssonResearch/EST-OSCORE",
   "labels": [
     {
@@ -55,6 +55,222 @@
       "updatedAt": "2023-05-02T09:00:01Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 9,
+      "id": "I_kwDOBOvnCc5lr0eF",
+      "title": "Explicit the message flow",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/9",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Marco Tiloca wrote:\r\n>  As expected, the draft focuses on the EDHOC forward message flow, as it better maps against the EST expected workflow and ensures to protect the identity of the EST client. That said, can the use of the EDHOC reverse message flow be explicitly ruled out altogether?",
+      "createdAt": "2023-05-11T14:53:00Z",
+      "updatedAt": "2023-05-11T14:53:15Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed in the meeting, the proposed action here is to add an explicit statement in Section 3 (Authentication) that the EST client MUST play the role of the EDHOC initiator",
+          "createdAt": "2023-05-11T14:53:15Z",
+          "updatedAt": "2023-05-11T14:53:15Z"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "id": "I_kwDOBOvnCc5lr1QN",
+      "title": "Channel binding when EDHOC is not used",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/10",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Marco Tiloca wrote: \r\n\r\n>Section 1 says: \"pre-shared OSCORE keying material would also be an option.\"\r\n> In such a case, is channel binding simply not achievable?\r\n> Or is it somehow possible as long as the OSCORE keying material was established through some sort of interactive protocol (e.g., like the OSCORE profile of ACE, see RFC 9203)?\r\n",
+      "createdAt": "2023-05-11T14:54:32Z",
+      "updatedAt": "2023-05-11T14:54:46Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed in the meeting, the proposed action here is to explicitly specify that EDHOC-Exporter-based channel binding is applicable only to cases where EDHOC is executed prior to enrollment and to state that the channel binding is not supported when pre-shared OSCORE context is used.",
+          "createdAt": "2023-05-11T14:54:45Z",
+          "updatedAt": "2023-05-11T14:54:45Z"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "id": "I_kwDOBOvnCc5lr1w6",
+      "title": "Transport PKCS objects within EDHOC's EAD fields?",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/11",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Marco Tiloca wrote:\r\n> In scenarios using message_4, wouldn't it make sense to have the PKCS#10 request and response transported in an EAD_3 and EAD_4 item, respectively?",
+      "createdAt": "2023-05-11T14:55:31Z",
+      "updatedAt": "2023-05-11T14:55:49Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed in the meeting, the reason for not transporting PKCS objects within EAD fields of EDHOC is that we also consider re-enrollment where EDHOC is not necessarily executed. Therefore, proposed action is to informatively mention that not using EAD is intentional. ",
+          "createdAt": "2023-05-11T14:55:49Z",
+          "updatedAt": "2023-05-11T14:55:49Z"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "id": "I_kwDOBOvnCc5lr2qh",
+      "title": "Mandate \"osc\" attribute in links to EST resources",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/12",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Marco Tiloca wrote:\r\n> Per Section 9 of RFC 8613, the \"osc\" attribute is optionally included in a link to specify that a resource has to be accessed with OSCORE. Should it remain optional here too?\r\n> Consider a setup where OSCORE and DTLS are combined. Especially when discovering EST resources on a non-default port number, the links to those resources would have URI scheme \"coaps\". Then, the absence of the \"osc\" attribute might wrongly suggest that the EST server is actually using EST-coaps.\r\n>Therefore, it might be worth mandating the use of the attribute \"osc\" in links to EST resources accessed as in this specification.\r\n> An alternative would be defining a new set of EST-OSCORE-related Resource Type values, such as \"ace.est.osc.*\".",
+      "createdAt": "2023-05-11T14:57:08Z",
+      "updatedAt": "2023-05-11T14:57:20Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": " As discussed in the meeting, the proposed action here is to mandate the use of the attribute \u201cosc\u201d in links to EST resources.",
+          "createdAt": "2023-05-11T14:57:20Z",
+          "updatedAt": "2023-05-11T14:57:20Z"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "id": "I_kwDOBOvnCc5lr3TR",
+      "title": "Response to /skc may be unencrypted PKCS #8 private key",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/13",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Marco Tiloca wrote:\r\n\r\n> Regarding the response from /skc, is it possible to deviate from what is defined in RFC 9148 and *not* encrypt the private key? After all, end-to-end encryption of the whole EST payload is ensured by OSCORE.\r\n\r\n> If yes, that might open for a new Content-Format pair (284, 287), i.e., an unencrypted PKCS #8 private key together with a single certificate (not a PKCS #7 container).\r\n",
+      "createdAt": "2023-05-11T14:58:12Z",
+      "updatedAt": "2023-05-11T14:58:25Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As agreed in the meeting, we will specify that the response /skc can be PKCS #8 private key because OSCORE is used, and also specify the new Context-Format pair.",
+          "createdAt": "2023-05-11T14:58:25Z",
+          "updatedAt": "2023-05-11T14:58:25Z"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "id": "I_kwDOBOvnCc5lr4HO",
+      "title": "Specify Content-Format support as in RFC 9148",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/14",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Marco Tiloca wrote:\r\n\r\n> I suppose your intention is for the EST client and server to support Content-Formats just like in RFC 9148, i.e.:\r\n> \"Content-Format 281 MUST be supported by EST-coaps servers. Servers MAY also support Content-Format 287. It is up to the client to support only Content-Format 281, 287 or both.\"\r\n> I think it is good to have an explicit statement here too.\r\n> Like RFC 9148 does in its Table 3, it is good to also recap the Content-Format identifiers used for the different parts of the responses from /skg and /skc.",
+      "createdAt": "2023-05-11T14:59:41Z",
+      "updatedAt": "2023-05-11T14:59:51Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As agreed in the meeting, we will specify explicitly Content-Format support and add a Table similar to RFC 9148 Table 3.",
+          "createdAt": "2023-05-11T14:59:50Z",
+          "updatedAt": "2023-05-11T14:59:50Z"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "id": "I_kwDOBOvnCc5lr4zo",
+      "title": "Translation scheme if DTLS is used",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/15",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Marco Tiloca wrote:\r\n>>\"The EST URLs based on https:// are translated to coap://, but with mandatory use of the CoAP OSCORE option.\"\r\n\r\n> The scheme \"coap\" is the translation target only if DTLS is not additionally used.\r\n",
+      "createdAt": "2023-05-11T15:01:08Z",
+      "updatedAt": "2023-05-11T15:01:16Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": " As agreed in the meeting, we will explicitly mention that if DTLS is used, scheme is \u201ccoaps\u201d.",
+          "createdAt": "2023-05-11T15:01:15Z",
+          "updatedAt": "2023-05-11T15:01:15Z"
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "id": "I_kwDOBOvnCc5lr5Qn",
+      "title": "Specify support for Block1 and Block2",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/16",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Marco Tiloca wrote:\r\n\r\n>> \"this specification mandates the implementation of CoAP option Block1 and Block2 fragmentation mechanism [RFC7959]\"\r\n\r\n> This is good, but it contradicts the text in Section 4.4 where the support of the CoAP option Block1 and Block2 is only RECOMMENDED.",
+      "createdAt": "2023-05-11T15:02:02Z",
+      "updatedAt": "2023-05-11T15:02:12Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed in the meeting, we will replace this text with requirements similar to Section 4.6 of RFC 9148 on Block1 and Block2. ",
+          "createdAt": "2023-05-11T15:02:11Z",
+          "updatedAt": "2023-05-11T15:02:11Z"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "I_kwDOBOvnCc5lr5za",
+      "title": "EST Client <-> CoAP-to-HTTP proxy secure association",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/17",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Marco Tiloca wrote:\r\n\r\n> If a secure association is needed between the EST Client and the CoAP-to-HTTP Proxy, this may alternatively and more conveniently rely on OSCORE as well, see https://datatracker.ietf.org/doc/draft-tiloca-core-oscore-capable-proxies/",
+      "createdAt": "2023-05-11T15:03:07Z",
+      "updatedAt": "2023-05-11T15:03:16Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed in the meeting, the proposed action here is to informatively reference draft-tiloca-core-oscore-capable-proxies as a way to establish a secure association between the EST client and CoAP-to-HTTP proxy.",
+          "createdAt": "2023-05-11T15:03:16Z",
+          "updatedAt": "2023-05-11T15:03:16Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -267,13 +483,13 @@
       "labels": [],
       "body": "Addresses partially #7 ",
       "createdAt": "2023-05-04T12:02:27Z",
-      "updatedAt": "2023-05-04T13:03:20Z",
+      "updatedAt": "2023-05-11T13:59:22Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0cd1b7e473536f465520e131fcead870c9fff8a7",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "7-marcos-review",
-      "headRefOid": "f7addb6fea6e23e03758b754e8cf10357b714deb",
+      "headRefOid": "8337d01576f42e8ac17f267283690e550a347aeb",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
