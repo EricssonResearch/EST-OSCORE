@@ -393,7 +393,7 @@ Table of Contents
    Similar to EST-coaps, EST-oscore allows transport of the ASN.1
    structure of a given Media-Type in binary format.  In addition, EST-
    oscore uses the same CoAP Content-Format identifiers when
-   transferring EST requests and responses . Table 2 summarizes the
+   transferring EST requests and responses.  Table 2 summarizes the
    information from Section 4.3 in [RFC9148].
 
            +=======+===================================+=======+
