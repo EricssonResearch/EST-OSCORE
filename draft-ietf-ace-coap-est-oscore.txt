@@ -5,13 +5,13 @@
 ACE Working Group                                            G. Selander
 Internet-Draft                                               Ericsson AB
 Intended status: Standards Track                                 S. Raza
-Expires: 21 October 2023                                            RISE
+Expires: 18 November 2023                                           RISE
                                                               M. Furuhed
                                                                    Nexus
                                                               M. Vučinić
                                                                    Inria
                                                                T. Claeys
-                                                           19 April 2023
+                                                             17 May 2023
 
 
                   Protecting EST Payloads with OSCORE
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 October 2023.
+   This Internet-Draft will expire on 18 November 2023.
 
 Copyright Notice
 
@@ -110,31 +110,31 @@ Table of Contents
    One optimization of certificate enrollment targeting IoT deployments
    is specified in EST-coaps ([RFC9148]), which defines a version of
    Enrollment over Secure Transport [RFC7030] for transporting EST
-   payloads over CoAP [RFC7252] and DTLS [RFC6347], instead of secured
-   HTTP.
+   payloads over CoAP [RFC7252] and DTLS [RFC6347] [RFC9147], instead of
+   HTTP [RFC9110] [RFC9112] and TLS [RFC8446].
 
    This document describes a method for protecting EST payloads over
    CoAP or HTTP with OSCORE [RFC8613].  OSCORE specifies an extension to
-   CoAP which protects the application layer message and can be applied
-   independently of how CoAP messages are transported.  OSCORE can also
-   be applied to CoAP-mappable HTTP which enables end-to-end security
-   for mixed CoAP and HTTP transfer of application layer data.  Hence
-   EST payloads can be protected end-to-end independent of underlying
-   transport and through proxies translating between between CoAP and
-   HTTP.
+   CoAP which protects messages at the application layer and can be
+   applied independently of how CoAP messages are transported.  OSCORE
+   can also be applied to CoAP-mappable HTTP which enables end-to-end
+   security for mixed CoAP and HTTP transfer of application layer data.
+   Hence EST payloads can be protected end-to-end independent of the
+   underlying transport and through proxies translating between between
+   CoAP and HTTP.
 
    OSCORE is designed for constrained environments, building on IoT
-   standards such as CoAP, CBOR [RFC7049] and COSE [RFC8152], and has in
-   particular gained traction in settings where message sizes and the
-   number of exchanged messages needs to be kept at a minimum, such as
-   6TiSCH [RFC9031], or for securing multicast CoAP messages
+   standards such as CoAP, CBOR [RFC8949] and COSE [RFC9052] [RFC9053],
+   and has in particular gained traction in settings where message sizes
+   and the number of exchanged messages need to be kept at a minimum,
+   such as 6TiSCH [RFC9031], or for securing CoAP group messages
    [I-D.ietf-core-oscore-groupcomm].  Where OSCORE is implemented and
    used for communication security, the reuse of OSCORE for other
    purposes, such as enrollment, reduces the code footprint.
 
    In order to protect certificate enrollment with OSCORE, the necessary
    keying material (notably, the OSCORE Master Secret, see [RFC8613])
-   needs to be established between EST-oscore client and EST-oscore
+   needs to be established between the EST-oscore client and EST-oscore
    server.  For this purpose we assume by default the use of the
    lightweight authenticated key exchange protocol EDHOC
    [I-D.ietf-lake-edhoc], although pre-shared OSCORE keying material
@@ -160,9 +160,10 @@ Table of Contents
    data (i.e., CoAP message fields and payload).  This specification
    deviates from EST-coaps in the following respects:
 
-   *  The DTLS record layer is replaced, or complemented, with OSCORE.
+   *  The DTLS record layer is replaced by, or complemented with,
+      OSCORE.
 
-   *  The DTLS handshake is replaced, or complemented, with the
+   *  The DTLS handshake is replaced by, or complemented with, the
       lightweight authenticated key exchange protocol EDHOC
       [I-D.ietf-lake-edhoc], and makes use of the following features:
 
@@ -181,9 +182,9 @@ Table of Contents
       constrained networks supporting CoAP/CoAPs and non-constrained
       networks supporting HTTP/HTTPs with a CoAP-HTTP proxy protection
       without any security processing in the proxy (see Section 5).  The
-      concept "Registrar" and its required trust relation with EST
-      server as described in Section 5 of [RFC9148] is therefore
-      redundant.
+      concept "Registrar" and its required trust relation with the EST
+      server as described in Section 5 of [RFC9148] is therefore not
+      applicable.
 
    So, while the same authentication scheme (Diffie-Hellman key exchange
    authenticated with transported certificates) and the same EST
@@ -218,19 +219,22 @@ Table of Contents
 
 3.  Authentication
 
-   This specification replaces the DTLS handshake in EST-coaps with the
-   lightweight authenticated key exchange protocol EDHOC
-   [I-D.ietf-lake-edhoc].  During initial enrollment the EST-oscore
-   client and server run EDHOC [I-D.ietf-lake-edhoc] to authenticate and
-   establish the OSCORE security context with which the EST payloads are
-   protected.
+   This specification replaces, or complements, the DTLS handshake in
+   EST-coaps with the lightweight authenticated key exchange protocol
+   EDHOC [I-D.ietf-lake-edhoc].  During initial enrollment, the EST-
+   oscore client and server run EDHOC [I-D.ietf-lake-edhoc] to
+   authenticate and establish the OSCORE Security Context used to
+   protect the messages conveying EST payloads.
 
-   EST-oscore clients and servers MUST perform mutual authentication.
-   The EST server and EST client are responsible for ensuring that an
-   acceptable cipher suite is negotiated.  The client MUST authenticate
-   the server before accepting any server response.  The server MUST
-   authenticate the client and provide relevant information to the CA
-   for decision about issuing a certificate.
+   The EST-oscore clients and servers MUST perform mutual
+   authentication.  The EST server and EST client are responsible for
+   ensuring that an acceptable cipher suite is negotiated.  The client
+   MUST authenticate the server before accepting any server response.
+   The server MUST authenticate the client.  These requirements are
+   fullfilled when using EDHOC [I-D.ietf-lake-edhoc].
+
+   The server MUST also provide relevant information to the CA for
+   decision about issuing a certificate.
 
 3.1.  EDHOC
 
@@ -241,13 +245,13 @@ Table of Contents
    Initiator/Responder, which is transported in an EDHOC message.  This
    identifier may be the credential itself (in which case the credential
    is transported), or a pointer such as a URI to the credential (e.g.,
-   x5t, see [I-D.ietf-cose-x509]) or some other identifier which enables
+   x5u, see [I-D.ietf-cose-x509]) or some other identifier which enables
    the receiving endpoint to retrieve the credential.
 
 3.2.  Certificate-based Authentication
 
    EST-oscore, like EST-coaps, supports certificate-based authentication
-   between EST client and server.  In this case the client MUST be
+   between the EST client and server.  In this case the client MUST be
    configured with an Implicit or Explicit Trust Anchor (TA) [RFC7030]
    database, enabling the client to authenticate the server.  During the
    initial enrollment the client SHOULD populate its Explicit TA
@@ -274,12 +278,14 @@ Table of Contents
 
    where TBD1 is a registered label from the EDHOC Exporter Label
    registry, length equals the desired length of the edhoc-unique byte
-   string.  The client then adds the edhoc-unique byte string as a
-   challengePassword (see Section 5.4.1 of [RFC2985]) in the attributes
-   section of the PKCS#10 Request [RFC2986] to prove to the server that
-   the authenticated EDHOC client is in possession of the private key
-   associated with the certification request, and signed the
-   certification request after the EDHOC session was established.
+   string.  Unless otherwise indicated by an application profile, the
+   length SHOULD be set to 32 bytes.  The client then adds the edhoc-
+   unique byte string as a challengePassword (see Section 5.4.1 of
+   [RFC2985]) in the attributes section of the PKCS#10 Request [RFC2986]
+   to prove to the server that the authenticated EDHOC client is in
+   possession of the private key associated with the certification
+   request, and signed the certification request after the EDHOC session
+   was established.
 
 3.4.  Optimizations
 
@@ -289,10 +295,10 @@ Table of Contents
       an enrolment request and response) in two round trips
       [I-D.ietf-core-oscore-edhoc].
 
-   *  The certificates MAY be compressed, e.g. using the CBOR encoding
+   *  The certificates MAY be compressed, e.g., using the CBOR encoding
       defined in [I-D.ietf-cose-cbor-encoded-cert].
 
-   *  The certificate MAY be referenced instead of transported
+   *  The client certificate MAY be referenced instead of transported
       [I-D.ietf-cose-x509].  The EST-oscore server MAY use information
       in the credential identifier field of the EDHOC message
       (ID_CRED_x) to access the EST-oscore client certificate, e.g., in
@@ -300,19 +306,21 @@ Table of Contents
       certificate may not need to be transported over a constrained link
       between EST client and server.
 
-   *  Conversely, the response to the PKCS#10 request MAY be a reference
-      to the enrolled certificate rather than the certificate itself.
-      The EST-oscore server MAY in the enrolment response to the EST-
-      oscore client include a pointer to a directory or database where
-      the certificate can be retrieved.
+   *  Conversely, the response to the PKCS#10 request MAY specify a
+      reference to the enrolled certificate rather than the certificate
+      itself.  The EST-oscore server MAY in the enrolment response to
+      the EST-oscore client include a pointer to a directory or database
+      where the certificate can be retrieved.
 
 4.  Protocol Design and Layering
 
    EST-oscore uses CoAP [RFC7252] and Block-Wise [RFC7959] to transfer
    EST messages in the same way as [RFC9148].  Instead of DTLS record
-   layer, OSCORE [RFC8613] is used to protect the EST payloads.  DTLS
-   handshake is replaced with EDHOC [I-D.ietf-lake-edhoc].  Figure 1
-   below shows the layered EST-oscore architecture.
+   layer, OSCORE [RFC8613] is used to protect the messages conveying the
+   EST payloads.  The DTLS handshake is complemented by or replaced with
+   EDHOC [I-D.ietf-lake-edhoc].  Figure 1 below shows the layered EST-
+   oscore architecture.  Note that Figure 1 does not illustrate the
+   potential use of DTLS.
 
                                    +----------------+
                                    |  EST messages  |
@@ -339,7 +347,7 @@ Table of Contents
         REQ: GET /.well-known/core?rt=ace.est.sen
 
         RES: 2.05 Content
-      </est>; rt="ace.est";osc
+      </est>; rt="ace.est.sen";osc
 
 4.2.  Mandatory/optional EST Functions
 
@@ -384,9 +392,9 @@ Table of Contents
 
    Similar to EST-coaps, EST-oscore allows transport of the ASN.1
    structure of a given Media-Type in binary format.  In addition, EST-
-   oscore uses the same CoAP Content-Format Options to transport EST
-   requests and responses . Table 2 summarizes the information from
-   Section 4.3 in [RFC9148].
+   oscore uses the same CoAP Content-Format identifiers when
+   transferring EST requests and responses . Table 2 summarizes the
+   information from Section 4.3 in [RFC9148].
 
            +=======+===================================+=======+
            | URI   | Content-Format                    | #IANA |
@@ -425,13 +433,14 @@ Table of Contents
            |       | application/csrattrs (res)        | 285   |
            +-------+-----------------------------------+-------+
 
-                Table 2: EST functions and there associated
-                        Media-Type and IANA numbers
+               Table 2: EST functions and the associated CoAP
+                         Content-Format identifiers
 
 4.4.  Message Bindings
 
-   The EST-oscore message characteristics are identical to those
-   specified in Section 4.4 of [RFC9148].  It is RECOMMENDED that
+   Note that the EST-oscore message characteristics are identical to
+   those specified in Section 4.4 of [RFC9148].  It is therefore
+   required that
 
    *  The EST-oscore endpoints support delayed responses
 
@@ -452,22 +461,22 @@ Table of Contents
    particular the use of static DH keys instead of signature keys for
    authentication (e.g., method 3 of [I-D.ietf-lake-edhoc]).  Together
    with various measures listed in this document such as CBOR-encoded
-   payloads ([I-D.ietf-cose-cbor-encoded-cert]), CBOR certificates
+   payloads [RFC8949], CBOR certificates
    [I-D.ietf-cose-cbor-encoded-cert], certificates by reference
    (Section 3.4), and trust anchors without signature (Section 4.2.1), a
    significant reduction of message sizes can be achieved.
 
-   Nevertheless, depending on application, the protocol messages may
-   become larger than available frame size resulting in fragmentation
-   and, in resource constrained networks such as IEEE 802.15.4 where
-   throughput is limited, fragment loss can trigger costly
-   retransmissions.
+   Nevertheless, depending on the application, the protocol messages may
+   become larger than the available frame size thus resulting in
+   fragmentation and, in resource constrained networks such as IEEE
+   802.15.4 where throughput is limited, fragment loss can trigger
+   costly retransmissions.
 
    It is RECOMMENDED to prevent IP fragmentation, since it involves an
-   error-prone datagram reconstitution.  To limit the size of the CoAP
-   payload, this specification mandates the implementation of CoAP
-   option Block1 and Block2 fragmentation mechanism [RFC7959] as
-   described in Section 4.6 of [RFC9148].
+   error-prone datagram reassembly.  To limit the size of the CoAP
+   payload, this specification mandates the implementation of the CoAP
+   option Block1 and Block2 to enforce the fragmentation mechanism
+   defined in [RFC7959] as described in Section 4.6 of [RFC9148].
 
 4.7.  Delayed Responses
 
@@ -482,9 +491,9 @@ Table of Contents
    including the CA's DH certificate using the /crts function.  The
    certificate indicates the DH group parameters which MUST be respected
    by the EST client when generating its own DH key pair.  The EST
-   client prepares the PKCS #10 object and signs it by following the
-   steps in Section 4 of [RFC6955].  The Key Derivation Function (KDF)
-   and the MAC MUST be set to the HDKF and HMAC algorithms used by
+   client prepares the PKCS #10 object and computes a MAC by following
+   the steps in Section 4 of [RFC6955].  The Key Derivation Function
+   (KDF) and the MAC MUST be set to the HDKF and HMAC algorithms used by
    OSCORE.  As per [RFC8613], the HKDF MUST be one of the HMAC-based
    HKDF [RFC5869] algorithms defined for COSE [RFC9052].  The KDF and
    MAC is thus defined by the hash algorithm used by OSCORE in HKDF and
@@ -501,19 +510,19 @@ Table of Contents
    intermediary CoAP-to-HTTP proxy.
 
    Since OSCORE is applicable to CoAP-mappable HTTP (see Section 11 of
-   [RFC8613]) the EST payloads can be protected end-to-end between EST
-   client and EST server independent of transport protocol or potential
-   transport layer security which may need to be terminated in the
-   proxy, see Figure 2.  Therefore the concept "Registrar" and its
-   required trust relation with EST server as described in Section 5 of
-   [RFC9148] is redundant.
+   [RFC8613]) the messages conveying the EST payloads can be protected
+   end-to-end between the EST client and EST server, irrespective of
+   transport protocol or potential transport layer security which may
+   need to be terminated in the proxy, see Figure 2.  Therefore the
+   concept "Registrar" and its required trust relation with EST server
+   as described in Section 5 of [RFC9148] is not applicable.
 
    The mappings between CoAP and HTTP referred to in Section 8.1 of
    [RFC9148] apply, and additional mappings resulting from the use of
    OSCORE are specified in Section 11 of [RFC8613].
 
    OSCORE provides end-to-end security between EST Server and EST
-   Client.  The use of TLS and DTLS is optional.
+   Client.  The additional use of TLS and DTLS is optional.
 
                                            Constrained-Node Network
       .---------.                       .----------------------------.
@@ -586,10 +595,6 @@ Table of Contents
               of-Possession Algorithms", RFC 6955, DOI 10.17487/RFC6955,
               May 2013, <https://www.rfc-editor.org/info/rfc6955>.
 
-   [RFC7049]  Bormann, C. and P. Hoffman, "Concise Binary Object
-              Representation (CBOR)", RFC 7049, DOI 10.17487/RFC7049,
-              October 2013, <https://www.rfc-editor.org/info/rfc7049>.
-
    [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
               Application Protocol (CoAP)", RFC 7252,
               DOI 10.17487/RFC7252, June 2014,
@@ -606,19 +611,24 @@ Table of Contents
               DOI 10.17487/RFC7959, August 2016,
               <https://www.rfc-editor.org/info/rfc7959>.
 
-   [RFC8152]  Schaad, J., "CBOR Object Signing and Encryption (COSE)",
-              RFC 8152, DOI 10.17487/RFC8152, July 2017,
-              <https://www.rfc-editor.org/info/rfc8152>.
-
    [RFC8613]  Selander, G., Mattsson, J., Palombini, F., and L. Seitz,
               "Object Security for Constrained RESTful Environments
               (OSCORE)", RFC 8613, DOI 10.17487/RFC8613, July 2019,
               <https://www.rfc-editor.org/info/rfc8613>.
 
+   [RFC8949]  Bormann, C. and P. Hoffman, "Concise Binary Object
+              Representation (CBOR)", STD 94, RFC 8949,
+              DOI 10.17487/RFC8949, December 2020,
+              <https://www.rfc-editor.org/info/rfc8949>.
+
    [RFC9052]  Schaad, J., "CBOR Object Signing and Encryption (COSE):
               Structures and Process", STD 96, RFC 9052,
               DOI 10.17487/RFC9052, August 2022,
               <https://www.rfc-editor.org/info/rfc9052>.
+
+   [RFC9053]  Schaad, J., "CBOR Object Signing and Encryption (COSE):
+              Initial Algorithms", RFC 9053, DOI 10.17487/RFC9053,
+              August 2022, <https://www.rfc-editor.org/info/rfc9053>.
 
    [RFC9148]  van der Stok, P., Kampanakis, P., Richardson, M., and S.
               Raza, "EST-coaps: Enrollment over Secure Transport with
@@ -705,10 +715,28 @@ Table of Contents
               "CBOR Web Token (CWT)", RFC 8392, DOI 10.17487/RFC8392,
               May 2018, <https://www.rfc-editor.org/info/rfc8392>.
 
+   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
+              <https://www.rfc-editor.org/info/rfc8446>.
+
    [RFC9031]  Vučinić, M., Ed., Simon, J., Pister, K., and M.
               Richardson, "Constrained Join Protocol (CoJP) for 6TiSCH",
               RFC 9031, DOI 10.17487/RFC9031, May 2021,
               <https://www.rfc-editor.org/info/rfc9031>.
+
+   [RFC9110]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "HTTP Semantics", STD 97, RFC 9110,
+              DOI 10.17487/RFC9110, June 2022,
+              <https://www.rfc-editor.org/info/rfc9110>.
+
+   [RFC9112]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "HTTP/1.1", STD 99, RFC 9112, DOI 10.17487/RFC9112,
+              June 2022, <https://www.rfc-editor.org/info/rfc9112>.
+
+   [RFC9147]  Rescorla, E., Tschofenig, H., and N. Modadugu, "The
+              Datagram Transport Layer Security (DTLS) Protocol Version
+              1.3", RFC 9147, DOI 10.17487/RFC9147, April 2022,
+              <https://www.rfc-editor.org/info/rfc9147>.
 
 Authors' Addresses
 
