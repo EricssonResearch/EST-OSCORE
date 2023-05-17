@@ -80,6 +80,7 @@ informative:
   I-D.ietf-core-oscore-edhoc:
   I-D.ietf-cose-x509:
   I-D.ietf-cose-cbor-encoded-cert:
+  I-D.tiloca-core-oscore-capable-proxies:
 
 
 --- abstract
@@ -335,7 +336,9 @@ Therefore the concept "Registrar" and its required trust relation with EST serve
 
 The mappings between CoAP and HTTP referred to in Section 8.1 of {{RFC9148}} apply, and additional mappings resulting from the use of OSCORE are specified in Section 11 of {{RFC8613}}.
 
-OSCORE provides end-to-end security between EST Server and EST Client. The additional use of TLS and DTLS is optional.
+OSCORE provides end-to-end security between EST Server and EST Client.
+The additional use of TLS and DTLS is optional.
+If a secure association is needed between the EST Client and the CoAP-to-HTTP Proxy, this may also rely on OSCORE {{I-D.tiloca-core-oscore-capable-proxies}}.
 
 ~~~~~~~~~~~
                                        Constrained-Node Network
