@@ -286,6 +286,7 @@ It is therefore required that
   * The EST-oscore endpoints support delayed responses
   * The endpoints supports the following CoAP options: OSCORE, Uri-Host, Uri-Path, Uri-Port, Content-Format, Block1, Block2, and Accept.
   * The EST URLs based on https:// are translated to coap://, but with mandatory use of the CoAP OSCORE option.
+    In case DTLS is additionally used, the translation target is the scheme "coaps", instead of "coap".
 
 ## CoAP response codes
 See Section 4.5 in {{RFC9148}}.
