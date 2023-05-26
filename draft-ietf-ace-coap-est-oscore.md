@@ -290,6 +290,20 @@ In addition, EST-oscore uses the same CoAP Content-Format identifiers when trans
 |       | application/csrattrs                           (res) |  285  |
 {: #table_mediatypes cols="l l" title="EST functions and the associated CoAP Content-Format identifiers"}
 
+Content-Format 281 MUST be supported by EST-oscore servers.
+Servers MAY also support Content-Format 287.
+It is up to the client to support only Content-Format 281, 287 or both.
+As indicated in {{Section 4.3 of RFC9148}}, the client will use a CoAP Accept Option in the request to express the preferred response Content-Format.
+If an Accept Option is not included in the request, the client is not expressing any preference and the server SHOULD choose format 281.
+
+The generated response for /skg and /skc requests contains two parts: certificate and the corresponding private key.
+{{table_cft_skg_skc}} summarizes the Content-Format identifiers used in responses to /skg and /skc.
+
+| Function | Response, Part 1 | Response, Part 2 |
+| /skg     | 284              | 281              |
+| /skc     | 280              | 287              |
+{: #table_cft_skg_skc cols="l l" title="Response Content-Format identifiers for /skg and /skc"}
+
 ## Message Bindings
 Note that the EST-oscore message characteristics are identical to those specified in Section 4.4 of {{RFC9148}}.
 It is therefore required that
