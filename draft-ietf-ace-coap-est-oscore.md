@@ -297,11 +297,17 @@ As indicated in {{Section 4.3 of RFC9148}}, the client will use a CoAP Accept Op
 If an Accept Option is not included in the request, the client is not expressing any preference and the server SHOULD choose format 281.
 
 The generated response for /skg and /skc requests contains two parts: certificate and the corresponding private key.
+{{Section 4.8 of RFC9148}} specifies that the private key in response to /skc request may be either an encrypted (PKCS #7) or unencrypted (PKCS #8) key, depending on whether the CSR request included SMIMECapabilities.
+
+Due to the use of OSCORE, which protects the communication between the EST client and the EST server end-to-end, it is possible to return the private key to /skc as an unencrypted PKCS #8 object (Content-Format identifier 284).
+Therefore, when making the CSR to /skc, the EST client MUST NOT include SMIMECapabilities.
+As a consequence, the response to /skc is an unencrypted PKCS #8 object.
+
 {{table_cft_skg_skc}} summarizes the Content-Format identifiers used in responses to /skg and /skc.
 
 | Function | Response, Part 1 | Response, Part 2 |
 | /skg     | 284              | 281              |
-| /skc     | 280              | 287              |
+| /skc     | 284              | 287              |
 {: #table_cft_skg_skc cols="l l" title="Response Content-Format identifiers for /skg and /skc"}
 
 ## Message Bindings
