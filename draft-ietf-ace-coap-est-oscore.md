@@ -329,8 +329,10 @@ Together with various measures listed in this document such as CBOR-encoded payl
 
 Nevertheless, depending on the application, the protocol messages may become larger than the available frame size thus resulting in fragmentation and, in resource constrained networks such as IEEE 802.15.4 where throughput is limited, fragment loss can trigger costly retransmissions.
 
-It is RECOMMENDED to prevent IP fragmentation, since it involves an error-prone datagram reassembly.
-To limit the size of the CoAP payload, this specification mandates the implementation of the CoAP option Block1 and Block2 to enforce the fragmentation mechanism defined in {{RFC7959}} as described in Section 4.6 of {{RFC9148}}.
+It is recommended to prevent IP fragmentation, since it involves an error-prone datagram reassembly.
+To limit the size of the CoAP payload, this document specifies the requirements on implementing CoAP options Block1 and Block2.
+EST-oscore servers MUST implement Block1 and Block2.
+EST-oscore clients MUST implement Block2 and MAY implement Block1.
 
 ## Delayed Responses
 See Section 4.7 in {{RFC9148}}.
