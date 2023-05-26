@@ -1615,7 +1615,11 @@ It is up to the client to support only Content-Format 281, 287 or both.
 As indicated in <span><a href="https://rfc-editor.org/rfc/rfc9148#section-4.3" class="relref">Section 4.3</a> of [<a href="#RFC9148" class="cite xref">RFC9148</a>]</span>, the client will use a CoAP Accept Option in the request to express the preferred response Content-Format.
 If an Accept Option is not included in the request, the client is not expressing any preference and the server SHOULD choose format 281.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
 <p id="section-4.3-4">The generated response for /skg and /skc requests contains two parts: certificate and the corresponding private key.
-<a href="#table_cft_skg_skc" class="auto internal xref">Table 3</a> summarizes the Content-Format identifiers used in responses to /skg and /skc.<a href="#section-4.3-4" class="pilcrow">¶</a></p>
+<span><a href="https://rfc-editor.org/rfc/rfc9148#section-4.8" class="relref">Section 4.8</a> of [<a href="#RFC9148" class="cite xref">RFC9148</a>]</span> specifies that the private key in response to /skc request may be either an encrypted (PKCS #7) or unencrypted (PKCS #8) key, depending on whether the CSR request included SMIMECapabilities.<a href="#section-4.3-4" class="pilcrow">¶</a></p>
+<p id="section-4.3-5">Due to the use of OSCORE, which protects the communication between the EST client and the EST server end-to-end, it is possible to return the private key to /skc as an unencrypted PKCS #8 object (Content-Format identifier 284).
+Therefore, when making the CSR to /skc, the EST client MUST NOT include SMIMECapabilities.
+As a consequence, the response to /skc is an unencrypted PKCS #8 object.<a href="#section-4.3-5" class="pilcrow">¶</a></p>
+<p id="section-4.3-6"><a href="#table_cft_skg_skc" class="auto internal xref">Table 3</a> summarizes the Content-Format identifiers used in responses to /skg and /skc.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
 <span id="name-response-content-format-ide"></span><div id="table_cft_skg_skc">
 <table class="center" id="table-3">
           <caption>
@@ -1637,7 +1641,7 @@ If an Accept Option is not included in the request, the client is not expressing
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">/skc</td>
-              <td class="text-left" rowspan="1" colspan="1">280</td>
+              <td class="text-left" rowspan="1" colspan="1">284</td>
               <td class="text-left" rowspan="1" colspan="1">287</td>
             </tr>
           </tbody>
