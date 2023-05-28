@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-05-18T00:16:27.473029+00:00",
+  "timestamp": "2023-05-28T00:18:26.799323+00:00",
   "repo": "EricssonResearch/EST-OSCORE",
   "labels": [
     {
@@ -537,7 +537,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2023-05-17T13:07:08Z",
-      "updatedAt": "2023-05-17T13:07:08Z",
+      "updatedAt": "2023-05-26T17:49:11Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
@@ -549,7 +549,28 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOBOvnCc5WOsyH",
+          "commit": {
+            "abbreviatedOid": "6ecdc69"
+          },
+          "author": "marco-tiloca-sics",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-26T17:49:10Z",
+          "updatedAt": "2023-05-26T17:49:11Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "I suggest to replace \"When supported\" with \"When EDHOC is executed prior to enrollment\", since you refer specifically to an EDHOC function. Also, s/EDHOC-Exporter/EDHOC_Exporter.",
+              "createdAt": "2023-05-26T17:49:10Z",
+              "updatedAt": "2023-05-26T17:49:11Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 20,
@@ -615,7 +636,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2023-05-17T13:34:30Z",
-      "updatedAt": "2023-05-17T13:34:30Z",
+      "updatedAt": "2023-05-26T17:55:30Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
@@ -627,7 +648,28 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOBOvnCc5WOv0g",
+          "commit": {
+            "abbreviatedOid": "3034438"
+          },
+          "author": "marco-tiloca-sics",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-26T17:55:29Z",
+          "updatedAt": "2023-05-26T17:55:30Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "If you refer to a \"scheme\", then you should say:\r\n\r\n`In case DTLS is additionally used, the translation target is the scheme \"coaps\", instead of \"coap\".`",
+              "createdAt": "2023-05-26T17:55:29Z",
+              "updatedAt": "2023-05-26T17:55:30Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 23,
@@ -648,6 +690,159 @@
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "17-est-client-coap-to-http-proxy-secure-association",
       "headRefOid": "81e0df516ac745e7bd909f10659c9ffbd255be56",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 24,
+      "id": "PR_kwDOBOvnCc5RcPSL",
+      "title": "#14: Specify and summarize Content-Format identifiers",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/24",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The PR specifies and summarize Content-Format identifiers. It mandates that the response to /skc is an unencrypted PKCS8 object.",
+      "createdAt": "2023-05-26T13:29:52Z",
+      "updatedAt": "2023-05-26T20:03:40Z",
+      "baseRepository": "EricssonResearch/EST-OSCORE",
+      "baseRefName": "master",
+      "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
+      "headRepository": "EricssonResearch/EST-OSCORE",
+      "headRefName": "14-specify-content-format-support-as-in-rfc-9148",
+      "headRefOid": "41398e1eb007253a26d89f00521d325db4764100",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOBOvnCc5WOe-o",
+          "commit": {
+            "abbreviatedOid": "41398e1"
+          },
+          "author": "marco-tiloca-sics",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-26T17:07:47Z",
+          "updatedAt": "2023-05-26T17:07:48Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Basically, Section 4.8 of RFC 9148 (third paragraph, last sentence) is also admitting the combination (284, 287), for responses to both /skg and /skc requests, depending on whether the CSR request included SMIMECapabilities, as you say.\r\n\r\nHowever, Table 3 in Section 4.3 of RFC 9148 gives a different impression. Perhaps the intention was to have \"284 or 280\" in the column \"Response, Part 1\" for both rows \"/skg\" and \"/skc\"?\r\n\r\nRegardless, I think that what's proposed below is a good direction for EST-OSCORE.",
+              "createdAt": "2023-05-26T17:07:48Z",
+              "updatedAt": "2023-05-26T17:07:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5WOfIr",
+          "commit": {
+            "abbreviatedOid": "41398e1"
+          },
+          "author": "marco-tiloca-sics",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-26T17:08:19Z",
+          "updatedAt": "2023-05-26T17:08:19Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "Isn't the unencrypted PKCS #8 object only the private key? The second item is pkix-cert.",
+              "createdAt": "2023-05-26T17:08:19Z",
+              "updatedAt": "2023-05-26T17:08:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5WOfTJ",
+          "commit": {
+            "abbreviatedOid": "41398e1"
+          },
+          "author": "marco-tiloca-sics",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-26T17:08:54Z",
+          "updatedAt": "2023-05-26T17:08:55Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Based on the comment above, I wonder if, consistently with Section 4.8 of RFC9148, the column \"Response, part 1\" for row \"/skg\" should actually be \"284 or 280\". At the moment, that row here is at least consistent with the \"/skg\" row of Table 3 in Section 4.3 of RFC 9148.\r\n\r\nEdit: irrespective of RFC 9148, you may want to always take advantage of OSCORE also for the /skg case, and hence: i) keep the \"/skg\" row as is in the table; and ii) say that \"the EST client MUST NOT include SMIMECapabilities\" also for the /skg request.",
+              "createdAt": "2023-05-26T17:08:54Z",
+              "updatedAt": "2023-05-26T17:40:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5WPZXr",
+          "commit": {
+            "abbreviatedOid": "41398e1"
+          },
+          "author": "mcr",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-26T20:02:38Z",
+          "updatedAt": "2023-05-26T20:02:38Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Hi, many PKCS (embedded) libraries do not speak PKCS7, but only PKCS8.  Meanwhile, many historical non-embedded systems have the opposite requirements and/or the PKCS8 code paths were removed during FIPS evaluations.  That's why RFC9148 decided to let the client decide which one they want.    \r\n\r\nUnless EST-OSCORE has a compelling reason to include server generated private keys, I suggest leaving it out completely: it's only asking for SecAD DISCUSSes.   The reason RFC9148 had it was because of very specific situations where an RSA1024-bit IDevID key was to be replaced with an RSA 2048 key, and it was KNOWN that the random number generator in the client machines was poor, and unlikely to be fixed.  Why one vendor's woes had such influence is a different question I can't answer, but let's not repeat it unless we have a really good reason.  I think that any 10yr old silicon has good enough RNG support that it's not an issue.",
+              "createdAt": "2023-05-26T20:02:38Z",
+              "updatedAt": "2023-05-26T20:02:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5WPaQD",
+          "commit": {
+            "abbreviatedOid": "41398e1"
+          },
+          "author": "mcr",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-26T20:03:39Z",
+          "updatedAt": "2023-05-26T20:03:39Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "And to be clear, the client says in their Accept: option which format they want.",
+              "createdAt": "2023-05-26T20:03:39Z",
+              "updatedAt": "2023-05-26T20:03:39Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "id": "PR_kwDOBOvnCc5Rc4j_",
+      "title": "#16: Specify requirements on implementing Block1 and Block2",
+      "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/25",
+      "state": "OPEN",
+      "author": "malishav",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-05-26T15:19:59Z",
+      "updatedAt": "2023-05-26T15:19:59Z",
+      "baseRepository": "EricssonResearch/EST-OSCORE",
+      "baseRefName": "master",
+      "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
+      "headRepository": "EricssonResearch/EST-OSCORE",
+      "headRefName": "16-specify-support-for-block1-and-block2",
+      "headRefOid": "b591f0d9c615ce29cc59e88f0f9a091d29d76d85",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
