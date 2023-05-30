@@ -5,13 +5,13 @@
 ACE Working Group                                            G. Selander
 Internet-Draft                                               Ericsson AB
 Intended status: Standards Track                                 S. Raza
-Expires: 18 November 2023                                           RISE
+Expires: 1 December 2023                                            RISE
                                                               M. Furuhed
                                                                    Nexus
                                                               M. Vučinić
                                                                    Inria
                                                                T. Claeys
-                                                             17 May 2023
+                                                             30 May 2023
 
 
                   Protecting EST Payloads with OSCORE
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 November 2023.
+   This Internet-Draft will expire on 1 December 2023.
 
 Copyright Notice
 
@@ -450,8 +450,8 @@ Table of Contents
 
    *  The EST URLs based on https:// are translated to coap://, but with
       mandatory use of the CoAP OSCORE option.  In case DTLS is
-      additionally used, the translation target is the scheme coaps://,
-      instead of coap://.
+      additionally used, the translation target is the scheme "coaps",
+      instead of "coap".
 
 4.5.  CoAP response codes
 
