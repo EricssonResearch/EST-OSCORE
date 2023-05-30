@@ -5,13 +5,13 @@
 ACE Working Group                                            G. Selander
 Internet-Draft                                               Ericsson AB
 Intended status: Standards Track                                 S. Raza
-Expires: 18 November 2023                                           RISE
+Expires: 1 December 2023                                            RISE
                                                               M. Furuhed
                                                                    Nexus
                                                               M. Vučinić
                                                                    Inria
                                                                T. Claeys
-                                                             17 May 2023
+                                                             30 May 2023
 
 
                   Protecting EST Payloads with OSCORE
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 November 2023.
+   This Internet-Draft will expire on 1 December 2023.
 
 Copyright Notice
 
@@ -273,11 +273,12 @@ Table of Contents
    based proof-of-possession is not supported when pre-shared OSCORE
    context is used.
 
-   When supported, the client can use the EDHOC-Exporter API to extract
-   channel-binding information and provide a connection-based proof-of
-   possession.  Channel-binding information is obtained as follows
+   When EDHOC is executed prior to enrollment, the client can use the
+   EDHOC_Exporter API to extract channel-binding information and provide
+   a connection-based proof-of possession.  Channel-binding information
+   is obtained as follows
 
-   edhoc-unique = EDHOC-Exporter(TBD1, "EDHOC Unique", length),
+   edhoc-unique = EDHOC_Exporter(TBD1, "EDHOC Unique", length),
 
    where TBD1 is a registered label from the EDHOC Exporter Label
    registry, length equals the desired length of the edhoc-unique byte
