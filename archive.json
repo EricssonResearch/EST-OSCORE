@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-05-28T00:18:26.799323+00:00",
+  "timestamp": "2023-06-01T00:23:02.620463+00:00",
   "repo": "EricssonResearch/EST-OSCORE",
   "labels": [
     {
@@ -537,13 +537,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2023-05-17T13:07:08Z",
-      "updatedAt": "2023-05-26T17:49:11Z",
+      "updatedAt": "2023-05-30T09:03:32Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "10-channel-binding-when-edhoc-is-not-used",
-      "headRefOid": "6ecdc695d7365915e4c5e6b18ae9da52d2465228",
+      "headRefOid": "fa3c74502d021e1522a13c22b3f54dfaec151c24",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -567,6 +567,26 @@
               "body": "I suggest to replace \"When supported\" with \"When EDHOC is executed prior to enrollment\", since you refer specifically to an EDHOC function. Also, s/EDHOC-Exporter/EDHOC_Exporter.",
               "createdAt": "2023-05-26T17:49:10Z",
               "updatedAt": "2023-05-26T17:49:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5WdFte",
+          "commit": {
+            "abbreviatedOid": "6ecdc69"
+          },
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-30T09:03:31Z",
+          "updatedAt": "2023-05-30T09:03:31Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "fixed",
+              "createdAt": "2023-05-30T09:03:31Z",
+              "updatedAt": "2023-05-30T09:03:31Z"
             }
           ]
         }
@@ -636,13 +656,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2023-05-17T13:34:30Z",
-      "updatedAt": "2023-05-26T17:55:30Z",
+      "updatedAt": "2023-05-30T08:59:12Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "15-translation-scheme-if-dtls-is-used",
-      "headRefOid": "303443863d62bf83631900f135212176dedda2a2",
+      "headRefOid": "1b9811706a05672a5b1de57acb512f8797425cba",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -666,6 +686,26 @@
               "body": "If you refer to a \"scheme\", then you should say:\r\n\r\n`In case DTLS is additionally used, the translation target is the scheme \"coaps\", instead of \"coap\".`",
               "createdAt": "2023-05-26T17:55:29Z",
               "updatedAt": "2023-05-26T17:55:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5WdDLH",
+          "commit": {
+            "abbreviatedOid": "3034438"
+          },
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-30T08:58:54Z",
+          "updatedAt": "2023-05-30T08:58:55Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "fixed ",
+              "createdAt": "2023-05-30T08:58:55Z",
+              "updatedAt": "2023-05-30T08:58:55Z"
             }
           ]
         }
