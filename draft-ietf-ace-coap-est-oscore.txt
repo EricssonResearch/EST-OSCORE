@@ -465,7 +465,9 @@ Table of Contents
       Accept.
 
    *  The EST URLs based on https:// are translated to coap://, but with
-      mandatory use of the CoAP OSCORE option.
+      mandatory use of the CoAP OSCORE option.  In case DTLS is
+      additionally used, the translation target is the scheme "coaps",
+      instead of "coap".
 
 4.5.  CoAP response codes
 
