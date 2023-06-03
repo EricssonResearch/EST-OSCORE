@@ -540,7 +540,10 @@ Table of Contents
    OSCORE are specified in Section 11 of [RFC8613].
 
    OSCORE provides end-to-end security between EST Server and EST
-   Client.  The additional use of TLS and DTLS is optional.
+   Client.  The additional use of TLS and DTLS is optional.  If a secure
+   association is needed between the EST Client and the CoAP-to-HTTP
+   Proxy, this may also rely on OSCORE
+   [I-D.tiloca-core-oscore-capable-proxies].
 
                                            Constrained-Node Network
       .---------.                       .----------------------------.
@@ -686,6 +689,13 @@ Table of Contents
               ietf-cose-x509-09, 13 October 2022,
               <https://datatracker.ietf.org/doc/html/draft-ietf-cose-
               x509-09>.
+
+   [I-D.tiloca-core-oscore-capable-proxies]
+              Tiloca, M. and R. Höglund, "OSCORE-capable Proxies", Work
+              in Progress, Internet-Draft, draft-tiloca-core-oscore-
+              capable-proxies-06, 5 April 2023,
+              <https://datatracker.ietf.org/doc/html/draft-tiloca-core-
+              oscore-capable-proxies-06>.
 
    [RFC2985]  Nystrom, M. and B. Kaliski, "PKCS #9: Selected Object
               Classes and Attribute Types Version 2.0", RFC 2985,

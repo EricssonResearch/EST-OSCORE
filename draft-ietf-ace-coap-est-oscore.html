@@ -1692,7 +1692,9 @@ The EST-server can exist outside the constrained network in a non-constrained ne
 <p id="section-5-2">Since OSCORE is applicable to CoAP-mappable HTTP (see Section 11 of <span>[<a href="#RFC8613" class="cite xref">RFC8613</a>]</span>) the messages conveying the EST payloads can be protected end-to-end between the EST client and EST server, irrespective of transport protocol or potential transport layer security which may need to be terminated in the proxy, see <a href="#fig-proxy" class="auto internal xref">Figure 2</a>.
 Therefore the concept "Registrar" and its required trust relation with EST server as described in Section 5 of <span>[<a href="#RFC9148" class="cite xref">RFC9148</a>]</span> is not applicable.<a href="#section-5-2" class="pilcrow">¶</a></p>
 <p id="section-5-3">The mappings between CoAP and HTTP referred to in Section 8.1 of <span>[<a href="#RFC9148" class="cite xref">RFC9148</a>]</span> apply, and additional mappings resulting from the use of OSCORE are specified in Section 11 of <span>[<a href="#RFC8613" class="cite xref">RFC8613</a>]</span>.<a href="#section-5-3" class="pilcrow">¶</a></p>
-<p id="section-5-4">OSCORE provides end-to-end security between EST Server and EST Client. The additional use of TLS and DTLS is optional.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-5-4">OSCORE provides end-to-end security between EST Server and EST Client.
+The additional use of TLS and DTLS is optional.
+If a secure association is needed between the EST Client and the CoAP-to-HTTP Proxy, this may also rely on OSCORE <span>[<a href="#I-D.tiloca-core-oscore-capable-proxies" class="cite xref">I-D.tiloca-core-oscore-capable-proxies</a>]</span>.<a href="#section-5-4" class="pilcrow">¶</a></p>
 <span id="name-coap-to-http-proxy-at-the-c"></span><div id="fig-proxy">
 <figure id="figure-2">
         <div class="alignCenter art-text artwork" id="section-5-5.1">
@@ -1853,6 +1855,10 @@ Therefore the concept "Registrar" and its required trust relation with EST serve
 <dt id="I-D.ietf-cose-x509">[I-D.ietf-cose-x509]</dt>
         <dd>
 <span class="refAuthor">Schaad, J.</span>, <span class="refTitle">"CBOR Object Signing and Encryption (COSE): Header Parameters for Carrying and Referencing X.509 Certificates"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-cose-x509-09</span>, <time datetime="2022-10-13" class="refDate">13 October 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-cose-x509-09">https://datatracker.ietf.org/doc/html/draft-ietf-cose-x509-09</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.tiloca-core-oscore-capable-proxies">[I-D.tiloca-core-oscore-capable-proxies]</dt>
+        <dd>
+<span class="refAuthor">Tiloca, M.</span> and <span class="refAuthor">R. Höglund</span>, <span class="refTitle">"OSCORE-capable Proxies"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-tiloca-core-oscore-capable-proxies-06</span>, <time datetime="2023-04-05" class="refDate">5 April 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-tiloca-core-oscore-capable-proxies-06">https://datatracker.ietf.org/doc/html/draft-tiloca-core-oscore-capable-proxies-06</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2985">[RFC2985]</dt>
         <dd>
