@@ -228,7 +228,9 @@ EST-oscore follows much of the EST-coaps and EST design.
 
 ## Discovery and URI     {#discovery}
 The discovery of EST resources and the definition of the short EST-coaps URI paths specified in Section 4.1 of {{RFC9148}}, as well as the new Resource Type defined in Section 8.2 of {{RFC9148}} apply to EST-oscore.
-Support for OSCORE is indicated by the "osc" attribute defined in Section 9 of {{RFC8613}}, for example:
+Support for OSCORE is indicated by the "osc" attribute defined in Section 9 of {{RFC8613}}.
+
+Example:
 
 ~~~~~~~~~~~
 
@@ -238,6 +240,9 @@ Support for OSCORE is indicated by the "osc" attribute defined in Section 9 of {
    </est>; rt="ace.est.sen";osc
 
 ~~~~~~~~~~~
+
+The use of the "osc" attribute is REQUIRED.
+In scenarios where OSCORE and DTLS are combined, the absence of the "osc" attribute might wrongly suggest that the EST server is actually using EST-coaps, because of the scheme "coaps", when it is using EST-oscore.
 
 ## Mandatory/optional EST Functions {#est-functions}
 The EST-oscore specification has the same set of required-to-implement functions as EST-coaps.
