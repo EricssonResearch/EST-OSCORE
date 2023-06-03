@@ -5,13 +5,13 @@
 ACE Working Group                                            G. Selander
 Internet-Draft                                               Ericsson AB
 Intended status: Standards Track                                 S. Raza
-Expires: 18 November 2023                                           RISE
+Expires: 5 December 2023                                            RISE
                                                               M. Furuhed
                                                                    Nexus
                                                               M. Vučinić
                                                                    Inria
                                                                T. Claeys
-                                                             17 May 2023
+                                                             3 June 2023
 
 
                   Protecting EST Payloads with OSCORE
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 November 2023.
+   This Internet-Draft will expire on 5 December 2023.
 
 Copyright Notice
 
@@ -226,14 +226,17 @@ Table of Contents
    authenticate and establish the OSCORE Security Context used to
    protect the messages conveying EST payloads.
 
-   The EST-oscore clients and servers MUST perform mutual
+   The EST-oscore client MUST play the role of the EDHOC Initiator.  The
+   EST-oscore server MUST play the role of the EDHOC Responder.
+
+   The EST-oscore clients and servers must perform mutual
    authentication.  The EST server and EST client are responsible for
    ensuring that an acceptable cipher suite is negotiated.  The client
-   MUST authenticate the server before accepting any server response.
-   The server MUST authenticate the client.  These requirements are
+   must authenticate the server before accepting any server response.
+   The server must authenticate the client.  These requirements are
    fullfilled when using EDHOC [I-D.ietf-lake-edhoc].
 
-   The server MUST also provide relevant information to the CA for
+   The server must also provide relevant information to the CA for
    decision about issuing a certificate.
 
 3.1.  EDHOC
