@@ -526,11 +526,12 @@ Table of Contents
    802.15.4 where throughput is limited, fragment loss can trigger
    costly retransmissions.
 
-   It is RECOMMENDED to prevent IP fragmentation, since it involves an
+   It is recommended to prevent IP fragmentation, since it involves an
    error-prone datagram reassembly.  To limit the size of the CoAP
-   payload, this specification mandates the implementation of the CoAP
-   option Block1 and Block2 to enforce the fragmentation mechanism
-   defined in [RFC7959] as described in Section 4.6 of [RFC9148].
+   payload, this document specifies the requirements on implementing
+   CoAP options Block1 and Block2.  EST-oscore servers MUST implement
+   Block1 and Block2.  EST-oscore clients MUST implement Block2 and MAY
+   implement Block1.
 
 4.7.  Delayed Responses
 
