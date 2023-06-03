@@ -203,6 +203,7 @@ The EST-oscore server MAY in the enrolment response to the EST-oscore client inc
 # Protocol Design and Layering
 EST-oscore uses CoAP {{RFC7252}} and Block-Wise {{RFC7959}} to transfer EST messages in the same way as {{RFC9148}}.
 Instead of DTLS record layer, OSCORE {{RFC8613}} is used to protect the messages conveying the EST payloads.
+External Authorization Data (EAD) fields of EDHOC are intentionally not used to carry EST payloads because EDHOC needs not be executed in the case of re-enrollment.
 The DTLS handshake is complemented by or replaced with EDHOC {{I-D.ietf-lake-edhoc}}.
 {{fig-stack}} below shows the layered EST-oscore architecture.
 Note that {{fig-stack}} does not illustrate the potential use of DTLS.
