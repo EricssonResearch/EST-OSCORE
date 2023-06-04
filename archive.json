@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-06-01T00:23:02.620463+00:00",
+  "timestamp": "2023-06-04T00:20:48.202937+00:00",
   "repo": "EricssonResearch/EST-OSCORE",
   "labels": [
     {
@@ -45,31 +45,39 @@
       "id": "I_kwDOBOvnCc5k2nFB",
       "title": "Marco's review",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/7",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "[General]\r\n\r\n* Replace RFC 7049 with RFC 8949\r\n\r\n* Replace RFC 8152 with RFC 9052 and RFC 9053\r\n\r\n* When mentioning DTLS and referring to RFC 6347, refer also to RFC 9147\r\n\r\n* As expected, the draft focuses on the EDHOC forward message flow, as it better maps against the EST expected workflow and ensures to protect the identity of the EST client. That said, can the use of the EDHOC reverse message flow be explicitly ruled out altogether?\r\n\r\n \r\n[Section 1]\r\n\r\n* s/secured HTTP/HTTP [RFC9110][RFC9112] and TLS [RFC8446]\r\n\r\n* s/which protects the application layer message/which protects messages at the application layer\r\n\r\n* s/multicast CoAP messages/CoAP group messages\r\n\r\n\r\n[Section 1.1]\r\n\r\n* \"The concept \"Registrar\" and its required trust relation with EST server as described in Section 5 of [RFC9148] is therefore redundant.\"\r\n\r\n   Do you really mean \"redundant\"? Isn't it actually \"inapplicable\"?\r\n\r\n   In the presence of end-to-end security through OSCORE between the EST client and server, an hypothetical Registrar cannot perform its task as it does instead in RFC 9148. In this case instead, an intermediary would be simply limited to be a (cross-)proxy, on which indeed less trust needs to be put.\r\n\r\n\r\n[Section 3.0]\r\n\r\n* \"This specification replaces the DTLS handshake in EST-coaps with the lightweight authenticated key exchange protocol EDHOC [I-D.ietf-lake-edhoc].\"\r\n\r\n   However, Section 1 talks about possible co-existence of OSCORE and DTLS, rather than of replacement. I think you mean \"replaces or complements\", like said in the previous sections.\r\n\r\n* \"... and establish the OSCORE security context with which the EST payloads are protected.\"\r\n\r\n   This should be \"... Security Context used to protect the messages conveying the EST payloads.\"\r\n\r\n* I suggest to split the second paragraph into two parts.\r\n\r\n  The first part ends with the current \"The server MUST authenticate the client\". The text can highlight that all those requirements are fulfilled when specifically using EDHOC.\r\n\r\n  The second part would say \"The server MUST also provide relevant information to the CA for decision about issuing a certificate\".\r\n\r\n\r\n[Section 3.1]\r\n\r\n* \"or a pointer such as a URI to the credential (e.g., x5t, see [I-D.ietf-cose-x509])\"\r\n\r\n   This is mixing a type of credential reference with the abbreviated name of a different reference type. Either say a hash and then the parameter x5t, or a URI and then the parameter x5u.\r\n\r\n\r\n[Section 3.3]\r\n\r\n* Section 1 says: \"pre-shared OSCORE keying material would also be an option.\"\r\n\r\n   In such a case, is channel binding simply not achievable?\r\n\r\n   Or is it somehow possible as long as the OSCORE keying material was established through some sort of interactive protocol (e.g., like the OSCORE profile of ACE, see RFC 9203)?\r\n\r\n* \"length equals the desired length of the edhoc-unique byte string\"\r\n\r\n   I think it's better to specify a length of the byte string to use, unless otherwise indicated/advertised (e.g., in a used EDHOC application profile). RFC 9148 considers 32 bytes (see its Section 3).\r\n\r\n\r\n[Section 3.4]\r\n\r\n* In scenarios using message_4, wouldn't it make sense to have the PKCS#10 request and response transported in an EAD_3 and EAD_4 item, respectively?\r\n\r\n* s/The certificate MAY be referenced/The client certificate MAY be referenced\r\n\r\n* s/response to the PKCS#10 request MAY be/response to the PKCS#10 request MAY specify\r\n\r\n\r\n[Section 4.0]\r\n\r\n* \"OSCORE [RFC8613] is used to protect the EST payloads.\"\r\n\r\n   This should be \"OSCORE [RFC8613] is used to protect the messages conveying the EST payloads.\"\r\n\r\n* s/DTLS handshake is replaced with EDHOC/The DTLS handshake is complemented by or replaced with EDHOC\r\n\r\n   Then the following sentence can clarify that the architecture shown in Figure 6 does not consider the additional use of DTLS.\r\n\r\n\r\n[Section 4.1]\r\n\r\n* In the shown example, the resource type should be rt=\"ace.est.sen\" also in the link specified in the response.\r\n\r\n* Per Section 9 of RFC 8613, the \"osc\" attribute is optionally included in a link to specify that a resource has to be accessed with OSCORE. Should it remain optional here too?\r\n\r\n   Consider a setup where OSCORE and DTLS are combined. Especially when discovering EST resources on a non-default port number, the links to those resources would have URI scheme \"coaps\". Then, the absence of the \"osc\" attribute might wrongly suggest that the EST server is actually using EST-coaps.\r\n\r\n   Therefore, it might be worth mandating the use of the attribute \"osc\" in links to EST resources accessed as in this specification.\r\n\r\n   An alternative would be defining a new set of EST-OSCORE-related Resource Type values, such as \"ace.est.osc.*\".\r\n\r\n\r\n[Section 4.2]\r\n\r\n* Regarding the response from /skc, is it possible to deviate from what is defined in RFC 9148 and *not* encrypt the private key? After all, end-to-end encryption of the whole EST payload is ensured by OSCORE.\r\n\r\n   If yes, that might open for a new Content-Format pair (284, 287), i.e., an unencrypted PKCS #8 private key together with a single certificate (not a PKCS#7 container).\r\n\r\n\r\n[Section 4.3]\r\n\r\n* \"EST-oscore uses the same CoAP Content-Format Options to transport EST requests and responses\"\r\n\r\n   I think you mean: \"EST-oscore uses the same CoAP Content-Format identifiers when transferring EST requests and responses\".\r\n\r\n* The caption of Table 2 should be: \"EST functions and the associated CoAP Content-Format identifiers\"\r\n\r\n* I suppose your intention is for the EST client and server to support Content-Formats just like in RFC 9148, i.e.:\r\n\r\n   \"Content-Format 281 MUST be supported by EST-coaps servers. Servers MAY also support Content-Format 287. It is up to the client to support only Content-Format 281, 287 or both.\"\r\n\r\n   I think it is good to have an explicit statement here too.\r\n\r\n* Like RFC 9148 does in its Table 3, it is good to also recap the Content-Format identifiers used for the different parts of the responses from /skg and /skc.\r\n\r\n\r\n[Section 4.4]\r\n\r\n* The list of requirements is preceded by \"It is RECOMMENDED that\". However, isn't it a MUST for (at least) the CoAP options OSCORE and Uri-Path?\r\n\r\n* \"The EST URLs based on https:// are translated to coap://, but with mandatory use of the CoAP OSCORE option.\"\r\n\r\n   The scheme \"coap\" is the translation target only if DTLS is not additionally used.\r\n\r\n\r\n[Section 4.6]\r\n\r\n* \"such as CBOR-encoded payloads ([I-D.ietf-cose-cbor-encoded-cert])\"\r\n\r\n   Perhaps you meant to refer to RFC 8949?\r\n\r\n* s/reconstitution/reassembly\r\n\r\n* \"this specification mandates the implementation of CoAP option Block1 and Block2 fragmentation mechanism [RFC7959]\"\r\n\r\n   This is good, but it contradicts the text in Section 4.4 where the support of the CoAP option Block1 and Block2 is only RECOMMENDED.\r\n\r\n\r\n[Section 4.8]\r\n\r\n* \"The EST client prepares the PKCS #10 object and signs it by following the steps in Section 4 of [RFC6955].\"\r\n\r\n   Even though Section 4 of RFC 6955 does use the words \"The value to be signed\", it is quite confusing to read \"signs it\" in this section, which correctly starts with saying that a Diffie-Hellman key pair cannot be used for signing operations.\r\n\r\n   I think that here it is worth saying \"and computing a MAC\" instead of \"and signs it\".\r\n\r\n\r\n[Section 5]\r\n\r\n* \"the EST payloads can be protected end-to-end\"\r\n\r\n   This should be \"the messages conveying the EST payloads can be protected end-to-end\"\r\n\r\n* \"Therefore the concept \"Registrar\" and its required trust relation with EST server as described in Section 5 of [RFC9148] is redundant.\"\r\n\r\n   See a previous comment about Section 1.1, on the word \"redundant\".\r\n\r\n* \"The use of TLS and DTLS is optional.\"\r\n\r\n   Proposed rephrasing: \"The additional use of TLS or DTLS is optional.\"\r\n\r\n* If a secure association is needed between the EST Client and the CoAP-to-HTTP Proxy, this may alternatively and more conveniently rely on OSCORE as well, see https://datatracker.ietf.org/doc/draft-tiloca-core-oscore-capable-proxies/\r\n\r\n\r\n[Nits]\r\n\r\n* Section 1\r\n--- s/of underlying transport/of the underlying transport\r\n--- s/needs to be kept/need to be kept\r\n--- s/between EST-oscore client/between the EST-oscore client\r\n\r\n* Section 1.1\r\n--- s/replaced, or complemented, with OSCORE/replaced by, or complemented with, OSCORE\r\n--- s/replaced, or complemented, with the lightweight/replaced by, or complemented with, the lightweight\r\n--- s/relation with EST/relation with the EST\r\n\r\n* Section 3\r\n--- s/initial enrollment the EST-oscore/initial enrollment, the EST-oscore\r\n--- s/EST-oscore clients and/The EST-oscore clients and\r\n\r\n* Section 3.2\r\n--- s/between EST client and/between the EST client and\r\n\r\n* Section 3.4\r\n--- s/e.g. using/e.g., using\r\n\r\n* Section 4\r\n--- s/Instead of DTLS record/Instead of the DTLS record\r\n\r\n* Section 4.2.1\r\n--- s/e.g. using/e.g., using\r\n\r\n* Section 4.6\r\n--- s/depending on application/depending on the application\r\n--- s/than available frame size resulting/than the available frame size thus resulting\r\n--- s/implementation of CoAP option/implementation of the CoAP option\r\n--- s/fragmentation mechanism/to enforce the fragmentation mechanism defined in\r\n\r\n* Section 5\r\n--- s/between EST client and EST server independent/between the EST client and EST server, irrespective\r\n",
       "createdAt": "2023-05-02T08:56:40Z",
-      "updatedAt": "2023-05-02T09:00:01Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2023-06-03T10:11:10Z",
+      "closedAt": "2023-06-03T10:11:09Z",
+      "comments": [
+        {
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Resolved with:\r\n* #19 \r\n* #20 \r\n* #21 \r\n* #24 \r\n* #22 \r\n* #8 ",
+          "createdAt": "2023-06-03T10:11:07Z",
+          "updatedAt": "2023-06-03T10:11:07Z"
+        }
+      ]
     },
     {
       "number": 9,
       "id": "I_kwDOBOvnCc5lr0eF",
       "title": "Explicit the message flow",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/9",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Marco Tiloca wrote:\r\n>  As expected, the draft focuses on the EDHOC forward message flow, as it better maps against the EST expected workflow and ensures to protect the identity of the EST client. That said, can the use of the EDHOC reverse message flow be explicitly ruled out altogether?",
       "createdAt": "2023-05-11T14:53:00Z",
-      "updatedAt": "2023-05-11T14:53:15Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-03T09:42:41Z",
+      "closedAt": "2023-06-03T09:42:41Z",
       "comments": [
         {
           "author": "malishav",
@@ -85,15 +93,15 @@
       "id": "I_kwDOBOvnCc5lr1QN",
       "title": "Channel binding when EDHOC is not used",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/10",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Marco Tiloca wrote: \r\n\r\n>Section 1 says: \"pre-shared OSCORE keying material would also be an option.\"\r\n> In such a case, is channel binding simply not achievable?\r\n> Or is it somehow possible as long as the OSCORE keying material was established through some sort of interactive protocol (e.g., like the OSCORE profile of ACE, see RFC 9203)?\r\n",
       "createdAt": "2023-05-11T14:54:32Z",
-      "updatedAt": "2023-05-11T14:54:46Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-03T09:43:19Z",
+      "closedAt": "2023-06-03T09:43:19Z",
       "comments": [
         {
           "author": "malishav",
@@ -109,15 +117,15 @@
       "id": "I_kwDOBOvnCc5lr1w6",
       "title": "Transport PKCS objects within EDHOC's EAD fields?",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/11",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Marco Tiloca wrote:\r\n> In scenarios using message_4, wouldn't it make sense to have the PKCS#10 request and response transported in an EAD_3 and EAD_4 item, respectively?",
       "createdAt": "2023-05-11T14:55:31Z",
-      "updatedAt": "2023-05-11T14:55:49Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-03T09:43:48Z",
+      "closedAt": "2023-06-03T09:43:48Z",
       "comments": [
         {
           "author": "malishav",
@@ -133,15 +141,15 @@
       "id": "I_kwDOBOvnCc5lr2qh",
       "title": "Mandate \"osc\" attribute in links to EST resources",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/12",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Marco Tiloca wrote:\r\n> Per Section 9 of RFC 8613, the \"osc\" attribute is optionally included in a link to specify that a resource has to be accessed with OSCORE. Should it remain optional here too?\r\n> Consider a setup where OSCORE and DTLS are combined. Especially when discovering EST resources on a non-default port number, the links to those resources would have URI scheme \"coaps\". Then, the absence of the \"osc\" attribute might wrongly suggest that the EST server is actually using EST-coaps.\r\n>Therefore, it might be worth mandating the use of the attribute \"osc\" in links to EST resources accessed as in this specification.\r\n> An alternative would be defining a new set of EST-OSCORE-related Resource Type values, such as \"ace.est.osc.*\".",
       "createdAt": "2023-05-11T14:57:08Z",
-      "updatedAt": "2023-05-11T14:57:20Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-03T09:44:37Z",
+      "closedAt": "2023-06-03T09:44:37Z",
       "comments": [
         {
           "author": "malishav",
@@ -157,15 +165,15 @@
       "id": "I_kwDOBOvnCc5lr3TR",
       "title": "Response to /skc may be unencrypted PKCS #8 private key",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/13",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Marco Tiloca wrote:\r\n\r\n> Regarding the response from /skc, is it possible to deviate from what is defined in RFC 9148 and *not* encrypt the private key? After all, end-to-end encryption of the whole EST payload is ensured by OSCORE.\r\n\r\n> If yes, that might open for a new Content-Format pair (284, 287), i.e., an unencrypted PKCS #8 private key together with a single certificate (not a PKCS #7 container).\r\n",
       "createdAt": "2023-05-11T14:58:12Z",
-      "updatedAt": "2023-05-11T14:58:25Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-03T10:04:37Z",
+      "closedAt": "2023-06-03T10:04:37Z",
       "comments": [
         {
           "author": "malishav",
@@ -181,15 +189,15 @@
       "id": "I_kwDOBOvnCc5lr4HO",
       "title": "Specify Content-Format support as in RFC 9148",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/14",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Marco Tiloca wrote:\r\n\r\n> I suppose your intention is for the EST client and server to support Content-Formats just like in RFC 9148, i.e.:\r\n> \"Content-Format 281 MUST be supported by EST-coaps servers. Servers MAY also support Content-Format 287. It is up to the client to support only Content-Format 281, 287 or both.\"\r\n> I think it is good to have an explicit statement here too.\r\n> Like RFC 9148 does in its Table 3, it is good to also recap the Content-Format identifiers used for the different parts of the responses from /skg and /skc.",
       "createdAt": "2023-05-11T14:59:41Z",
-      "updatedAt": "2023-05-11T14:59:51Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-03T10:04:37Z",
+      "closedAt": "2023-06-03T10:04:37Z",
       "comments": [
         {
           "author": "malishav",
@@ -205,15 +213,15 @@
       "id": "I_kwDOBOvnCc5lr4zo",
       "title": "Translation scheme if DTLS is used",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/15",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Marco Tiloca wrote:\r\n>>\"The EST URLs based on https:// are translated to coap://, but with mandatory use of the CoAP OSCORE option.\"\r\n\r\n> The scheme \"coap\" is the translation target only if DTLS is not additionally used.\r\n",
       "createdAt": "2023-05-11T15:01:08Z",
-      "updatedAt": "2023-05-11T15:01:16Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-03T09:45:20Z",
+      "closedAt": "2023-06-03T09:45:20Z",
       "comments": [
         {
           "author": "malishav",
@@ -229,15 +237,15 @@
       "id": "I_kwDOBOvnCc5lr5Qn",
       "title": "Specify support for Block1 and Block2",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/16",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Marco Tiloca wrote:\r\n\r\n>> \"this specification mandates the implementation of CoAP option Block1 and Block2 fragmentation mechanism [RFC7959]\"\r\n\r\n> This is good, but it contradicts the text in Section 4.4 where the support of the CoAP option Block1 and Block2 is only RECOMMENDED.",
       "createdAt": "2023-05-11T15:02:02Z",
-      "updatedAt": "2023-05-11T15:02:12Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-03T10:06:21Z",
+      "closedAt": "2023-06-03T10:06:21Z",
       "comments": [
         {
           "author": "malishav",
@@ -253,15 +261,15 @@
       "id": "I_kwDOBOvnCc5lr5za",
       "title": "EST Client <-> CoAP-to-HTTP proxy secure association",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/issues/17",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Marco Tiloca wrote:\r\n\r\n> If a secure association is needed between the EST Client and the CoAP-to-HTTP Proxy, this may alternatively and more conveniently rely on OSCORE as well, see https://datatracker.ietf.org/doc/draft-tiloca-core-oscore-capable-proxies/",
       "createdAt": "2023-05-11T15:03:07Z",
-      "updatedAt": "2023-05-11T15:03:16Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-03T10:02:01Z",
+      "closedAt": "2023-06-03T10:02:01Z",
       "comments": [
         {
           "author": "malishav",
@@ -504,24 +512,26 @@
       "id": "PR_kwDOBOvnCc5QtmDr",
       "title": "#9: explicit the message flow and remove normative keywords in Section 3",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/18",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The commit lowercases the normative keywords in Section 3 to avoid \"restatement anti-pattern\".",
       "createdAt": "2023-05-17T13:00:45Z",
-      "updatedAt": "2023-05-17T13:00:45Z",
+      "updatedAt": "2023-06-03T10:07:06Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "9-explicit-the-message-flow",
       "headRefOid": "8e77722c986f752873d7e298fdb660131226ca3b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2023-06-03T09:42:40Z",
+      "mergedAt": "2023-06-03T09:42:40Z",
+      "mergedBy": "malishav",
+      "mergeCommit": {
+        "oid": "d4554d03188e219737697a50f591eb17d3a1b6d3"
+      },
       "comments": [],
       "reviews": []
     },
@@ -530,24 +540,26 @@
       "id": "PR_kwDOBOvnCc5QtppC",
       "title": "#10: Channel binding when EDHOC is not used",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/19",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2023-05-17T13:07:08Z",
-      "updatedAt": "2023-05-30T09:03:32Z",
+      "updatedAt": "2023-06-03T10:08:20Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "10-channel-binding-when-edhoc-is-not-used",
       "headRefOid": "fa3c74502d021e1522a13c22b3f54dfaec151c24",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2023-06-03T09:43:18Z",
+      "mergedAt": "2023-06-03T09:43:18Z",
+      "mergedBy": "malishav",
+      "mergeCommit": {
+        "oid": "f54615c3318c15012525168af46896e1bf628548"
+      },
       "comments": [],
       "reviews": [
         {
@@ -597,24 +609,26 @@
       "id": "PR_kwDOBOvnCc5Qttdl",
       "title": "#11: Informatively mention that not using EAD of EDHOC is intentional",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/20",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2023-05-17T13:12:44Z",
-      "updatedAt": "2023-05-17T13:12:44Z",
+      "updatedAt": "2023-06-03T10:08:07Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "11-transport-pkcs-objects-within-edhocs-ead-fields",
       "headRefOid": "69e3d3999cc61fb3532299a4cdaea742fb5df61b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2023-06-03T09:43:47Z",
+      "mergedAt": "2023-06-03T09:43:47Z",
+      "mergedBy": "malishav",
+      "mergeCommit": {
+        "oid": "5a7bf131266f28456ee161ab47c84ed21382a100"
+      },
       "comments": [],
       "reviews": []
     },
@@ -623,24 +637,26 @@
       "id": "PR_kwDOBOvnCc5Qt0yI",
       "title": "#12: Mandate \"osc\" attribute in links to EST resources",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/21",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2023-05-17T13:28:40Z",
-      "updatedAt": "2023-05-17T13:28:40Z",
+      "updatedAt": "2023-06-03T10:07:56Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "12-mandate-osc-attribute-in-links-to-est-resources",
       "headRefOid": "e62e96a569fd81552741d3b6fb32d0a014547d72",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2023-06-03T09:44:36Z",
+      "mergedAt": "2023-06-03T09:44:36Z",
+      "mergedBy": "malishav",
+      "mergeCommit": {
+        "oid": "bf5e377a46a0f01e3a00094ff5cb6407d826c46c"
+      },
       "comments": [],
       "reviews": []
     },
@@ -649,24 +665,26 @@
       "id": "PR_kwDOBOvnCc5Qt3WQ",
       "title": "#15: Specify translation scheme if DTLS is additionally used",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/22",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2023-05-17T13:34:30Z",
-      "updatedAt": "2023-05-30T08:59:12Z",
+      "updatedAt": "2023-06-03T10:07:35Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
       "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "15-translation-scheme-if-dtls-is-used",
       "headRefOid": "1b9811706a05672a5b1de57acb512f8797425cba",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2023-06-03T09:45:19Z",
+      "mergedAt": "2023-06-03T09:45:19Z",
+      "mergedBy": "malishav",
+      "mergeCommit": {
+        "oid": "6c7b485029ab3cc9588dcdda96c6579d77cfd8a5"
+      },
       "comments": [],
       "reviews": [
         {
@@ -716,50 +734,95 @@
       "id": "PR_kwDOBOvnCc5Qt74Y",
       "title": "#17: OSCORE-based secure association between Client and CoAP-to-HTTP \u2026",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/23",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "\u2026proxy",
       "createdAt": "2023-05-17T13:45:28Z",
-      "updatedAt": "2023-05-17T13:45:28Z",
+      "updatedAt": "2023-06-03T10:07:15Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
-      "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
+      "baseRefOid": "6c7b485029ab3cc9588dcdda96c6579d77cfd8a5",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "17-est-client-coap-to-http-proxy-secure-association",
-      "headRefOid": "81e0df516ac745e7bd909f10659c9ffbd255be56",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "0cd5c04a8a0caf4595adb618343120d685fd721e",
+      "closedAt": "2023-06-03T10:02:00Z",
+      "mergedAt": "2023-06-03T10:02:00Z",
+      "mergedBy": "malishav",
+      "mergeCommit": {
+        "oid": "f1acc3dad4aa40deb9b8753352bdb0228bf8ddaf"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOBOvnCc5WyVWJ",
+          "commit": {
+            "abbreviatedOid": "81e0df5"
+          },
+          "author": "gselander",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-06-01T18:07:47Z",
+          "updatedAt": "2023-06-01T18:07:47Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "The same would apply for CoAP-to-CoAP proxy. Does it make sense to mention that? Perhaps not here?",
+              "createdAt": "2023-06-01T18:07:47Z",
+              "updatedAt": "2023-06-01T18:07:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5W-PXo",
+          "commit": {
+            "abbreviatedOid": "81e0df5"
+          },
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-06-03T09:59:33Z",
+          "updatedAt": "2023-06-03T09:59:33Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "This is a section on \"HTTP-CoAP proxy\" so I guess it does not make sense to mention that here. ",
+              "createdAt": "2023-06-03T09:59:33Z",
+              "updatedAt": "2023-06-03T09:59:33Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 24,
       "id": "PR_kwDOBOvnCc5RcPSL",
       "title": "#14: Specify and summarize Content-Format identifiers",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/24",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The PR specifies and summarize Content-Format identifiers. It mandates that the response to /skc is an unencrypted PKCS8 object.",
       "createdAt": "2023-05-26T13:29:52Z",
-      "updatedAt": "2023-05-26T20:03:40Z",
+      "updatedAt": "2023-06-03T10:07:45Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
-      "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
+      "baseRefOid": "f1acc3dad4aa40deb9b8753352bdb0228bf8ddaf",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "14-specify-content-format-support-as-in-rfc-9148",
-      "headRefOid": "41398e1eb007253a26d89f00521d325db4764100",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "1fe05149cfaf3518f9ba2422209618b7d0c428c8",
+      "closedAt": "2023-06-03T10:04:36Z",
+      "mergedAt": "2023-06-03T10:04:36Z",
+      "mergedBy": "malishav",
+      "mergeCommit": {
+        "oid": "b1681d53a4d45eea76a7a1f18f70b2baabbd1e1c"
+      },
       "comments": [],
       "reviews": [
         {
@@ -861,6 +924,66 @@
               "updatedAt": "2023-05-26T20:03:39Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5WuQ4L",
+          "commit": {
+            "abbreviatedOid": "41398e1"
+          },
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-06-01T09:09:49Z",
+          "updatedAt": "2023-06-01T09:09:49Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "> Unless EST-OSCORE has a compelling reason to include server generated private keys, I suggest leaving it out completely: it's only asking for SecAD DISCUSSes. The reason RFC9148 had it was because of very specific situations where an RSA1024-bit IDevID key was to be replaced with an RSA 2048 key, and it was KNOWN that the random number generator in the client machines was poor, and unlikely to be fixed. Why one vendor's woes had such influence is a different question I can't answer, but let's not repeat it unless we have a really good reason. I think that any 10yr old silicon has good enough RNG support that it's not an issue.\r\n\r\nOne argument that was brought up by Shahid is that a hardware RNG alone, indeed dominantly present nowadays, is not sufficient to guarantee good quality random numbers. He brought up this talk from DEF CON 2021: https://www.youtube.com/watch?v=Zuqw0-jZh9Y.\r\n\r\nAs it stands, I think the issue of keeping or removing server-generated private keys deserves more discussion. I will keep it in the draft for now and bring it up for discussion in the ACE interim on 5 June 2023.",
+              "createdAt": "2023-06-01T09:09:49Z",
+              "updatedAt": "2023-06-01T09:09:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5WuUOz",
+          "commit": {
+            "abbreviatedOid": "41398e1"
+          },
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-06-01T09:15:07Z",
+          "updatedAt": "2023-06-01T09:15:08Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "Rephrased this to \"the private key part of the response to /skc is an unencrypted PKCS #8 object\".",
+              "createdAt": "2023-06-01T09:15:08Z",
+              "updatedAt": "2023-06-01T09:15:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOBOvnCc5WuWAL",
+          "commit": {
+            "abbreviatedOid": "41398e1"
+          },
+          "author": "malishav",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-06-01T09:19:06Z",
+          "updatedAt": "2023-06-01T09:19:07Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Thanks Marco. I edited the text to read:\r\n\r\n> Due to the use of OSCORE, which protects the communication between the EST client and the EST server end-to-end, it is possible to return the private key to /skc or /skg as an unencrypted PKCS #8 object (Content-Format identifier 284). Therefore, when making the CSR to /skc or /skg, the EST client MUST NOT include SMIMECapabilities. As a consequence, the private key part of the response to /skc or /skg is an unencrypted PKCS #8 object.\r\n\r\nand kept the table as-is.\r\n",
+              "createdAt": "2023-06-01T09:19:07Z",
+              "updatedAt": "2023-06-01T09:19:07Z"
+            }
+          ]
         }
       ]
     },
@@ -869,24 +992,26 @@
       "id": "PR_kwDOBOvnCc5Rc4j_",
       "title": "#16: Specify requirements on implementing Block1 and Block2",
       "url": "https://github.com/EricssonResearch/EST-OSCORE/pull/25",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "malishav",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2023-05-26T15:19:59Z",
-      "updatedAt": "2023-05-26T15:19:59Z",
+      "updatedAt": "2023-06-03T10:07:25Z",
       "baseRepository": "EricssonResearch/EST-OSCORE",
       "baseRefName": "master",
-      "baseRefOid": "0b3713b96f0f3c7ba2ea32f84e89585f7e9b6ee0",
+      "baseRefOid": "b1681d53a4d45eea76a7a1f18f70b2baabbd1e1c",
       "headRepository": "EricssonResearch/EST-OSCORE",
       "headRefName": "16-specify-support-for-block1-and-block2",
-      "headRefOid": "b591f0d9c615ce29cc59e88f0f9a091d29d76d85",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "ea192c59e4191802fd5d2a0f79c7d8bdc9bdfe03",
+      "closedAt": "2023-06-03T10:06:20Z",
+      "mergedAt": "2023-06-03T10:06:19Z",
+      "mergedBy": "malishav",
+      "mergeCommit": {
+        "oid": "31877a498742989258963721a7a8c60a0d0344d9"
+      },
       "comments": [],
       "reviews": []
     }
